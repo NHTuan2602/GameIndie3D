@@ -14,6 +14,9 @@ public class DialogueLine
 
 public class DialogueManager : MonoBehaviour
 {
+    // Bùa chú Singleton để các Script khác gọi dễ dàng hơn
+    public static DialogueManager instance;
+
     [Header("Giao diện UI Hội thoại")]
     public GameObject dialoguePanel;
     public TextMeshProUGUI nameText;
@@ -29,25 +32,33 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI endingText;
 
     [Header("Cài đặt Chuyển Màn")]
-    [Tooltip("Gõ chính xác tên Scene Minigame lừa đảo của bạn vào đây")]
     public string nextSceneName = "MainGameScene";
 
     [Header("Cài đặt Hiệu ứng")]
     public float typingSpeed = 0.05f;
 
-    [Header("Kịch bản Hội thoại (Dùng [PLAYER] để thay tên)")]
-    public DialogueLine[] dialogueLines;
+    [Header("KỊCH BẢN 1: TỰ GIỚI THIỆU (Mới vào game)")]
+    public DialogueLine[] introLines;
 
+    [Header("KỊCH BẢN 2: RỦ RÊ (Sau khi xếp xong đồ)")]
+    public DialogueLine[] outroLines;
+
+    private DialogueLine[] currentLinesToPlay; // Dùng để xác định đang đọc kịch bản nào
     private int currentLineIndex = 0;
     private bool isTyping = false;
+    private bool isPlayingIntro = false; // Cờ kiểm tra trạng thái
     private Coroutine typingCoroutine;
+
+    void Awake()
+    {
+        if (instance == null) instance = this;
+    }
 
     void Start()
     {
-        // Ẩn tất cả khi mới vào game
         choicePanel.SetActive(false);
         dialoguePanel.SetActive(false);
-        if (endingPanel != null) endingPanel.SetActive(false); // Ẩn màn hình ending
+        if (endingPanel != null) endingPanel.SetActive(false);
 
         agreeButton.onClick.AddListener(OnAgreeClicked);
         refuseButton.onClick.AddListener(OnRefuseClicked);
@@ -62,10 +73,8 @@ public class DialogueManager : MonoBehaviour
             if (isTyping)
             {
                 StopCoroutine(typingCoroutine);
-
                 string pName = GetPlayerName();
-                dialogueText.text = dialogueLines[currentLineIndex].sentence.Replace("[PLAYER]", pName);
-
+                dialogueText.text = currentLinesToPlay[currentLineIndex].sentence.Replace("[PLAYER]", pName);
                 isTyping = false;
             }
             else
@@ -75,6 +84,23 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // ==========================================
+    // HÀM MỚI: BẮT ĐẦU ĐOẠN TỰ GIỚI THIỆU
+    // ==========================================
+    public void StartIntroDialogue()
+    {
+        // Gán kịch bản 1 vào chạy
+        currentLinesToPlay = introLines;
+        isPlayingIntro = true;
+
+        dialoguePanel.SetActive(true);
+        currentLineIndex = 0;
+        StartDialogue();
+    }
+
+    // ==========================================
+    // HÀM CŨ: BẮT ĐẦU ĐOẠN RỦ RÊ CUỐI CA
+    // ==========================================
     public void TriggerStoryEvent()
     {
         PlayerMovement player = FindObjectOfType<PlayerMovement>();
@@ -83,6 +109,10 @@ public class DialogueManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+        // Gán kịch bản 2 vào chạy
+        currentLinesToPlay = outroLines;
+        isPlayingIntro = false;
+
         dialoguePanel.SetActive(true);
         currentLineIndex = 0;
         StartDialogue();
@@ -90,7 +120,7 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue()
     {
-        if (dialogueLines.Length > 0)
+        if (currentLinesToPlay.Length > 0)
         {
             ShowLine(currentLineIndex);
         }
@@ -98,35 +128,23 @@ public class DialogueManager : MonoBehaviour
 
     private string GetPlayerName()
     {
-        // Ưu tiên 1: Đọc tên trực tiếp từ bộ nhớ mà IntroManager vừa lưu
         if (PlayerPrefs.HasKey("SavedPlayerName"))
         {
             string savedName = PlayerPrefs.GetString("SavedPlayerName");
-            if (!string.IsNullOrEmpty(savedName))
-            {
-                return savedName; // Trả về tên thật (Ví dụ: "hưng")
-            }
+            if (!string.IsNullOrEmpty(savedName)) return savedName;
         }
-
-        // Ưu tiên 2: Nếu lỡ quên lưu ổ cứng thì hỏi GameManager (Kế hoạch dự phòng)
         if (GameManager.instance != null && !string.IsNullOrEmpty(GameManager.instance.playerName))
-        {
             return GameManager.instance.playerName;
-        }
-
-        // Đường cùng: Máy tính hỏng, data mất hết thì mới dùng chữ "Bạn"
         return "Bạn";
     }
 
     private void ShowLine(int index)
     {
-        DialogueLine currentLine = dialogueLines[index];
+        DialogueLine currentLine = currentLinesToPlay[index];
         string pName = GetPlayerName();
 
-        if (currentLine.speakerName == "[PLAYER]")
-            nameText.text = pName;
-        else
-            nameText.text = currentLine.speakerName;
+        if (currentLine.speakerName == "[PLAYER]") nameText.text = pName;
+        else nameText.text = currentLine.speakerName;
 
         string finalSentence = currentLine.sentence.Replace("[PLAYER]", pName);
 
@@ -138,7 +156,6 @@ public class DialogueManager : MonoBehaviour
     {
         dialogueText.text = "";
         isTyping = true;
-
         foreach (char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
@@ -150,65 +167,59 @@ public class DialogueManager : MonoBehaviour
     private void NextDialogueLine()
     {
         currentLineIndex++;
-        if (currentLineIndex < dialogueLines.Length) ShowLine(currentLineIndex);
-        else ShowChoices();
+        if (currentLineIndex < currentLinesToPlay.Length)
+        {
+            ShowLine(currentLineIndex);
+        }
+        else
+        {
+            // XỬ LÝ RẼ NHÁNH: Đọc xong thì làm gì?
+            if (isPlayingIntro)
+            {
+                // Nếu đọc xong đoạn tự giới thiệu -> Tắt bảng, THẢ CHO NGƯỜI CHƠI ĐI LẠI
+                dialoguePanel.SetActive(false);
+
+                PlayerMovement player = FindObjectOfType<PlayerMovement>();
+                if (player != null) player.canMove = true;
+
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+
+                CrosshairController crosshair = FindObjectOfType<CrosshairController>();
+                if (crosshair != null) crosshair.Show();
+            }
+            else
+            {
+                // Nếu đọc xong đoạn rủ rê đi Campuchia -> Bật 2 nút Đồng ý / Từ chối
+                dialoguePanel.SetActive(false);
+                choicePanel.SetActive(true);
+            }
+        }
     }
 
-    private void ShowChoices()
-    {
-        dialoguePanel.SetActive(false);
-        choicePanel.SetActive(true);
-    }
-
-    // =======================================================
-    // NÚT ĐỒNG Ý: CHUYỂN QUA MÀN GÕ PHÍM
-    // =======================================================
     private void OnAgreeClicked()
     {
         Debug.Log("Đã chọn ĐỒNG Ý. Đang tải màn hình lừa đảo...");
-
-        // Load qua Scene gõ phím
         SceneManager.LoadScene(nextSceneName);
     }
 
-    // =======================================================
-    // NÚT TỪ CHỐI: MÀN HÌNH ĐEN ENDING
-    // =======================================================
     private void OnRefuseClicked()
     {
-        Debug.Log("Đã chọn TỪ CHỐI. Kích hoạt Ending 1.");
-
-        // Tắt hết các UI hội thoại
         choicePanel.SetActive(false);
         dialoguePanel.SetActive(false);
 
-        // Bật màn hình đen Ending lên
         if (endingPanel != null)
         {
             endingPanel.SetActive(true);
             if (endingText != null)
-            {
-                // Set nội dung chữ cho ngầu
                 endingText.text = "Bạn đã từ chối lời đề nghị. Cuộc sống sinh viên nghèo vẫn tiếp diễn, nhưng ít ra bạn được bình yên.\n\n<color=#FF0000>ENDING 1: BẠN SỢ RỒI!</color>";
-            }
         }
-
-        // GỌI HÀM ĐẾM NGƯỢC ĐỂ KẾT THÚC GAME
         StartCoroutine(EndGameSequence());
     }
 
-    // Luồng đếm ngược tự động thoát
     IEnumerator EndGameSequence()
     {
-        // Đợi 5 giây cho người chơi đủ thời gian đọc dòng chữ Ending
         yield return new WaitForSeconds(5f);
-
-        Debug.Log("Đang thoát game...");
-
-        // Nếu chạy trong Unity Editor thì lệnh này vô tác dụng, nhưng khi Build ra file .exe thì nó sẽ tự văng game
         Application.Quit();
-
-        // Nếu bạn có Scene Main Menu, có thể thay dòng Quit() bằng:
-        // SceneManager.LoadScene("MainMenuScene");
     }
 }

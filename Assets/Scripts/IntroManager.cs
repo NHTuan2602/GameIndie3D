@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -6,19 +7,30 @@ public class IntroManager : MonoBehaviour
 {
     [Header("Giao diện Nhập Tên")]
     public GameObject namePanel;
+    public CanvasGroup namePanelCanvasGroup; // Đã thêm biến này để kéo thả
     public TMP_InputField nameInputField;
     public Button submitButton;
     public CrosshairController crosshairController;
+
+    [Header("Cài đặt Hiệu ứng")]
+    public float fadeDuration = 1.5f; // Thời gian mờ dần (1.5 giây là đẹp nhất)
 
     void Start()
     {
         namePanel.SetActive(true);
 
-        // Mở khóa chuột để người chơi gõ tên
+        // Đảm bảo màn hình rõ nét và cho phép click chuột lúc mới vào
+        if (namePanelCanvasGroup != null)
+        {
+            namePanelCanvasGroup.alpha = 1f;
+            namePanelCanvasGroup.blocksRaycasts = true;
+        }
+
+        // 1. Mở khóa chuột để người chơi gõ tên
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Trói chân nhân vật
+        // 2. Trói chân nhân vật
         PlayerMovement player = FindObjectOfType<PlayerMovement>();
         if (player != null) player.canMove = false;
 
@@ -37,7 +49,7 @@ public class IntroManager : MonoBehaviour
             return;
         }
 
-        // LƯU TÊN VÀO BỘ NÃO GAMEMANAGER
+        // LƯU TÊN VÀO Ổ CỨNG VÀ GAMEMANAGER
         PlayerPrefs.SetString("SavedPlayerName", playerName);
         PlayerPrefs.Save();
 
@@ -47,17 +59,43 @@ public class IntroManager : MonoBehaviour
         }
 
         Debug.Log("Đã lưu hồ sơ nhân viên: " + playerName);
+
+        // KHỞI ĐỘNG HIỆU ỨNG MỜ DẦN THAY VÌ TẮT CÁI RỤP
+        StartCoroutine(FadeOutAndStartGame());
+    }
+
+    IEnumerator FadeOutAndStartGame()
+    {
+        submitButton.interactable = false;
+        nameInputField.interactable = false;
+        if (namePanelCanvasGroup != null) namePanelCanvasGroup.blocksRaycasts = false;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            if (namePanelCanvasGroup != null)
+            {
+                namePanelCanvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
+            }
+            yield return null;
+        }
+
         namePanel.SetActive(false);
 
-        // Mở khóa di chuyển cho nhân vật
-        PlayerMovement player = FindObjectOfType<PlayerMovement>();
-        if (player != null) player.canMove = true;
+        // ==============================================================
+        // MỚI SỬA: Thay vì thả cho đi lại, GỌI ĐOẠN TỰ GIỚI THIỆU DẬY
+        // ==============================================================
+        // Nghỉ 1 giây cho người chơi ngắm cảnh siêu thị (Giải quyết Góc khuất số 3)
+        yield return new WaitForSeconds(1.0f);
 
-        // Tùy cơ chế 3D của bạn: Ở đây tôi giả định bạn cần khóa chuột vào giữa màn hình để chơi góc nhìn thứ nhất
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        if (crosshairController != null) crosshairController.Show();
-
-        // KÍCH HOẠT MINIGAME XẾP ĐỒ Ở ĐÂY (Nếu cần gọi hàm)
+        if (DialogueManager.instance != null)
+        {
+            DialogueManager.instance.StartIntroDialogue();
+        }
+        else
+        {
+            Debug.LogError("Chưa gắn kịch bản DialogueManager vô scene!");
+        }
     }
 }
