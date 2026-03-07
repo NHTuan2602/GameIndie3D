@@ -23,24 +23,35 @@ MonoBehaviour:
     scriptToType: Co oi chau la ban cua Binh, Binh vua bi tai nan giao thong nang
       lam co a.
     timeLimit: 40
+    hasDistraction: 1
+    distractionMessage: "Em ch\xE1n s\u1ED1ng r\u1ED3i \u0111\xFAng kh\xF4ng, chat
+      nhanh l\xEAn coi"
   - victimMessage: "Tr\u1EDDi \u0111\u1EA5t \u01A1i! Th\u1EB1ng B\xECnh b\u1ECB sao?
       N\xF3 \u0111ang \u1EDF \u0111\xE2u h\u1EA3 ch\xE1u??"
     scriptToType: Binh dang cap cuu o benh vien Cho Ray, tinh trang nguy kich lam
       bac si dang cho co len.
     timeLimit: 40
+    hasDistraction: 0
+    distractionMessage: 
   - victimMessage: "C\xF4 b\u1EAFt xe \xF4m l\xEAn ngay! B\xE1c s\u0129 b\u1EA3o
       t\xECnh h\xECnh n\xF3 sao r\u1ED3i ch\xE1u \u01A1i, c\xF4 run qu\xE1..."
     scriptToType: Bac si yeu cau phai dong tam ung 50 trieu thi moi duoc vao phong
       mo gap co a.
     timeLimit: 40
+    hasDistraction: 0
+    distractionMessage: 
   - victimMessage: "C\xF4 \u0111ang ch\u1EA1y ra b\u1EBFn xe nh\u01B0ng trong ng\u01B0\u1EDDi
       kh\xF4ng c\xF3 \u0111\u1ED3ng ti\u1EC1n m\u1EB7t n\xE0o c\u1EA3, l\xE0m sao
       b\xE2y gi\u1EDD?"
     scriptToType: Co goi nho ho hang chuyen khoan gap vao tai khoan cua bac si nhe,
       cham la khong kip dau.
     timeLimit: 40
+    hasDistraction: 0
+    distractionMessage: 
   - victimMessage: "Ch\xE1u \u0111\u1ECDc s\u1ED1 t\xE0i kho\u1EA3n \u0111i! C\xF4
       nh\u1EDD b\xE0 h\xE0ng x\xF3m chuy\u1EC3n ngay! C\u1EE9u con c\xF4 v\u1EDBi!"
     scriptToType: So tai khoan 123456789 ngan hang VCB ten Nguyen Van A, co chuyen
       nhanh de chau nop cho bac si.
     timeLimit: 40
+    hasDistraction: 0
+    distractionMessage: 

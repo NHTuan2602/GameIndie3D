@@ -5,7 +5,8 @@ public class GameManager : MonoBehaviour
 {
     // --- SINGLETON: Bộ não bất tử ---
     public static GameManager instance;
-
+    [Header("Thông tin Nhân vật")]
+    public string playerName = "Tuấn"; // Lưu tên từ màn hình Intro
     [Header("Chỉ số Sinh tồn")]
     public int hp = 100;
     public int maxHp = 100;

@@ -41,20 +41,26 @@ public class MiniGameManager : MonoBehaviour
     void CompleteShift()
     {
         if (crosshairController != null) crosshairController.Hide();
-        Debug.Log("HẾT CA LÀM! Mở điện thoại...");
+        Debug.Log("HẾT CA LÀM! Kích hoạt cốt truyện Visual Novel...");
 
-        if (phoneMessagePanel != null)
-        {
-            phoneMessagePanel.SetActive(true);
-        }
-
-        // Tước quyền đi lại của nhân vật khi đang xem điện thoại
+        // Tước quyền đi lại của nhân vật khi đang xem hội thoại
         PlayerMovement player = FindObjectOfType<PlayerMovement>();
         if (player != null) player.canMove = false;
 
-        // Đảm bảo chuột đã được hiện lên để bấm nút
+        // Đảm bảo chuột đã được hiện lên để bấm nút Đồng ý / Từ chối
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        // Tắt cái giao diện điện thoại cũ đi để không bị đè hình
+        if (phoneMessagePanel != null)
+        {
+            phoneMessagePanel.SetActive(false);
+        }
+
+        // ========================================================
+        // ĐÂY LÀ DÒNG LỆNH ĐÁNH THỨC VISUAL NOVEL CỦA CHÚNG TA
+        // ========================================================
+        FindObjectOfType<DialogueManager>().TriggerStoryEvent();
     }
 
     public void AcceptJobAndGoToCampuchia()
