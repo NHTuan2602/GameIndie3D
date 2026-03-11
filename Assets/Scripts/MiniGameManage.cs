@@ -43,9 +43,13 @@ public class MiniGameManager : MonoBehaviour
         if (crosshairController != null) crosshairController.Hide();
         Debug.Log("HẾT CA LÀM! Kích hoạt cốt truyện Visual Novel...");
 
-        // Tước quyền đi lại của nhân vật khi đang xem hội thoại
+        // Tước quyền đi lại và quay đầu của nhân vật khi đang xem hội thoại (MỚI SỬA)
         PlayerMovement player = FindObjectOfType<PlayerMovement>();
-        if (player != null) player.canMove = false;
+        if (player != null)
+        {
+            player.canWalk = false;
+            player.canLook = false;
+        }
 
         // Đảm bảo chuột đã được hiện lên để bấm nút Đồng ý / Từ chối
         Cursor.lockState = CursorLockMode.None;

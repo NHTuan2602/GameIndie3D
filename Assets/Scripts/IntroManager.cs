@@ -7,7 +7,7 @@ public class IntroManager : MonoBehaviour
 {
     [Header("Giao diện Nhập Tên")]
     public GameObject namePanel;
-    public CanvasGroup namePanelCanvasGroup; // Đã thêm biến này để kéo thả
+    public CanvasGroup namePanelCanvasGroup;
     public TMP_InputField nameInputField;
     public Button submitButton;
     public CrosshairController crosshairController;
@@ -30,9 +30,13 @@ public class IntroManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // 2. Trói chân nhân vật
+        // 2. Trói chân và Khóa cổ nhân vật (MỚI SỬA CẬP NHẬT THEO PLAYERMOVEMENT MỚI)
         PlayerMovement player = FindObjectOfType<PlayerMovement>();
-        if (player != null) player.canMove = false;
+        if (player != null)
+        {
+            player.canWalk = false; // Không cho đi lại
+            player.canLook = false; // Không cho xoay đầu nhìn lung tung lúc nhập tên
+        }
 
         submitButton.onClick.AddListener(OnSubmitName);
     }
@@ -86,7 +90,7 @@ public class IntroManager : MonoBehaviour
         // ==============================================================
         // MỚI SỬA: Thay vì thả cho đi lại, GỌI ĐOẠN TỰ GIỚI THIỆU DẬY
         // ==============================================================
-        // Nghỉ 1 giây cho người chơi ngắm cảnh siêu thị (Giải quyết Góc khuất số 3)
+        // Nghỉ 1 giây cho người chơi ngắm cảnh siêu thị
         yield return new WaitForSeconds(1.0f);
 
         if (DialogueManager.instance != null)
