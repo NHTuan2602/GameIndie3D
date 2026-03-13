@@ -8,11 +8,13 @@ public class PlayerMovement : MonoBehaviour
     public float mouseSensitivity = 300f;
 
     [Header("Trạng thái Hoạt động")]
+    [Tooltip("Bỏ tích ô này để KHÓA CHÂN nhân vật (Dùng cho mini-game)")]
     public bool canWalk = false;
+    [Tooltip("Tích ô này để cho phép quay đầu ngắm nhìn xung quanh")]
     public bool canLook = true;
 
     // ==============================================================
-    // KHU VỰC CÔNG TẮC ĐIỆN ẢNH (DÙNG CHO NGỒI TRÊN XE BUS)
+    // KHU VỰC CÔNG TẮC ĐIỆN ẢNH (DÙNG CHO NGỒI TRÊN XE BUS / SIÊU THỊ)
     // ==============================================================
     [Header("Giới hạn Cổ (Chống xoay 360 độ)")]
     [Tooltip("Tích vào đây để KHÓA CỔ không cho nhìn lên/xuống")]
@@ -53,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         // ==========================================
-        // 1. HỆ THỐNG XOAY GÓC NHÌN & TƯƠNG TÁC
+        // 1. HỆ THỐNG XOAY GÓC NHÌN
         // ==========================================
         if (canLook)
         {
@@ -63,16 +65,13 @@ public class PlayerMovement : MonoBehaviour
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
             float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-            // Xoay cổ ngang (Trục Y)
             yRotation += mouseX;
 
-            // NẾU BẬT GIỚI HẠN NGANG: Ép cổ không được xoay quá góc maxHorizontalAngle
             if (limitHorizontalLook)
             {
                 yRotation = Mathf.Clamp(yRotation, startYRotation - maxHorizontalAngle, startYRotation + maxHorizontalAngle);
             }
 
-            // NẾU KHÔNG BỊ KHÓA DỌC: Mới cho phép nhìn lên/xuống
             if (!lockVerticalLook)
             {
                 xRotation -= mouseY;
@@ -81,11 +80,13 @@ public class PlayerMovement : MonoBehaviour
 
             transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
 
-            // Bắn tia click chuột để lấy chai nước
+            // TẠM THỜI TẮT BẮN TIA Ở ĐÂY ĐỂ TRÁNH XUNG ĐỘT VỚI DRAG AND SNAP
+            /*
             if (Input.GetMouseButtonDown(0))
             {
                 InteractWithObject();
             }
+            */
         }
         else
         {
@@ -94,51 +95,52 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // ==========================================
-        // 2. HỆ THỐNG ĐI LẠI TRÊN MẶT PHẲNG
+        // 2. XỬ LÝ TRỌNG LỰC (LUÔN PHẢI CHẠY DÙ CÓ BỊ KHÓA CHÂN HAY KHÔNG)
+        // ==========================================
+        if (controller.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+        velocity.y += gravity * Time.deltaTime;
+
+        // ==========================================
+        // 3. HỆ THỐNG ĐI LẠI TRÊN MẶT PHẲNG (CHỈ CHẠY KHI ĐƯỢC PHÉP)
         // ==========================================
         if (canWalk)
         {
-            if (controller.isGrounded && velocity.y < 0)
-            {
-                velocity.y = -2f;
-            }
-
             float x = Input.GetAxis("Horizontal");
             float z = Input.GetAxis("Vertical");
 
             Vector3 moveDirection = transform.right * x + transform.forward * z;
             controller.Move(moveDirection.normalized * moveSpeed * Time.deltaTime);
-
-            velocity.y += gravity * Time.deltaTime;
-            controller.Move(velocity * Time.deltaTime);
         }
+
+        // Áp dụng trọng lực cuối cùng (để nhân vật luôn đứng vững trên sàn)
+        controller.Move(velocity * Time.deltaTime);
     }
 
     // ==========================================
-    // 3. HÀM PHÁT TIA LASER LẤY CHAI NƯỚC
+    // 4. CÁC HÀM CÔNG TẮC ĐỂ SCRIPT KHÁC GỌI VÀO
     // ==========================================
-    void InteractWithObject()
+
+    // Hàm này để MiniGameManager gọi khi bắt đầu ca làm
+    public void LockMovementForMiniGame()
     {
-        if (playerCamera == null)
-        {
-            Debug.LogError("GÓC KHUẤT: Bạn chưa kéo Main Camera vào script PlayerMovement!");
-            return;
-        }
+        canWalk = false;
+        canLook = true;
+    }
 
-        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        RaycastHit hit;
+    // Hàm này để MiniGameManager gọi khi kết thúc ca làm (hết giờ)
+    public void UnlockMovement()
+    {
+        canWalk = true;
+        canLook = true;
+    }
 
-        Debug.DrawRay(ray.origin, ray.direction * interactRange, Color.red, 2f);
-
-        if (Physics.Raycast(ray, out hit, interactRange))
-        {
-            if (hit.collider.CompareTag("WaterBottle"))
-            {
-                Debug.Log("CẢNH BÁO: Đã lấy chai nước tẩm thuốc mê!");
-                Destroy(hit.collider.gameObject);
-
-                // TODO: Gọi hiệu ứng nhịp tim đập và màn hình đen mờ dần tại đây!
-            }
-        }
+    // Hàm này để vô hiệu hóa hoàn toàn khi đang nói chuyện (Visual Novel)
+    public void LockAllForDialogue()
+    {
+        canWalk = false;
+        canLook = false;
     }
 }

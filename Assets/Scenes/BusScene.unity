@@ -950,9 +950,9 @@ MonoBehaviour:
   lockVerticalLook: 1
   limitHorizontalLook: 1
   maxHorizontalAngle: 80
-  gravity: -9.81
+  gravity: 0
   interactRange: 3
-  playerCamera: {fileID: 0}
+  playerCamera: {fileID: 1580023150}
 --- !u!4 &1603294395 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 139dc0c48e0f88f488423cd6ee1220c2
+timeCreated: 1520007520
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81953
+  packageName: POLYGON - Zombie Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/Polygon zombie package/mesh.texture/supermarket mesh,texture/materals/window
+    1.27x0.824.mat
+  uploadId: 659046

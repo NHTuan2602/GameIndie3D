@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 547459f80d5a2f249ae8f6597a87def0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81953
+  packageName: POLYGON - Zombie Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/Polygon zombie package/mesh.texture/supermarket mesh,texture/Materials/Counter
+    food.mat
+  uploadId: 659046

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 829d8b11465306b428baf10b3782ad28
+timeCreated: 1520290378
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81953
+  packageName: POLYGON - Zombie Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/Polygon zombie package/Supermarket prefab/Safe prefab.prefab
+  uploadId: 659046
