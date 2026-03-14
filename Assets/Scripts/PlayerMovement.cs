@@ -8,21 +8,12 @@ public class PlayerMovement : MonoBehaviour
     public float mouseSensitivity = 300f;
 
     [Header("Trạng thái Hoạt động")]
-    [Tooltip("Bỏ tích ô này để KHÓA CHÂN nhân vật (Dùng cho mini-game)")]
     public bool canWalk = false;
-    [Tooltip("Tích ô này để cho phép quay đầu ngắm nhìn xung quanh")]
     public bool canLook = true;
 
-    // ==============================================================
-    // KHU VỰC CÔNG TẮC ĐIỆN ẢNH (DÙNG CHO NGỒI TRÊN XE BUS / SIÊU THỊ)
-    // ==============================================================
     [Header("Giới hạn Cổ (Chống xoay 360 độ)")]
-    [Tooltip("Tích vào đây để KHÓA CỔ không cho nhìn lên/xuống")]
     public bool lockVerticalLook = false;
-
-    [Tooltip("Tích vào đây để ép chỉ được quay đầu sang 2 bên như người thật")]
     public bool limitHorizontalLook = false;
-    [Tooltip("Độ ngoái cổ tối đa (Người bình thường là 80-90 độ)")]
     public float maxHorizontalAngle = 80f;
 
     [Header("Trọng lực & Vật lý")]
@@ -35,28 +26,21 @@ public class PlayerMovement : MonoBehaviour
 
     private float xRotation = 0f;
     private float yRotation = 0f;
-    private float startYRotation = 0f; // Biến bí mật để chống gãy cổ
+    private float startYRotation = 0f;
 
     private CharacterController controller;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-
-        // Giữ nguyên góc nhìn ban đầu khi mới load Scene
         Vector3 rot = transform.localRotation.eulerAngles;
         yRotation = rot.y;
         xRotation = rot.x;
-
-        // BÍ QUYẾT: Ghi nhớ lại tọa độ góc cổ lúc mới vào game làm cột mốc
         startYRotation = yRotation;
     }
 
     void Update()
     {
-        // ==========================================
-        // 1. HỆ THỐNG XOAY GÓC NHÌN
-        // ==========================================
         if (canLook)
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -80,13 +64,13 @@ public class PlayerMovement : MonoBehaviour
 
             transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
 
-            // TẠM THỜI TẮT BẮN TIA Ở ĐÂY ĐỂ TRÁNH XUNG ĐỘT VỚI DRAG AND SNAP
-            /*
-            if (Input.GetMouseButtonDown(0))
+            // ==========================================
+            // DÙNG NÚT 'E' ĐỂ UỐNG NƯỚC
+            // ==========================================
+            if (Input.GetKeyDown(KeyCode.E))
             {
                 InteractWithObject();
             }
-            */
         }
         else
         {
@@ -94,18 +78,12 @@ public class PlayerMovement : MonoBehaviour
             Cursor.visible = true;
         }
 
-        // ==========================================
-        // 2. XỬ LÝ TRỌNG LỰC (LUÔN PHẢI CHẠY DÙ CÓ BỊ KHÓA CHÂN HAY KHÔNG)
-        // ==========================================
         if (controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
         }
         velocity.y += gravity * Time.deltaTime;
 
-        // ==========================================
-        // 3. HỆ THỐNG ĐI LẠI TRÊN MẶT PHẲNG (CHỈ CHẠY KHI ĐƯỢC PHÉP)
-        // ==========================================
         if (canWalk)
         {
             float x = Input.GetAxis("Horizontal");
@@ -115,32 +93,56 @@ public class PlayerMovement : MonoBehaviour
             controller.Move(moveDirection.normalized * moveSpeed * Time.deltaTime);
         }
 
-        // Áp dụng trọng lực cuối cùng (để nhân vật luôn đứng vững trên sàn)
         controller.Move(velocity * Time.deltaTime);
     }
 
     // ==========================================
-    // 4. CÁC HÀM CÔNG TẮC ĐỂ SCRIPT KHÁC GỌI VÀO
+    // 4. HÀM TƯƠNG TÁC (CHỈ BẮT ĐÚNG CHAI NƯỚC, BỎ QUA HỘP HÀNG)
     // ==========================================
-
-    // Hàm này để MiniGameManager gọi khi bắt đầu ca làm
-    public void LockMovementForMiniGame()
+    void InteractWithObject()
     {
-        canWalk = false;
-        canLook = true;
+        if (playerCamera == null) return;
+
+        // BƯỚC 1: KIỂM TRA ĐỒ ĐANG CẦM TRÊN TAY TRƯỚC (Không cần bắn laser)
+        // Duyệt qua tất cả các vật thể đang làm "con" của Camera
+        foreach (Transform child in playerCamera.transform)
+        {
+            if (child.CompareTag("WaterBottle") && child.gameObject.activeSelf)
+            {
+                Debug.Log("Đã ấn E uống chai nước trên tay! Bắt đầu sập nguồn...");
+                Destroy(child.gameObject); // Vứt chai nước
+
+                // Dọn sạch bóng ma UI
+                if (DialogueManager.instance != null && DialogueManager.instance.dialoguePanel != null)
+                {
+                    DialogueManager.instance.dialoguePanel.SetActive(false);
+                    if (DialogueManager.instance.dialogueText != null) DialogueManager.instance.dialogueText.text = "";
+                    if (DialogueManager.instance.nameText != null) DialogueManager.instance.nameText.text = "";
+                }
+
+                // Gọi đạo diễn sập màn hình
+                BusEventManager busEvent = FindObjectOfType<BusEventManager>();
+                if (busEvent != null) busEvent.StartBlackout();
+
+                return; // Đã uống xong thì THOÁT HÀM luôn, không chạy xuống code bắn tia bên dưới nữa!
+            }
+        }
+
+        // BƯỚC 2: NẾU KHÔNG CẦM GÌ TRÊN TAY, THÌ MỚI BẮN TIA LASER ĐỂ LẤY ĐỒ DƯỚI ĐẤT
+        // (Giữ lại đoạn này để sau này sang Campuchia còn lượm nhặt đồ vật khác)
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, interactRange))
+        {
+            if (hit.collider.CompareTag("WaterBottle"))
+            {
+                // (Code nhặt đồ dưới đất... dự phòng)
+            }
+        }
     }
 
-    // Hàm này để MiniGameManager gọi khi kết thúc ca làm (hết giờ)
-    public void UnlockMovement()
-    {
-        canWalk = true;
-        canLook = true;
-    }
-
-    // Hàm này để vô hiệu hóa hoàn toàn khi đang nói chuyện (Visual Novel)
-    public void LockAllForDialogue()
-    {
-        canWalk = false;
-        canLook = false;
-    }
+    public void LockMovementForMiniGame() { canWalk = false; canLook = true; }
+    public void UnlockMovement() { canWalk = true; canLook = true; }
+    public void LockAllForDialogue() { canWalk = false; canLook = false; }
 }
