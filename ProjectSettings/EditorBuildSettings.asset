@@ -6,13 +6,19 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/IntroScene.unity
+    path: Assets/Scenes/MainMenu.unity
+    guid: 2a7535c61764dfe4ba6ac72035c149dc
+  - enabled: 1
+    path: Assets/Scenes/HospitalScene.unity
+    guid: 0b262efb354bbe241856bb31065d6663
+  - enabled: 1
+    path: Assets/Scenes/SupermarketScene.unity
     guid: fb4dd4cec9902124db2a29d783589403
   - enabled: 1
     path: Assets/Scenes/BusScene.unity
     guid: 12d0a12d13848564385ea54e42d22fdd
   - enabled: 1
-    path: Assets/Scenes/MainGameScene.unity
+    path: Assets/Scenes/ScamScreen.unity
     guid: 4c967e290369fda449e29ed367cf4da3
   - enabled: 1
     path: Assets/Scenes/NightScreen.unity
