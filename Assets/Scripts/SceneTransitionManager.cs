@@ -57,8 +57,7 @@ public class SceneTransitionManager : MonoBehaviour
             yield return null;
         }
 
-        // --- LÚC NÀY SCENE XE KHÁCH ĐÃ LOAD XONG, NHƯNG MÀN HÌNH VẪN ĐANG ĐEN THUI ---
-
+        // --- LÚC NÀY SCENE XE KHÁCH ĐÃ LOAD XONG, NHƯNG MÀN HÌNH VẪN ĐANG ĐEN THUI ---a
         // 4. FADE IN (MÀN HÌNH SÁNG LÊN TỪ TỪ Ở SCENE MỚI)
         elapsedTime = 0f;
         while (elapsedTime < fadeDuration)

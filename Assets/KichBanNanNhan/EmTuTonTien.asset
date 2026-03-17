@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: EmTuTonTien
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Em T\xFA T\u1ED1n Ti\u1EC1n"
+  jobOrAge: "19 tu\u1ED5i - Sinh vi\xEAn l\xE0m th\xEAm"
+  staminaCost: 10
+  potentialReward: 1500
+  difficultyLevel: 0
+  rounds:
+  - victimMessage: "D\u1EA1 anh \u01A1i, em th\u1EA5y b\xE0i \u0111\u0103ng tuy\u1EC3n
+      vi\u1EC7c l\xE0m kho. Em \u0111ang n\u1EE3 ti\u1EC1n ph\xF2ng tr\u1ECD, anh
+      gi\xFAp em v\u1EDBi."
+    scriptToType: Chao em, ben anh dang tuyen nhan vien online tai nha. Viec nhe
+      luong cao, ngay lam 2 tieng kiem 300k.
+    timeLimit: 35
+    hasDistraction: 0
+    distractionMessage: "Em ch\xE1n s\u1ED1ng r\u1ED3i \u0111\xFAng kh\xF4ng, chat
+      nhanh l\xEAn coi"
+  - victimMessage: "Th\u1EADt \u1EA1? C\u1EE9u em v\u1EDBi. C\xF4ng vi\u1EC7c l\xE0m
+      g\xEC v\u1EADy anh? Em ch\u01B0a c\xF3 kinh nghi\u1EC7m."
+    scriptToType: Cong viec chi la bam like san pham tren he thong de tang tuong
+      tac. Rat don gian, ai cung lam duoc.
+    timeLimit: 30
+    hasDistraction: 1
+    distractionMessage: "G\xF5 nhanh l\xEAn! L\xE3o n\xE0y s\u1EAFp c\xFAp m\xE1y
+      r\u1ED3i!"
+  - victimMessage: "D\u1EA1 em l\xE0m \u0111\u01B0\u1EE3c. Anh cho em nh\u1EADn vi\u1EC7c
+      ngay nh\xE9."
+    scriptToType: De bat dau, em can dong phi the chan mo tai khoan la 1 trieu ruoi.
+      Kiem duoc tien se hoan lai ngay.
+    timeLimit: 40
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "1 tri\u1EC7u r\u01B0\u1EE1i... Em ch\u1EC9 c\xF2n \u0111\xFAng
+      1 tri\u1EC7u r\u01B0\u1EE1i ti\u1EC1n \u0103n th\xE1ng n\xE0y. Kh\xF4ng c\u1ECDc
+      \u0111\u01B0\u1EE3c kh\xF4ng anh?"
+    scriptToType: Co rat nhieu ban dang dang ky. Em khong chuyen nhanh thi anh nhuong
+      suat nay cho nguoi khac nhe.
+    timeLimit: 40
+    hasDistraction: 1
+    distractionMessage: "\xC9p n\xF3 n\xF4n ti\u1EC1n ra! M\xE0y th\u01B0\u01A1ng
+      n\xF3 th\xEC ai th\u01B0\u01A1ng m\xE0y?"
+  - victimMessage: "D\u1EA1 em chuy\u1EC3n r\u1ED3i. Anh \u01A1i duy\u1EC7t cho em
+      l\xE0m lu\xF4n \u0111\u1EC3 em ki\u1EBFm l\u1EA1i ti\u1EC1n \u0103n v\u1EDBi
+      \u1EA1..."
+    scriptToType: Ok anh nhan duoc roi. Em doi 5 phut de he thong kich hoat tai khoan
+      nhe.
+    timeLimit: 35
+    hasDistraction: 0
+    distractionMessage: 

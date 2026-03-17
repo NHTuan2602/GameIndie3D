@@ -7,22 +7,27 @@ using System.Collections;
 public class MainMenuController : MonoBehaviour
 {
     [Header("Cài đặt Chuyển Cảnh")]
-    public string firstLevelName = "BusScene";
-    public GameObject blackScreenFade; // Tấm màn đen để Fade Out
+    public string cinematicSceneName = "CinematicIntro";
+    public GameObject blackScreenFade;
 
     [Header("Bảng tin nhắn (Điện thoại)")]
-    public TextMeshProUGUI phoneMessageText; // Kéo Text đòi nợ vào đây
-    public Button quitGameButton; // Kéo nút Quit của điện thoại vào đây
+    public TextMeshProUGUI phoneMessageText;
+    public Button quitGameButton;
 
     [Header("Giấy nhận việc")]
-    public TextMeshProUGUI paperTitleText; // Kéo Text "GIẤY BÁO VIỆN PHÍ" vào đây
-    public TextMeshProUGUI paperInstructionText; // Kéo Text "[CLICK ĐỂ NHẬN VIỆC]" vào đây
-    public Button startGameButton; // Kéo nút Start của tờ giấy vào đây
+    public TextMeshProUGUI paperTitleText;
+    public TextMeshProUGUI paperInstructionText;
+    public Button startGameButton;
+
+    [Header("Giao diện Nhập Tên")]
+    public GameObject nameInputPanel; // Kéo Panel chứa bảng nhập tên vào đây
+    public TMP_InputField playerNameInput; // Kéo ô nhập chữ (InputField) vào đây
+    public Button confirmNameButton; // Kéo nút Xác nhận vào đây
 
     [Header("Âm thanh (Audio Clips)")]
-    public AudioClip paperCrumpleSound; // Tiếng lạo xạo giấy khi di chuột vào tờ giấy
-    public AudioClip phoneVibrateSound; // Tiếng rung điện thoại khi di chuột vào điện thoại
-    public AudioClip phoneRingSound; // Tiếng "Ting" khi tin nhắn đòi nợ đột ngột sáng lên
+    public AudioClip paperCrumpleSound;
+    public AudioClip phoneVibrateSound;
+    public AudioClip phoneRingSound;
 
     private AudioSource audioSource;
     private bool isTransitioning = false;
@@ -32,91 +37,100 @@ public class MainMenuController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Thả chuột để người chơi tương tác
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         if (blackScreenFade != null) blackScreenFade.SetActive(false);
 
-        // Đảm bảo ban đầu mọi thứ tăm tối
-        phoneMessageText.gameObject.SetActive(false); // Tin nhắn điện thoại đen ngòm
+        // Tắt bảng nhập tên lúc mới vào game
+        if (nameInputPanel != null) nameInputPanel.SetActive(false);
+        phoneMessageText.gameObject.SetActive(false);
 
-        StartCoroutine(StartMenuSequence()); // Bắt đầu kịch bản đèn chập chờn
+        StartCoroutine(StartMenuSequence());
     }
 
     IEnumerator StartMenuSequence()
     {
-        yield return new WaitForSeconds(2f); // Đợi 2 giây trầm cảm
-
-        // HIỆU ỨNG 1: Điện thoại đột ngột phát sáng và rung
+        yield return new WaitForSeconds(2f);
         if (phoneRingSound != null) audioSource.PlayOneShot(phoneRingSound);
-        if (phoneVibrateSound != null) audioSource.PlayOneShot(phoneVibrateSound); // Phối hợp code rung thực tế nếu có
-        phoneMessageText.gameObject.SetActive(true); // Sáng màn hình hiện tin nhắn
-        phoneMessageText.color = Color.green; // Tô màu xanh kiểu Matrix
-
-        // TODO: Bạn có thể thêm code ở đây để cái điện thoại rung vật lý
+        if (phoneVibrateSound != null) audioSource.PlayOneShot(phoneVibrateSound);
+        phoneMessageText.gameObject.SetActive(true);
+        phoneMessageText.color = Color.green;
     }
 
     // ==========================================
-    // CÁC HÀM XỬ LÝ KHI DI CHUỘT VÀO (HOVER) - Nối dây trong Inspector
-    // ==========================================
-    public void OnPointerEnterPaper()
-    {
-        if (isTransitioning) return;
-        paperInstructionText.text = "> CLICK ĐỂ NHẬN VIỆC <"; // Đổi nội dung mời gọi
-        paperInstructionText.color = Color.yellow; // Đổi màu
-        if (paperCrumpleSound != null) audioSource.PlayOneShot(paperCrumpleSound, 0.5f); // Tiếng lạo xạo giấy
-    }
-
-    public void OnPointerExitPaper()
-    {
-        if (isTransitioning) return;
-        paperInstructionText.text = "[CLICK ĐỂ NHẬN VIỆC]"; // Reset nội dung gốc
-        paperInstructionText.color = Color.white; // Reset màu
-    }
-
-    public void OnPointerEnterPhone()
-    {
-        if (isTransitioning) return;
-        quitGameButton.image.color = new Color(0, 1, 0, 0.5f); // Sáng nhẹ màn hình xanh
-        if (phoneVibrateSound != null) audioSource.PlayOneShot(phoneVibrateSound, 0.3f); // Rung nhẹ
-    }
-
-    public void OnPointerExitPhone()
-    {
-        if (isTransitioning) return;
-        quitGameButton.image.color = new Color(0, 0, 0, 0f); // Tắt màn hình về đen kịt
-    }
-
-    // ==========================================
-    // CÁC HÀM XỬ LÝ KHI CLICK (NỐI VÀO BUTTON ONCLICK)
+    // SỰ KIỆN 1: BẤM VÀO TỜ GIẤY CHỐT ĐƠN
     // ==========================================
     public void OnClickStartGame()
     {
-        Debug.Log("Đã chốt nhận việc! Đang chuyển cảnh...");
-        StartCoroutine(TransitionToGame());
+        if (isTransitioning) return;
+
+        // Bật bảng nhập tên lên
+        nameInputPanel.SetActive(true);
+
+        // Vô hiệu hóa tờ giấy và điện thoại để người chơi không bấm linh tinh nữa
+        startGameButton.interactable = false;
+        quitGameButton.interactable = false;
+    }
+
+    // ==========================================
+    // SỰ KIỆN 2: BẤM NÚT XÁC NHẬN TÊN
+    // ==========================================
+    public void OnConfirmName()
+    {
+        string enteredName = playerNameInput.text.Trim();
+
+        // Phòng thủ: Nếu người chơi bỏ trống, tự đặt tên là "Kẻ Khách"
+        if (string.IsNullOrEmpty(enteredName))
+        {
+            enteredName = "Kẻ Khách";
+        }
+
+        // LƯU TÊN VÀO BỘ NHỚ XUYÊN KHÔNG GIAN (PlayerPrefs)
+        PlayerPrefs.SetString("PlayerName", enteredName);
+        PlayerPrefs.Save(); // Chốt sổ lưu lại
+
+        // Tắt bảng nhập tên và bắt đầu chuyển cảnh
+        nameInputPanel.SetActive(false);
+        StartCoroutine(TransitionToCinematic());
     }
 
     public void OnClickQuitGame()
     {
-        Debug.Log("Không chịu nổi áp lực. Thoát game!");
         Application.Quit();
     }
 
-    IEnumerator TransitionToGame()
+    IEnumerator TransitionToCinematic()
     {
         isTransitioning = true;
-        // Bật màn hình đen che full màn hình
-        if (blackScreenFade != null)
-        {
-            blackScreenFade.SetActive(true);
-            // Bạn có thể dùng Animation hoặc code Lerp Alpha để màn hình đen từ từ ở đây
-        }
-
-        // Đợi 1.5 giây tạo cảm giác suspense
+        if (blackScreenFade != null) blackScreenFade.SetActive(true);
         yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene(cinematicSceneName);
+    }
 
-        // Load Scene Xe Bus (hoặc Scene Intro Siêu thị nếu bạn tách riêng)
-        SceneManager.LoadScene(firstLevelName);
+    // Các hàm Hover chuột giữ nguyên
+    public void OnPointerEnterPaper()
+    {
+        if (isTransitioning) return;
+        paperInstructionText.text = "> CLICK ĐỂ NHẬN VIỆC <";
+        paperInstructionText.color = Color.yellow;
+        if (paperCrumpleSound != null) audioSource.PlayOneShot(paperCrumpleSound, 0.5f);
+    }
+    public void OnPointerExitPaper()
+    {
+        if (isTransitioning) return;
+        paperInstructionText.text = "[CLICK ĐỂ NHẬN VIỆC]";
+        paperInstructionText.color = Color.white;
+    }
+    public void OnPointerEnterPhone()
+    {
+        if (isTransitioning) return;
+        quitGameButton.image.color = new Color(0, 1, 0, 0.5f);
+        if (phoneVibrateSound != null) audioSource.PlayOneShot(phoneVibrateSound, 0.3f);
+    }
+    public void OnPointerExitPhone()
+    {
+        if (isTransitioning) return;
+        quitGameButton.image.color = new Color(0, 0, 0, 0f);
     }
 }

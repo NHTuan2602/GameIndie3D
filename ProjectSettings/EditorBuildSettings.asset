@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 2a7535c61764dfe4ba6ac72035c149dc
   - enabled: 1
-    path: Assets/Scenes/HospitalScene.unity
+    path: Assets/Scenes/CinematicIntro.unity
     guid: 0b262efb354bbe241856bb31065d6663
   - enabled: 1
     path: Assets/Scenes/SupermarketScene.unity
@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BusScene.unity
     guid: 12d0a12d13848564385ea54e42d22fdd
+  - enabled: 1
+    path: Assets/Scenes/CampuchiaScene.unity
+    guid: 3fc897c8e10c5f34f8c65a193b69be0f
   - enabled: 1
     path: Assets/Scenes/ScamScreen.unity
     guid: 4c967e290369fda449e29ed367cf4da3

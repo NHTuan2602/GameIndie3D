@@ -12,22 +12,23 @@ public class ScamRound
     public float timeLimit;
 
     [Header("Cản trở (Pop-up)")]
-    public bool hasDistraction; // Hiệp này có bị Sếp chửi không?
-    public string distractionMessage; // Nội dung câu chửi
+    public bool hasDistraction;
+    public string distractionMessage;
 }
 
 public class ScamMinigame : MonoBehaviour
 {
     [Header("Giao diện Điện thoại")]
     public GameObject phonePanel;
+    public RectTransform phoneScreenRect; // Ranh giới màn hình điện thoại
     public TextMeshProUGUI chatHistoryText;
     public TextMeshProUGUI typingAreaText;
     public Slider timerSlider;
 
     [Header("Giao diện Pop-up Cản trở")]
-    public GameObject distractionPanel;
+    public GameObject distractionPanel; // Chỉ cần 1 biến này
     public TextMeshProUGUI distractionText;
-    public Button closeDistractionButton;
+    public Button closeDistractionButton; // Chỉ cần 1 biến này
 
     [Header("Phần thưởng / Hình phạt")]
     public float maxMoneyReward = 10000f;
@@ -45,16 +46,15 @@ public class ScamMinigame : MonoBehaviour
 
     private bool isTypingPhase = false;
     private bool isResting = false;
-    private bool isDistracted = false; // Biến khóa gõ phím khi có Pop-up
+    private bool isDistracted = false;
 
-    private Coroutine distractionCoroutine; // Lưu trữ luồng Pop-up để hủy khi hết giờ
+    private Coroutine distractionCoroutine;
 
     void Start()
     {
         if (phonePanel != null) phonePanel.SetActive(false);
         if (distractionPanel != null) distractionPanel.SetActive(false);
 
-        // Gắn lệnh tự động cho nút X của Pop-up
         if (closeDistractionButton != null)
         {
             closeDistractionButton.onClick.AddListener(CloseDistraction);
@@ -63,7 +63,6 @@ public class ScamMinigame : MonoBehaviour
 
     void Update()
     {
-        // Phím tắt để tắt Pop-up cực nhanh
         if (isDistracted && Input.GetKeyDown(KeyCode.Escape))
         {
             CloseDistraction();
@@ -71,7 +70,6 @@ public class ScamMinigame : MonoBehaviour
 
         if (!isTypingPhase || isResting) return;
 
-        // ĐỒNG HỒ VẪN CHẠY KỂ CẢ KHI CÓ POP-UP MÀN HÌNH!
         timeRemaining -= Time.deltaTime;
         if (timerSlider != null) timerSlider.value = timeRemaining / currentRounds[currentRoundIndex].timeLimit;
 
@@ -81,13 +79,11 @@ public class ScamMinigame : MonoBehaviour
             return;
         }
 
-        // Nếu đang bị Pop-up che thì KHÔNG CHO GÕ
         if (isDistracted) return;
 
-        // XỬ LÝ GÕ PHÍM CHÂN THỰC
         foreach (char c in Input.inputString)
         {
-            if (c == '\n' || c == '\r' || c == (char)27) continue; // Bỏ qua phím Enter và ESC
+            if (c == '\n' || c == '\r' || c == (char)27) continue;
 
             string targetScript = currentRounds[currentRoundIndex].scriptToType;
 
@@ -172,30 +168,46 @@ public class ScamMinigame : MonoBehaviour
 
         UpdateTypingUI();
 
-        // KÍCH HOẠT POP-UP NẾU HIỆP NÀY BỊ CÀI CẮM
         if (round.hasDistraction)
         {
             distractionCoroutine = StartCoroutine(TriggerDistraction(round.distractionMessage, round.timeLimit));
         }
     }
 
-    // =========================================================
-    // HỆ THỐNG GÂY ỨC CHẾ: BẬT VÀ TẮT POP-UP
-    // =========================================================
     IEnumerator TriggerDistraction(string message, float totalTime)
     {
-        // Chờ một khoảng thời gian ngẫu nhiên (từ 2s đến nửa thời gian hiệp)
         float randomWait = Random.Range(2f, totalTime / 2f);
         yield return new WaitForSeconds(randomWait);
 
-        // Chỉ bật Pop-up nếu thời gian còn dư nhiều hơn 3 giây (Tránh chết oan)
         if (timeRemaining > 3f && isTypingPhase)
         {
             isDistracted = true;
             if (distractionText != null) distractionText.text = message;
-            if (distractionPanel != null) distractionPanel.SetActive(true);
 
-            // Xóa sạch các phím đang ngậm trong bộ nhớ đệm Input của Unity
+            // Lấy Tọa độ ngay trong code để di chuyển (Tối ưu hóa)
+            if (phoneScreenRect != null && distractionPanel != null && closeDistractionButton != null)
+            {
+                RectTransform distRect = distractionPanel.GetComponent<RectTransform>();
+                RectTransform btnRect = closeDistractionButton.GetComponent<RectTransform>();
+
+                // Random vị trí Pop-up
+                float xMax = (phoneScreenRect.rect.width / 2) - (distRect.rect.width / 2);
+                float yMax = (phoneScreenRect.rect.height / 2) - (distRect.rect.height / 2);
+
+                float randomX = Random.Range(-xMax, xMax);
+                float randomY = Random.Range(-yMax, yMax);
+                distRect.anchoredPosition = new Vector2(randomX, randomY);
+
+                // Random vị trí nút X bên trong Pop-up
+                float btnXMax = (distRect.rect.width / 2) - (btnRect.rect.width / 2);
+                float btnYMax = (distRect.rect.height / 2) - (btnRect.rect.height / 2);
+
+                float btnRandomX = Random.Range(-btnXMax, btnXMax);
+                float btnRandomY = Random.Range(-btnYMax, btnYMax);
+                btnRect.anchoredPosition = new Vector2(btnRandomX, btnRandomY);
+            }
+
+            if (distractionPanel != null) distractionPanel.SetActive(true);
             Input.ResetInputAxes();
         }
     }
@@ -204,19 +216,13 @@ public class ScamMinigame : MonoBehaviour
     {
         isDistracted = false;
         if (distractionPanel != null) distractionPanel.SetActive(false);
-
-        // Đưa con trỏ focus về trạng thái bình thường để gõ phím mượt mà
         UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
     }
 
-    // =========================================================
-    // XỬ LÝ KẾT THÚC VÀ CẬP NHẬT UI
-    // =========================================================
     IEnumerator ProcessRoundEnd(bool isSuccess)
     {
         isTypingPhase = false;
 
-        // Dừng luôn cái Pop-up nếu nó đang chuẩn bị bật lên
         if (distractionCoroutine != null) StopCoroutine(distractionCoroutine);
         if (distractionPanel != null) distractionPanel.SetActive(false);
 
@@ -336,6 +342,4 @@ public class ScamMinigame : MonoBehaviour
             else GameManager.instance.OnScamFail();
         }
     }
-
-  
 }

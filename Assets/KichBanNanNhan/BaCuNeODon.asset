@@ -16,7 +16,7 @@ MonoBehaviour:
   jobOrAge: "75 tu\u1ED5i - H\u01B0u tr\xED"
   staminaCost: 15
   potentialReward: 5000
-  difficultyLevel: 1
+  difficultyLevel: 0
   rounds:
   - victimMessage: "Alo, s\u1ED1 l\u1EA1 g\u1ECDi c\xF4 c\xF3 vi\u1EC7c g\xEC kh\xF4ng
       ch\xE1u? C\xF4 \u0111ang b\u1EADn n\u1EA5u c\u01A1m."

@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: CoLanPhatTu
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "C\xF4 Lan Ph\u1EADt T\u1EED"
+  jobOrAge: "50 tu\u1ED5i - Hay l\xE0m t\u1EEB thi\u1EC7n"
+  staminaCost: 20
+  potentialReward: 20000
+  difficultyLevel: 1
+  rounds:
+  - victimMessage: "Ch\xE0o ch\xE1u, c\xF4 th\u1EA5y b\xE0i \u0111\u0103ng tr\xEAn
+      nh\xF3m T\u1EF1 Vi\u1EC7n. C\xF3 chuy\u1EC7n g\xEC th\u1EBF ch\xE1u?"
+    scriptToType: Chao co Lan, chau la tinh nguyen vien. Hien tai co 1 be dang bi
+      ung thu mau nguy kich lam co a.
+    timeLimit: 35
+    hasDistraction: 0
+    distractionMessage: "Em ch\xE1n s\u1ED1ng r\u1ED3i \u0111\xFAng kh\xF4ng, chat
+      nhanh l\xEAn coi"
+  - victimMessage: "Kh\u1ED5 th\xE2n \u0111\u1EE9a nh\u1ECF. Gia \u0111\xECnh ch\xE1u
+      b\xE9 \u0111\xE2u? Vi\u1EC7n ph\xED c\u1EA7n bao nhi\xEAu h\u1EA3 ch\xE1u?"
+    scriptToType: Gia dinh be ngheo qua da bo roi em roi. Vien phi hom nay la 20
+      trieu neu khong se phai xuat vien.
+    timeLimit: 30
+    hasDistraction: 0
+    distractionMessage: "G\xF5 nhanh l\xEAn! L\xE3o n\xE0y s\u1EAFp c\xFAp m\xE1y
+      r\u1ED3i!"
+  - victimMessage: "M\xF4 ph\u1EADt... \u0110\u1EC3 c\xF4 chuy\u1EC3n kho\u1EA3n.
+      Ch\xE1u g\u1EEDi h\xECnh b\xE9 cho c\xF4 xem \u0111\u01B0\u1EE3c kh\xF4ng?"
+    scriptToType: Co giup be voi, chau dang o benh vien ma nhin be khoc thet len
+      thuong qua co oi.
+    timeLimit: 40
+    hasDistraction: 1
+    distractionMessage: "\"Ng\u1EADp ng\u1EEBng c\xE1i g\xEC? L\u1EEBa \u0111i!!"
+  - victimMessage: "C\xF4 \u0111ang run qu\xE1 kh\xF4ng b\u1EA5m \u0111\u01B0\u1EE3c.
+      S\u1ED1 t\xE0i kho\u1EA3n n\xE0o ch\xE1u nh\u1EC9"
+    scriptToType: Co chuyen nhanh vao tai khoan cua benh vien nay de bac si tien
+      hanh phau thuat gap nhe co.
+    timeLimit: 40
+    hasDistraction: 0
+    distractionMessage: "M\xE0y g\xF5 ch\u1EADm tao ch\xEDch \u0111i\u1EC7n b\xE2y
+      gi\u1EDD"
+  - victimMessage: "C\xF4 chuy\u1EC3n 20 tri\u1EC7u r\u1ED3i nh\xE9. C\u1EA7u tr\u1EDDi
+      Ph\u1EADt ph\xF9 h\u1ED9 cho b\xE9."
+    scriptToType: Chau doi on co. Be da duoc dua vao phong mo roi. Chua phu ho cho
+      co va gia dinh luon binh an.
+    timeLimit: 35
+    hasDistraction: 0
+    distractionMessage: 

@@ -83,14 +83,33 @@ public class GameManager : MonoBehaviour
         karma -= karmaLost;
         if (karma < 0) karma = 0; // Đảm bảo Karma không bị âm
 
-        Debug.Log("Lừa THÀNH CÔNG! Tiến độ: " + attemptedScamsToday + "/10. KPI đạt: " + successfulScamsToday);
+        Debug.Log("Lừa THÀNH CÔNG! Tiến độ: " + attemptedScamsToday + "/" + maxAttemptsPerDay + ". KPI đạt: " + successfulScamsToday);
         CheckShiftProgress();
     }
 
     public void OnScamFail()
     {
         attemptedScamsToday++;
-        Debug.Log("Lừa THẤT BẠI! Bị chửi rủa. Tiến độ: " + attemptedScamsToday + "/10. KPI đạt: " + successfulScamsToday);
+
+        // MỚI THÊM: HÌNH PHẠT THẤT BẠI (Mất 20 thể lực)
+        int penalty = 20;
+        if (stamina >= penalty)
+        {
+            stamina -= penalty;
+            Debug.Log("Lừa THẤT BẠI! Bị quản lý chửi. Trừ 20 thể lực. Thể lực còn: " + stamina);
+        }
+        else
+        {
+            // Nếu không còn đủ thể lực để trừ, rút thẳng vào Máu (HP)
+            int deficit = penalty - stamina;
+            stamina = 0;
+            hp -= deficit;
+            Debug.Log("Lừa THẤT BẠI! Cạn kiệt thể lực, bị đánh mất " + deficit + " Máu! Máu còn: " + hp);
+
+            CheckDeath(); // Kiểm tra xem có lăn ra chết ngay tại bàn làm việc không
+        }
+
+        Debug.Log("Tiến độ: " + attemptedScamsToday + "/" + maxAttemptsPerDay + ". KPI đạt: " + successfulScamsToday);
         CheckShiftProgress();
     }
 

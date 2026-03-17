@@ -43,10 +43,10 @@ public class DialogueManager : MonoBehaviour
     [Header("KỊCH BẢN 2: RỦ RÊ (Sau khi xếp xong đồ)")]
     public DialogueLine[] outroLines;
 
-    private DialogueLine[] currentLinesToPlay; // Dùng để xác định đang đọc kịch bản nào
+    private DialogueLine[] currentLinesToPlay;
     private int currentLineIndex = 0;
     private bool isTyping = false;
-    private bool isPlayingIntro = false; // Cờ kiểm tra trạng thái
+    private bool isPlayingIntro = false;
     private Coroutine typingCoroutine;
 
     void Awake()
@@ -62,6 +62,9 @@ public class DialogueManager : MonoBehaviour
 
         agreeButton.onClick.AddListener(OnAgreeClicked);
         refuseButton.onClick.AddListener(OnRefuseClicked);
+
+        // MỚI SỬA: Bóp cò chạy ngay đoạn tự giới thiệu khi load xong Scene Siêu thị
+        StartIntroDialogue();
     }
 
     void Update()
@@ -85,10 +88,22 @@ public class DialogueManager : MonoBehaviour
     }
 
     // ==========================================
-    // HÀM MỚI: BẮT ĐẦU ĐOẠN TỰ GIỚI THIỆU
+    // HÀM: BẮT ĐẦU ĐOẠN TỰ GIỚI THIỆU
     // ==========================================
     public void StartIntroDialogue()
     {
+        // MỚI SỬA: Trói chân, khóa cổ người chơi lúc đang đứng tự độc thoại đầu game
+        PlayerMovement player = FindObjectOfType<PlayerMovement>();
+        if (player != null)
+        {
+            player.canWalk = false;
+            player.canLook = false;
+        }
+
+        // Hiện chuột ra để người chơi lỡ có muốn bấm gì đó (tùy chọn)
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         // Gán kịch bản 1 vào chạy
         currentLinesToPlay = introLines;
         isPlayingIntro = true;
@@ -99,14 +114,13 @@ public class DialogueManager : MonoBehaviour
     }
 
     // ==========================================
-    // HÀM CŨ: BẮT ĐẦU ĐOẠN RỦ RÊ CUỐI CA
+    // HÀM: BẮT ĐẦU ĐOẠN RỦ RÊ CUỐI CA
     // ==========================================
     public void TriggerStoryEvent()
     {
         PlayerMovement player = FindObjectOfType<PlayerMovement>();
         if (player != null)
         {
-            // MỚI SỬA CẬP NHẬT: Trói chân và khóa cổ khi đang nói chuyện rủ rê
             player.canWalk = false;
             player.canLook = false;
         }
@@ -133,9 +147,10 @@ public class DialogueManager : MonoBehaviour
 
     private string GetPlayerName()
     {
-        if (PlayerPrefs.HasKey("SavedPlayerName"))
+        // MỚI SỬA: Đổi đúng thẻ "PlayerName" cho khớp với bên Menu truyền sang
+        if (PlayerPrefs.HasKey("PlayerName"))
         {
-            string savedName = PlayerPrefs.GetString("SavedPlayerName");
+            string savedName = PlayerPrefs.GetString("PlayerName");
             if (!string.IsNullOrEmpty(savedName)) return savedName;
         }
         if (GameManager.instance != null && !string.IsNullOrEmpty(GameManager.instance.playerName))
@@ -178,17 +193,17 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            // XỬ LÝ RẼ NHÁNH: Đọc xong thì làm gì?
+            // XỬ LÝ RẼ NHÁNH
             if (isPlayingIntro)
             {
-                // Nếu đọc xong đoạn tự giới thiệu -> Tắt bảng, THẢ CHO NGƯỜI CHƠI ĐI LẠI VÀ XOAY ĐẦU
                 dialoguePanel.SetActive(false);
 
+                // Mở khóa chân cẳng sau khi độc thoại xong
                 PlayerMovement player = FindObjectOfType<PlayerMovement>();
                 if (player != null)
                 {
-                    player.canWalk = true; // MỞ KHÓA CHÂN
-                    player.canLook = true; // MỞ KHÓA CỔ
+                    player.canWalk = true;
+                    player.canLook = true;
                 }
 
                 Cursor.lockState = CursorLockMode.Locked;
@@ -199,7 +214,6 @@ public class DialogueManager : MonoBehaviour
             }
             else
             {
-                // Nếu đọc xong đoạn rủ rê đi Campuchia -> Bật 2 nút Đồng ý / Từ chối
                 dialoguePanel.SetActive(false);
                 choicePanel.SetActive(true);
             }
@@ -208,10 +222,7 @@ public class DialogueManager : MonoBehaviour
 
     private void OnAgreeClicked()
     {
-        // Tắt bảng hội thoại đi cho gọn
         choicePanel.SetActive(false);
-
-        // Load thẳng sang Scene Xe khách của bạn
         UnityEngine.SceneManagement.SceneManager.LoadScene("BusScene");
     }
 
