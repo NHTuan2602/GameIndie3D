@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public int maxHp = 100;
     public int stamina = 100;
     public int maxStamina = 100;
-
+    public bool hasAskedToContinue = false;
     [Header("Chỉ số Tiến trình & Đạo đức")]
     public float money = 0f;
     public int karma = 100;
@@ -25,8 +25,8 @@ public class GameManager : MonoBehaviour
     public int maxDays = 5;
     public int attemptedScamsToday = 0;   // Số người đã tiếp cận (Thành công + Thất bại)
     public int successfulScamsToday = 0;  // Số người lừa THÀNH CÔNG (Dùng để tính KPI)
-    public int targetKPI = 5;             // Cần lừa THÀNH CÔNG 5 người để không bị chích điện
-    public int maxAttemptsPerDay = 10;    // Tối đa danh sách có 10 người mỗi ngày
+    public int targetKPI = 3;             // Cần lừa THÀNH CÔNG 3 người để không bị chích điện
+    public int maxAttemptsPerDay = 5;    
 
     void Awake()
     {
@@ -118,16 +118,23 @@ public class GameManager : MonoBehaviour
     // ====================================================================
     private void CheckShiftProgress()
     {
+        // Đi tìm cái Bảng Tổng kết ngoài màn hình
+        ShiftSummaryUI summaryUI = FindObjectOfType<ShiftSummaryUI>();
+
+        // LUẬT MỚI: Chỉ cần chạm mốc 5 người (dù thắng hay thua) là ÉP DỪNG!
         if (attemptedScamsToday >= maxAttemptsPerDay)
         {
-            Debug.Log("Đã hết danh sách 10 nạn nhân hôm nay! Tự động kết thúc ca làm.");
-            EndDaySummary();
+            Debug.Log("Đã hết 5 lượt làm việc hôm nay! Tự động chốt sổ.");
+
+            // Xóa luôn vụ hỏi han (Optional), chỉ gọi hàm ForceEndShift
+            if (summaryUI != null) summaryUI.ShowForceEndShift();
+            else EndDaySummary();
         }
-        else if (attemptedScamsToday == 5)
+        else
         {
-            Debug.Log("--- BẠN ĐĐ TIẾP CẬN 5 NGƯỜI ---");
-            Debug.Log("Mở bảng UI: Bạn muốn [DỪNG CA LÀM] hay [LÀM TIẾP]?");
-            // Gọi UI hiển thị ở đây
+            // Nếu mới lừa được 1,2,3,4 người -> Tự động gọi lại danh sách nạn nhân mới!
+            VictimSelectionManager vsm = FindObjectOfType<VictimSelectionManager>();
+            if (vsm != null) vsm.GenerateVictimList();
         }
     }
 
@@ -165,6 +172,7 @@ public class GameManager : MonoBehaviour
         stamina = maxStamina;
         Debug.Log("Đã ngủ qua đêm. Thể lực phục hồi 100%.");
         AdvanceToNextDay();
+        hasAskedToContinue = false;
     }
 
     public void GoOut(float moneyCost)

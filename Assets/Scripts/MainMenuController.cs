@@ -10,24 +10,17 @@ public class MainMenuController : MonoBehaviour
     public string cinematicSceneName = "CinematicIntro";
     public GameObject blackScreenFade;
 
-    [Header("Bảng tin nhắn (Điện thoại)")]
-    public TextMeshProUGUI phoneMessageText;
-    public Button quitGameButton;
-
-    [Header("Giấy nhận việc")]
-    public TextMeshProUGUI paperTitleText;
-    public TextMeshProUGUI paperInstructionText;
-    public Button startGameButton;
+    [Header("Giao diện Nút bấm (Menu Mới)")]
+    public Button playButton;
+    public Button exitButton;
 
     [Header("Giao diện Nhập Tên")]
-    public GameObject nameInputPanel; // Kéo Panel chứa bảng nhập tên vào đây
-    public TMP_InputField playerNameInput; // Kéo ô nhập chữ (InputField) vào đây
-    public Button confirmNameButton; // Kéo nút Xác nhận vào đây
+    public GameObject nameInputPanel;
+    public TMP_InputField playerNameInput;
+    public Button confirmNameButton;
 
     [Header("Âm thanh (Audio Clips)")]
-    public AudioClip paperCrumpleSound;
-    public AudioClip phoneVibrateSound;
-    public AudioClip phoneRingSound;
+    public AudioClip clickSound; // Thay âm thanh giấy/điện thoại bằng tiếng click chuột
 
     private AudioSource audioSource;
     private bool isTransitioning = false;
@@ -41,62 +34,62 @@ public class MainMenuController : MonoBehaviour
         Cursor.visible = true;
 
         if (blackScreenFade != null) blackScreenFade.SetActive(false);
-
-        // Tắt bảng nhập tên lúc mới vào game
         if (nameInputPanel != null) nameInputPanel.SetActive(false);
-        phoneMessageText.gameObject.SetActive(false);
 
-        StartCoroutine(StartMenuSequence());
-    }
-
-    IEnumerator StartMenuSequence()
-    {
-        yield return new WaitForSeconds(2f);
-        if (phoneRingSound != null) audioSource.PlayOneShot(phoneRingSound);
-        if (phoneVibrateSound != null) audioSource.PlayOneShot(phoneVibrateSound);
-        phoneMessageText.gameObject.SetActive(true);
-        phoneMessageText.color = Color.green;
+        // GẮN SỰ KIỆN TỰ ĐỘNG (Không cần kéo thả OnClick ngoài Unity nữa)
+        if (playButton != null) playButton.onClick.AddListener(OnClickPlayGame);
+        if (exitButton != null) exitButton.onClick.AddListener(OnClickQuitGame);
+        if (confirmNameButton != null) confirmNameButton.onClick.AddListener(OnConfirmName);
     }
 
     // ==========================================
-    // SỰ KIỆN 1: BẤM VÀO TỜ GIẤY CHỐT ĐƠN
+    // SỰ KIỆN 1: BẤM NÚT "BẮT ĐẦU"
     // ==========================================
-    public void OnClickStartGame()
+    public void OnClickPlayGame()
     {
         if (isTransitioning) return;
+        PlayClickSound();
 
         // Bật bảng nhập tên lên
-        nameInputPanel.SetActive(true);
+        if (nameInputPanel != null) nameInputPanel.SetActive(true);
 
-        // Vô hiệu hóa tờ giấy và điện thoại để người chơi không bấm linh tinh nữa
-        startGameButton.interactable = false;
-        quitGameButton.interactable = false;
+        // Khóa 2 nút nền để người chơi không bấm lung tung
+        if (playButton != null) playButton.interactable = false;
+        if (exitButton != null) exitButton.interactable = false;
     }
 
     // ==========================================
-    // SỰ KIỆN 2: BẤM NÚT XÁC NHẬN TÊN
+    // SỰ KIỆN 2: BẤM NÚT "XÁC NHẬN" TÊN
     // ==========================================
     public void OnConfirmName()
     {
+        PlayClickSound();
+
         string enteredName = playerNameInput.text.Trim();
 
-        // Phòng thủ: Nếu người chơi bỏ trống, tự đặt tên là "Kẻ Khách"
+        // Phòng thủ: Nếu bỏ trống, tự đặt tên là "Kẻ Khách"
         if (string.IsNullOrEmpty(enteredName))
         {
             enteredName = "Kẻ Khách";
         }
 
-        // LƯU TÊN VÀO BỘ NHỚ XUYÊN KHÔNG GIAN (PlayerPrefs)
+        // Lưu tên vào bộ nhớ
         PlayerPrefs.SetString("PlayerName", enteredName);
-        PlayerPrefs.Save(); // Chốt sổ lưu lại
+        PlayerPrefs.Save();
 
-        // Tắt bảng nhập tên và bắt đầu chuyển cảnh
-        nameInputPanel.SetActive(false);
+        // Tắt bảng và chuyển cảnh
+        if (nameInputPanel != null) nameInputPanel.SetActive(false);
         StartCoroutine(TransitionToCinematic());
     }
 
+    // ==========================================
+    // SỰ KIỆN 3: BẤM NÚT "THOÁT"
+    // ==========================================
     public void OnClickQuitGame()
     {
+        if (isTransitioning) return;
+        PlayClickSound();
+        Debug.Log("Đang thoát game...");
         Application.Quit();
     }
 
@@ -108,29 +101,11 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene(cinematicSceneName);
     }
 
-    // Các hàm Hover chuột giữ nguyên
-    public void OnPointerEnterPaper()
+    private void PlayClickSound()
     {
-        if (isTransitioning) return;
-        paperInstructionText.text = "> CLICK ĐỂ NHẬN VIỆC <";
-        paperInstructionText.color = Color.yellow;
-        if (paperCrumpleSound != null) audioSource.PlayOneShot(paperCrumpleSound, 0.5f);
-    }
-    public void OnPointerExitPaper()
-    {
-        if (isTransitioning) return;
-        paperInstructionText.text = "[CLICK ĐỂ NHẬN VIỆC]";
-        paperInstructionText.color = Color.white;
-    }
-    public void OnPointerEnterPhone()
-    {
-        if (isTransitioning) return;
-        quitGameButton.image.color = new Color(0, 1, 0, 0.5f);
-        if (phoneVibrateSound != null) audioSource.PlayOneShot(phoneVibrateSound, 0.3f);
-    }
-    public void OnPointerExitPhone()
-    {
-        if (isTransitioning) return;
-        quitGameButton.image.color = new Color(0, 0, 0, 0f);
+        if (audioSource != null && clickSound != null)
+        {
+            audioSource.PlayOneShot(clickSound);
+        }
     }
 }

@@ -32,7 +32,7 @@ MonoBehaviour:
     scriptToType: Cong viec chi la bam like san pham tren he thong de tang tuong
       tac. Rat don gian, ai cung lam duoc.
     timeLimit: 30
-    hasDistraction: 1
+    hasDistraction: 0
     distractionMessage: "G\xF5 nhanh l\xEAn! L\xE3o n\xE0y s\u1EAFp c\xFAp m\xE1y
       r\u1ED3i!"
   - victimMessage: "D\u1EA1 em l\xE0m \u0111\u01B0\u1EE3c. Anh cho em nh\u1EADn vi\u1EC7c

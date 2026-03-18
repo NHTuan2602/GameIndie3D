@@ -99,6 +99,10 @@ public class VictimSelectionManager : MonoBehaviour
 
         // Tắt bảng danh sách, Mở màn hình gõ chữ
         selectionPanel.SetActive(false);
-        scamMinigame.StartMiniGame(selectedVictim.rounds);
+
+        // =========================================================
+        // ĐÃ SỬA DÒNG NÀY: Bổ sung thêm selectedVictim.victimName 
+        // =========================================================
+        scamMinigame.StartMiniGame(selectedVictim.rounds, selectedVictim.victimName);
     }
 }
