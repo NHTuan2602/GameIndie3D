@@ -5,11 +5,12 @@ using UnityEngine.UI;
 public class ScamComputer : MonoBehaviour
 {
     [Header("Cài đặt Tương tác")]
-    public float holdTimeRequired = 1.5f;
+    public float holdTimeRequired = 1.0f; // Đã giảm xuống 1 giây cho mượt hơn
     private float currentHoldTime = 0f;
 
     [Header("Giao diện & Kết nối")]
     public GameObject scamUIPanel;
+    public GameObject rootUI; // MỚI THÊM: Dùng để kích hoạt thằng Cha
     public PlayerMovement player;
 
     [Header("Giao diện 3D (Hiện khi nhìn vào)")]
@@ -29,6 +30,7 @@ public class ScamComputer : MonoBehaviour
     {
         if (player == null || player.playerCamera == null) return;
 
+        // Nếu đang ngồi hack máy tính thì chỉ chờ bấm Escape để thoát
         if (isWorking)
         {
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -44,21 +46,20 @@ public class ScamComputer : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 3f))
         {
-            // ==============================================================
-            // PHÉP THUẬT NÂNG CẤP: Xuyên qua các lớp con để tìm thằng cha!
-            // ==============================================================
             ScamComputer hitComputer = hit.collider.GetComponentInParent<ScamComputer>();
 
-            // Nếu tia đập trúng cái máy tính này (hoặc bất kỳ bộ phận con nào của nó)
+            // Nếu tia nhìn đập trúng cái màn hình
             if (hitComputer != null && hitComputer == this)
             {
                 isLookingAtScreen = true;
 
+                // Bật chữ "Giữ E..." lên
                 if (promptCanvas != null && !promptCanvas.activeSelf)
                 {
                     promptCanvas.SetActive(true);
                 }
 
+                // Nếu người chơi đè chặt phím E
                 if (Input.GetKey(KeyCode.E))
                 {
                     currentHoldTime += Time.deltaTime;
@@ -68,6 +69,7 @@ public class ScamComputer : MonoBehaviour
                         loadingCircle.fillAmount = currentHoldTime / holdTimeRequired;
                     }
 
+                    // KHI ĐÃ ĐẦY 100% -> VÀO VIỆC!
                     if (currentHoldTime >= holdTimeRequired)
                     {
                         StartWorking();
@@ -75,12 +77,14 @@ public class ScamComputer : MonoBehaviour
                 }
                 else
                 {
+                    // Thả tay ra thì tụt vòng tròn về 0
                     currentHoldTime = 0f;
                     if (loadingCircle != null) loadingCircle.fillAmount = 0f;
                 }
             }
         }
 
+        // Quay mặt đi chỗ khác -> Tắt biển báo 3D
         if (!isLookingAtScreen)
         {
             currentHoldTime = 0f;
@@ -94,10 +98,15 @@ public class ScamComputer : MonoBehaviour
         isWorking = true;
         currentHoldTime = 0f;
 
-        if (scamUIPanel != null) scamUIPanel.SetActive(true);
+        // 1. TẮT NGAY DÒNG CHỮ VÀ VÒNG TRÒN 3D
         if (promptCanvas != null) promptCanvas.SetActive(false);
         if (loadingCircle != null) loadingCircle.fillAmount = 0f;
 
+        // 2. BẬT BẢNG LỪA ĐẢO LÊN (Bật Cả Cha Lẫn Con)
+        if (rootUI != null) rootUI.SetActive(true);
+        if (scamUIPanel != null) scamUIPanel.SetActive(true);
+
+        // 3. Khóa camera, xả chuột
         player.canLook = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -107,8 +116,12 @@ public class ScamComputer : MonoBehaviour
     {
         isWorking = false;
 
+        // Tắt bảng lừa đảo
         if (scamUIPanel != null) scamUIPanel.SetActive(false);
+        // Tắt luôn thằng cha cho sạch màn hình
+        if (rootUI != null) rootUI.SetActive(false);
 
+        // Nhốt chuột, mở khóa camera
         player.canLook = true;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
