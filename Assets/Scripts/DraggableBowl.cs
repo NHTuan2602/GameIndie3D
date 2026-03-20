@@ -7,7 +7,7 @@ public class DraggableBowl : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
 {
     private Vector2 startPosition;
     public bool isDraggable = false;
-    private bool hasRevealed = false;
+    public bool hasRevealed = false; // Đổi thành public để Manager kiểm tra
     private Canvas canvas;
     private RectTransform rectTransform;
 
@@ -28,31 +28,47 @@ public class DraggableBowl : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
         rectTransform.anchoredPosition = startPosition;
         isDraggable = false;
         hasRevealed = false;
+        gameObject.SetActive(true); // Đảm bảo bát luôn hiện lại đầu ván
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (!isDraggable || hasRevealed) return;
+        if (!isDraggable) return;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!isDraggable || hasRevealed) return;
+        if (!isDraggable) return;
+        if (!isDraggable) return;
 
+        // Vẫn cho phép kéo mượt mà dù đã qua vạch đích
         rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
 
-        float distance = Vector2.Distance(rectTransform.anchoredPosition, startPosition);
-        if (distance >= revealThreshold)
+        // ĐO KHOẢNG CÁCH: Nếu vượt mốc lần đầu tiên -> Chốt kết quả (nhưng KHÔNG khóa kéo)
+        if (!hasRevealed)
         {
-            hasRevealed = true;
-            isDraggable = false;
-
-            if (manager != null)
+            float distance = Vector2.Distance(rectTransform.anchoredPosition, startPosition);
+            if (distance >= revealThreshold)
             {
-                manager.CheckResult();
+                hasRevealed = true;
+                if (manager != null) manager.CheckResult();
             }
         }
     }
 
-    public void OnEndDrag(PointerEventData eventData) { }
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (!isDraggable) return;
+
+        // HIỆU ỨNG DÂY THUN: Kéo chưa đủ xa mà lười thả ra -> Bay về úp lại
+        if (!hasRevealed)
+        {
+            rectTransform.anchoredPosition = startPosition;
+        }
+        else
+        {
+            // Đã mở bát thành công rồi thả tay -> Bát nằm ngoan ngoãn tại đó
+            isDraggable = false;
+        }
+    }
 }
