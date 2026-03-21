@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 7cd75c2d90cf9d348a950fcf0bb0b98c
+timeCreated: 1520088377
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81953
+  packageName: POLYGON - Zombie Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/Polygon zombie package/Supermarket prefab/Metal door2x2 prefab.prefab
+  uploadId: 659046

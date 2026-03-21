@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 19ec21c6e3e483245b4762a2d8c8399f
+timeCreated: 1520376114
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81953
+  packageName: POLYGON - Zombie Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/Polygon zombie package/mesh.texture/supermarket mesh,texture/materals/office
+    cabinet.mat
+  uploadId: 659046

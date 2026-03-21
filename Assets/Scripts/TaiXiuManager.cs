@@ -31,13 +31,18 @@ public class TaiXiuManager : MonoBehaviour
     public Transform taiArea;
     public Transform xiuArea;
 
-    [Header("Nút Cược")]
+    [Header("Nút Cược & Tương Tác")]
     public Button btn50k;
     public Button btn100k;
     public Button btn200k;
     public Button btn500k;
     public Button btnClearBet;
     public Button btnAllIn;
+    public Button btnCloseCasino;
+
+    [Header("--- KẾT NỐI VỚI BÀN 3D ---")]
+    [Tooltip("Kéo cái Bàn 3D (có chứa script MinigameInteract) vào đây")]
+    public MinigameInteract interactPoint; // --- THÊM DÒNG NÀY ĐỂ LIÊN LẠC ---
 
     [Header("--- CÀI ĐẶT XÚC XẮC ---")]
     public float rollDuration = 7f;
@@ -54,11 +59,9 @@ public class TaiXiuManager : MonoBehaviour
     public AudioClip winSound;
     public AudioClip loseSound;
 
-    [Header("--- ĐÈN CHÚC MỪNG (MỚI) ---")]
-    // Bạn kéo 2 cái tấm ảnh nền (Image) của cửa Tài/Xỉu vào đây nhé
+    [Header("--- ĐÈN CHÚC MỪNG ---")]
     public Image imgLightTai;
     public Image imgLightXiu;
-    // Coroutine lưu trữ để tắt khi cần
     private Coroutine flashingCoroutine;
 
     private List<GameObject> spawnedChips = new List<GameObject>();
@@ -80,6 +83,7 @@ public class TaiXiuManager : MonoBehaviour
         if (btn500k != null) btn500k.onClick.AddListener(() => AddMoneyToTable(500000, 3));
         if (btnClearBet != null) btnClearBet.onClick.AddListener(ClearBetUI);
         if (btnAllIn != null) btnAllIn.onClick.AddListener(BetAllIn);
+        if (btnCloseCasino != null) btnCloseCasino.onClick.AddListener(CloseCasino);
 
         originalDicePos = new Vector2[diceImages.Length];
         for (int i = 0; i < diceImages.Length; i++)
@@ -87,14 +91,25 @@ public class TaiXiuManager : MonoBehaviour
             if (diceImages[i] != null) originalDicePos[i] = diceImages[i].rectTransform.anchoredPosition;
         }
 
+        StartNewRound();
+    }
+
+    void OnEnable()
+    {
         if (bgmSource != null && bgmClip != null)
         {
             bgmSource.clip = bgmClip;
             bgmSource.loop = true;
             bgmSource.Play();
         }
+    }
 
-        StartNewRound();
+    void OnDisable()
+    {
+        if (bgmSource != null)
+        {
+            bgmSource.Stop();
+        }
     }
 
     void Update()
@@ -231,6 +246,25 @@ public class TaiXiuManager : MonoBehaviour
         spawnedChips.Clear();
     }
 
+    // --- HÀM THOÁT ĐÃ ĐƯỢC SỬA LẠI ĐỂ LIÊN LẠC VỚI THẾ GIỚI 3D ---
+    public void CloseCasino()
+    {
+        ClearBetCore(); // Hoàn tiền rác
+
+        if (interactPoint != null)
+        {
+            // Báo cho anh Lễ Tân 3D dọn dẹp (tắt bảng, bật lại player, khóa chuột)
+            interactPoint.ExitMinigame();
+        }
+        else
+        {
+            // Nếu quên nối dây thì mới dùng cách tắt bừa này
+            gameObject.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+
     public void StartNewRound()
     {
         playerChoice = 0;
@@ -241,7 +275,6 @@ public class TaiXiuManager : MonoBehaviour
         spawnedChips.Clear();
         UpdateMoneyUI();
 
-        // --- GÓC KHUẤT 1: RESET TOÀN BỘ ĐÈN ---
         if (flashingCoroutine != null) StopCoroutine(flashingCoroutine);
         ResetAreaLights();
 
@@ -294,6 +327,7 @@ public class TaiXiuManager : MonoBehaviour
         if (btn500k != null) btn500k.interactable = state;
         if (btnClearBet != null) btnClearBet.interactable = state;
         if (btnAllIn != null) btnAllIn.interactable = state;
+        if (btnCloseCasino != null) btnCloseCasino.interactable = state;
     }
 
     IEnumerator RollDiceRoutine()
@@ -306,13 +340,13 @@ public class TaiXiuManager : MonoBehaviour
         {
             if (betAmount > 0)
             {
-                statusText.text = "HẾT GIỜ! HOÀN TRẢ TIỀN.";
+                statusText.text = "HẾT GIỜ! HOÀN TRẢ TIỀN RÁC TRÊN BÀN.";
                 statusText.color = Color.green;
                 ClearBetCore();
             }
             else
             {
-                statusText.text = "HẾT GIỜ! BẠN LÀ KHÁN GIẢ VÁN NÀY.";
+                statusText.text = "BẠN ĐANG LÀ KHÁN GIẢ VÁN NÀY.";
                 statusText.color = Color.white;
             }
             yield return new WaitForSeconds(1.5f);
@@ -420,7 +454,6 @@ public class TaiXiuManager : MonoBehaviour
         int winningChoice = (totalDiceValue >= 11) ? 1 : 2;
         string resultName = (winningChoice == 1) ? "TÀI" : "XỈU";
 
-        // --- GÓC KHUẤT 2: KÍCH HOẠT CHỚP ĐÈN MƯỢT MÀ VỚI COROUTINE ---
         Image lightToFlash = (winningChoice == 1) ? imgLightTai : imgLightXiu;
         if (lightToFlash != null)
         {
@@ -435,7 +468,7 @@ public class TaiXiuManager : MonoBehaviour
         {
             int winAmount = betAmount * 2;
             playerMoney += winAmount;
-            statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>CHÚC MỪNG THẮNG LỚN  {betAmount:N0} VNĐ</color>";
+            statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>CHUC MUNG THANG LON  {betAmount:N0} VNĐ</color>";
             PlaySound(winSound);
         }
         else
@@ -448,29 +481,22 @@ public class TaiXiuManager : MonoBehaviour
         StartCoroutine(WaitAndRestart());
     }
 
-    // --- THUẬT TOÁN CHỚP TẮT ĐÈN CHUYÊN NGHIỆP ---
     IEnumerator FlashWinningArea(Image targetArea)
     {
-        // Chớp tắt 3 lần
         for (int i = 0; i < 3; i++)
         {
-            // Bật đèn màu Vàng ChanhChúc Mừng
-            targetArea.color = new Color(0.3f, 1f, 0.3f, 0.5f); // Màu xanh dương nhạt, mờ mờ
-            yield return new WaitForSeconds(0.3f); // Đợi 0.3s
-
-            // Tắt đèn (Về màu nền mặc định, mờ mờ)
-            targetArea.color = new Color(0f, 0f, 0f, 0.2f); // Màu đen mờ
-            yield return new WaitForSeconds(0.3f); // Đợi 0.3s
+            targetArea.color = new Color(0.3f, 1f, 0.3f, 0.5f);
+            yield return new WaitForSeconds(0.3f);
+            targetArea.color = new Color(0f, 0f, 0f, 0.2f);
+            yield return new WaitForSeconds(0.3f);
         }
-        // Kết thúc thì bật đèn sáng luôn cho đến ván mới
         targetArea.color = new Color(0.3f, 1f, 0.3f, 0.5f);
     }
 
-    // Hàm reset đèn về trạng thái tắt mặc định
     void ResetAreaLights()
     {
-        if (imgLightTai != null) imgLightTai.color = new Color(0f, 0f, 0f, 0.2f); // Đen mờ
-        if (imgLightXiu != null) imgLightXiu.color = new Color(0f, 0f, 0f, 0.2f); // Đen mờ
+        if (imgLightTai != null) imgLightTai.color = new Color(0f, 0f, 0f, 0.2f);
+        if (imgLightXiu != null) imgLightXiu.color = new Color(0f, 0f, 0f, 0.2f);
     }
 
     IEnumerator WaitAndRestart()

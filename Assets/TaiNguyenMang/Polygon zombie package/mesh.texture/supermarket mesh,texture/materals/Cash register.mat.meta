@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 74b64c89e91201f47a605119c1cd4f12
+timeCreated: 1520587202
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81953
+  packageName: POLYGON - Zombie Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/Polygon zombie package/mesh.texture/supermarket mesh,texture/materals/Cash
+    register.mat
+  uploadId: 659046

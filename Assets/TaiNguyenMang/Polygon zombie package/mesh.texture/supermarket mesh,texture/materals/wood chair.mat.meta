@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a150a7e1a9c84bd45a780abaf31c5e95
+timeCreated: 1520376125
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81953
+  packageName: POLYGON - Zombie Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/Polygon zombie package/mesh.texture/supermarket mesh,texture/materals/wood
+    chair.mat
+  uploadId: 659046

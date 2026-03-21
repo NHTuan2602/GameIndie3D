@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 179093f0bed43e94facc66a41f517966
+timeCreated: 1520291822
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81953
+  packageName: POLYGON - Zombie Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/Polygon zombie package/mesh.texture/supermarket mesh,texture/materals/ware
+    house shelft.mat
+  uploadId: 659046
