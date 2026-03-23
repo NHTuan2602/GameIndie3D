@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public int maxStamina = 100;
     public bool hasAskedToContinue = false;
     [Header("Chỉ số Tiến trình & Đạo đức")]
-    public float money = 0f;
+    public float money = 1000000f;
     public int karma = 100;
     public float escapeProgress = 0f;
     public bool hasCarInfo = false;

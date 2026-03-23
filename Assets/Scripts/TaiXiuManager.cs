@@ -17,9 +17,8 @@ public class TaiXiuManager : MonoBehaviour
     public DraggableBowl bowlObject;
 
     [Header("--- HỆ THỐNG TIỀN TỆ ---")]
-    public int playerMoney = 1000000;
     public int betAmount = 0;
-    public TextMeshProUGUI txtPlayerMoney;
+    public TextMeshProUGUI txtPlayerMoney; // ĐÃ FIX LẠI TÊN ĐÚNG
     public TextMeshProUGUI txtBetAmount;
 
     [Header("Ảnh Mệnh Giá Tiền")]
@@ -42,7 +41,7 @@ public class TaiXiuManager : MonoBehaviour
 
     [Header("--- KẾT NỐI VỚI BÀN 3D ---")]
     [Tooltip("Kéo cái Bàn 3D (có chứa script MinigameInteract) vào đây")]
-    public MinigameInteract interactPoint; // --- THÊM DÒNG NÀY ĐỂ LIÊN LẠC ---
+    public MinigameInteract interactPoint;
 
     [Header("--- CÀI ĐẶT XÚC XẮC ---")]
     public float rollDuration = 7f;
@@ -135,7 +134,8 @@ public class TaiXiuManager : MonoBehaviour
 
     void UpdateMoneyUI()
     {
-        if (txtPlayerMoney != null) txtPlayerMoney.text = $"Ví tiền: {playerMoney:N0} VNĐ";
+        // ĐÃ FIX LẠI TÊN BIẾN HIỂN THỊ CHỮ
+        if (txtPlayerMoney != null) txtPlayerMoney.text = $"Ví tiền: {GameManager.instance.money:N0} VNĐ";
         if (txtBetAmount != null) txtBetAmount.text = $"Đang cược: {betAmount:N0} VNĐ";
     }
 
@@ -143,9 +143,9 @@ public class TaiXiuManager : MonoBehaviour
     {
         if (!isBettingPhase || playerChoice != 0) return;
 
-        if (playerMoney >= amount)
+        if (GameManager.instance.money >= amount)
         {
-            playerMoney -= amount;
+            GameManager.instance.money -= amount;
             betAmount += amount;
             UpdateMoneyUI();
             PlaySound(coinSound);
@@ -166,15 +166,16 @@ public class TaiXiuManager : MonoBehaviour
     {
         if (!isBettingPhase || playerChoice != 0) return;
 
-        if (playerMoney <= 0)
+        if (GameManager.instance.money <= 0)
         {
             statusText.text = "BẠN KHÔNG CÒN CÁI NỊT NÀO ĐỂ TẤT TAY!";
             statusText.color = Color.red;
             return;
         }
 
-        int allInAmount = playerMoney;
-        playerMoney = 0;
+        // ĐÃ FIX LỖI ÉP KIỂU FLOAT SANG INT
+        int allInAmount = Mathf.FloorToInt(GameManager.instance.money);
+        GameManager.instance.money = 0;
         betAmount += allInAmount;
         UpdateMoneyUI();
         PlaySound(coinSound);
@@ -237,7 +238,7 @@ public class TaiXiuManager : MonoBehaviour
         if (playerChoice != 0) return;
         if (betAmount <= 0) return;
 
-        playerMoney += betAmount;
+        GameManager.instance.money += betAmount;
         betAmount = 0;
         UpdateMoneyUI();
         PlaySound(coinSound);
@@ -246,19 +247,16 @@ public class TaiXiuManager : MonoBehaviour
         spawnedChips.Clear();
     }
 
-    // --- HÀM THOÁT ĐÃ ĐƯỢC SỬA LẠI ĐỂ LIÊN LẠC VỚI THẾ GIỚI 3D ---
     public void CloseCasino()
     {
-        ClearBetCore(); // Hoàn tiền rác
+        ClearBetCore();
 
         if (interactPoint != null)
         {
-            // Báo cho anh Lễ Tân 3D dọn dẹp (tắt bảng, bật lại player, khóa chuột)
             interactPoint.ExitMinigame();
         }
         else
         {
-            // Nếu quên nối dây thì mới dùng cách tắt bừa này
             gameObject.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -467,7 +465,7 @@ public class TaiXiuManager : MonoBehaviour
         else if (playerChoice == winningChoice)
         {
             int winAmount = betAmount * 2;
-            playerMoney += winAmount;
+            GameManager.instance.money += winAmount;
             statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>CHUC MUNG THANG LON  {betAmount:N0} VNĐ</color>";
             PlaySound(winSound);
         }
