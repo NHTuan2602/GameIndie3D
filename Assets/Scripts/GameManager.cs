@@ -1,32 +1,52 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// 1. THÊM ENUM THỜI GIAN
+public enum GamePhase
+{
+    Morning,    // Sáng: Lừa 3 người
+    Noon,       // Trưa: Ăn trưa, nói chuyện NPC
+    Afternoon,  // Chiều: Lừa nốt 2 người
+    Night       // Tối: Đánh bạc, thám thính, ngủ
+}
+
 public class GameManager : MonoBehaviour
 {
     // --- SINGLETON: Bộ não bất tử ---
     public static GameManager instance;
+
     [Header("Thông tin Nhân vật")]
-    public string playerName = "Tuấn"; // Lưu tên từ màn hình Intro
+    public string playerName = "Tuấn";
+
     [Header("Chỉ số Sinh tồn")]
     public int hp = 100;
     public int maxHp = 100;
     public int stamina = 100;
     public int maxStamina = 100;
     public bool hasAskedToContinue = false;
+
     [Header("Chỉ số Tiến trình & Đạo đức")]
     public float money = 1000000f;
     public int karma = 100;
     public float escapeProgress = 0f;
     public bool hasCarInfo = false;
-    public int gamblingAddictionLevel = 0; // Biến tha hóa: Số lần đi chơi/đánh bạc
+    public int gamblingAddictionLevel = 0;
 
     [Header("Quản lý Ngày & KPI")]
     public int currentDay = 1;
     public int maxDays = 5;
-    public int attemptedScamsToday = 0;   // Số người đã tiếp cận (Thành công + Thất bại)
-    public int successfulScamsToday = 0;  // Số người lừa THÀNH CÔNG (Dùng để tính KPI)
-    public int targetKPI = 3;             // Cần lừa THÀNH CÔNG 3 người để không bị chích điện
-    public int maxAttemptsPerDay = 5;    
+    public int attemptedScamsToday = 0;
+    public int successfulScamsToday = 0;
+    public int targetKPI = 3;
+    public int maxAttemptsPerDay = 5;
+
+    [Header("--- HỆ THỐNG VÒNG LẶP MỚI ---")]
+    public GamePhase currentPhase = GamePhase.Morning;
+    public bool hasTalkedToNPC = false;
+    public bool unlockedScouting = false;
+    public int gambleCountTonight = 0;
+    public int collectedQuestItems = 0;
+    public int requiredItemsToEscape = 3;
 
     void Awake()
     {
@@ -42,19 +62,17 @@ public class GameManager : MonoBehaviour
     }
 
     // ====================================================================
-    // 1. CHỌN 1 NẠN NHÂN ĐỂ BẮT ĐẦU LỪA ĐẢO
+    // 1. CHỌN 1 NẠN NHÂN ĐỂ BẮT ĐẦU LỪA ĐẢO (Giữ nguyên)
     // ====================================================================
     public bool StartScammingVictim(int staminaCost)
     {
         if (hp <= 0) return false;
 
-        // Nếu đủ thể lực -> Trừ thể lực bình thường
         if (stamina >= staminaCost)
         {
             stamina -= staminaCost;
             Debug.Log("Trừ " + staminaCost + " Thể lực. Thể lực còn: " + stamina);
         }
-        // Nếu THIẾU thể lực -> Rút sạch thể lực và LẤY MÁU BÙ VÀO
         else
         {
             int deficit = staminaCost - stamina;
@@ -72,74 +90,89 @@ public class GameManager : MonoBehaviour
     }
 
     // ====================================================================
-    // 2. KẾT QUẢ MINI-GAME LỪA ĐẢO
+    // 2. KẾT QUẢ MINI-GAME LỪA ĐẢO (Giữ nguyên)
     // ====================================================================
     public void OnScamSuccess(float moneyEarned, int karmaLost)
     {
         attemptedScamsToday++;
         successfulScamsToday++;
-
         money += moneyEarned;
         karma -= karmaLost;
-        if (karma < 0) karma = 0; // Đảm bảo Karma không bị âm
+        if (karma < 0) karma = 0;
 
-        Debug.Log("Lừa THÀNH CÔNG! Tiến độ: " + attemptedScamsToday + "/" + maxAttemptsPerDay + ". KPI đạt: " + successfulScamsToday);
+        Debug.Log("Lừa THÀNH CÔNG! Tiến độ: " + attemptedScamsToday + "/" + maxAttemptsPerDay);
         CheckShiftProgress();
     }
 
     public void OnScamFail()
     {
         attemptedScamsToday++;
-
-        // MỚI THÊM: HÌNH PHẠT THẤT BẠI (Mất 20 thể lực)
         int penalty = 20;
         if (stamina >= penalty)
         {
             stamina -= penalty;
-            Debug.Log("Lừa THẤT BẠI! Bị quản lý chửi. Trừ 20 thể lực. Thể lực còn: " + stamina);
         }
         else
         {
-            // Nếu không còn đủ thể lực để trừ, rút thẳng vào Máu (HP)
             int deficit = penalty - stamina;
             stamina = 0;
             hp -= deficit;
-            Debug.Log("Lừa THẤT BẠI! Cạn kiệt thể lực, bị đánh mất " + deficit + " Máu! Máu còn: " + hp);
-
-            CheckDeath(); // Kiểm tra xem có lăn ra chết ngay tại bàn làm việc không
+            CheckDeath();
         }
 
-        Debug.Log("Tiến độ: " + attemptedScamsToday + "/" + maxAttemptsPerDay + ". KPI đạt: " + successfulScamsToday);
+        Debug.Log("Lừa THẤT BẠI! Bị chửi. Tiến độ: " + attemptedScamsToday + "/" + maxAttemptsPerDay);
         CheckShiftProgress();
     }
 
     // ====================================================================
-    // 3. KIỂM TRA MỐC QUAN TRỌNG TRONG CA LÀM
+    // 3. KIỂM TRA MỐC QUAN TRỌNG TRONG CA LÀM (NÂNG CẤP VÒNG LẶP SÁNG/CHIỀU)
     // ====================================================================
     private void CheckShiftProgress()
     {
-        // Đi tìm cái Bảng Tổng kết ngoài màn hình
-        ShiftSummaryUI summaryUI = FindObjectOfType<ShiftSummaryUI>();
-
-        // LUẬT MỚI: Chỉ cần chạm mốc 5 người (dù thắng hay thua) là ÉP DỪNG!
-        if (attemptedScamsToday >= maxAttemptsPerDay)
+        // GÓC KHUẤT 1: CHIA NHÁNH SÁNG VÀ CHIỀU RÕ RÀNG
+        if (currentPhase == GamePhase.Morning && attemptedScamsToday >= 3)
         {
-            Debug.Log("Đã hết 5 lượt làm việc hôm nay! Tự động chốt sổ.");
-
-            // Xóa luôn vụ hỏi han (Optional), chỉ gọi hàm ForceEndShift
-            if (summaryUI != null) summaryUI.ShowForceEndShift();
-            else EndDaySummary();
+            Debug.Log("==== HẾT CA SÁNG! CHUYỂN SANG NGHỈ TRƯA ====");
+            TransitionToPhase(GamePhase.Noon);
+        }
+        else if (currentPhase == GamePhase.Afternoon && attemptedScamsToday >= maxAttemptsPerDay)
+        {
+            Debug.Log("==== HẾT CA CHIỀU! KẾT THÚC CÔNG VIỆC TRONG NGÀY ====");
+            EndDaySummary(); // Tổng kết KPI và chích điện
+            TransitionToPhase(GamePhase.Night);
         }
         else
         {
-            // Nếu mới lừa được 1,2,3,4 người -> Tự động gọi lại danh sách nạn nhân mới!
+            // Gọi nạn nhân tiếp theo
             VictimSelectionManager vsm = FindObjectOfType<VictimSelectionManager>();
             if (vsm != null) vsm.GenerateVictimList();
         }
     }
 
     // ====================================================================
-    // 4. TỔNG KẾT NGÀY (CHÍCH ĐIỆN HOẶC THƯỞNG NÓNG)
+    // 4. HOẠT ĐỘNG BUỔI TRƯA & TỐI (THÊM MỚI)
+    // ====================================================================
+    public void TalkToNoonNPC()
+    {
+        if (currentPhase == GamePhase.Noon)
+        {
+            hasTalkedToNPC = true;
+            Debug.Log("Đã hóng hớt thông tin từ NPC. Chiều vào làm tiếp!");
+            // Nói xong là tự động bị lùa vào làm ca chiều
+            TransitionToPhase(GamePhase.Afternoon);
+        }
+    }
+
+    public void CollectQuestItem()
+    {
+        collectedQuestItems++;
+        Debug.Log($"Nhặt được vật phẩm cốt truyện: {collectedQuestItems}/{requiredItemsToEscape}");
+        // Nhặt xong tự bắt về ngủ
+        SleepThroughNight();
+    }
+
+    // ====================================================================
+    // 5. TỔNG KẾT NGÀY (CHÍCH ĐIỆN HOẶC THƯỞNG NÓNG) (Giữ nguyên logic)
     // ====================================================================
     public void EndDaySummary()
     {
@@ -150,49 +183,73 @@ public class GameManager : MonoBehaviour
             int extraVictims = successfulScamsToday - targetKPI;
             float bonus = extraVictims * 500f;
             money += bonus;
-            Debug.Log("ĐẠT KPI (" + successfulScamsToday + "/" + targetKPI + ")! Thưởng nóng: " + bonus);
+            Debug.Log("ĐẠT KPI! Thưởng nóng: " + bonus);
         }
         else
         {
             int missingKPI = targetKPI - successfulScamsToday;
             int hpLost = missingKPI * 15;
             hp -= hpLost;
-            Debug.Log("TRƯỢT KPI (" + successfulScamsToday + "/" + targetKPI + ")! Bị chích điện mất " + hpLost + " HP!");
+            Debug.Log("TRƯỢT KPI! Bị chích điện mất " + hpLost + " HP!");
             CheckDeath();
         }
-
-        // SceneManager.LoadScene("NightMenuScene");
     }
 
     // ====================================================================
-    // 5. LỰA CHỌN BAN ĐÊM (NGỦ, ĐI CHƠI, ĂN UỐNG) & HÌNH PHẠT
+    // 6. CHUYỂN GIAO THỜI GIAN VÀ SCENE
     // ====================================================================
+    public void TransitionToPhase(GamePhase newPhase)
+    {
+        currentPhase = newPhase;
+
+        if (currentPhase == GamePhase.Noon)
+        {
+            // SceneManager.LoadScene("NoonCanteenScene");
+        }
+        else if (currentPhase == GamePhase.Afternoon)
+        {
+            // SceneManager.LoadScene("OfficeScene"); 
+            // Nếu dùng chung 1 Scene, chỉ cần gọi UI chọn nạn nhân ra lại
+        }
+        else if (currentPhase == GamePhase.Night)
+        {
+            // SceneManager.LoadScene("NightRoomScene");
+        }
+    }
+
     public void SleepThroughNight()
     {
         stamina = maxStamina;
         Debug.Log("Đã ngủ qua đêm. Thể lực phục hồi 100%.");
         AdvanceToNextDay();
-        hasAskedToContinue = false;
     }
 
+    // ====================================================================
+    // 7. LỰA CHỌN BAN ĐÊM & HÌNH PHẠT (ĐÃ FIX GÓC KHUẤT 3)
+    // ====================================================================
     public void GoOut(float moneyCost)
     {
+        // Kiểm tra số lần đi đánh bạc trong đêm
+        if (gambleCountTonight >= 5)
+        {
+            Debug.Log("Đã chơi 5 ván, sòng bạc đóng cửa! Về ngủ đi.");
+            return;
+        }
+
         if (money >= moneyCost)
         {
             money -= moneyCost;
             stamina -= 20;
             if (stamina < 0) stamina = 0;
-            gamblingAddictionLevel++; // Tăng mức độ tha hóa
-            Debug.Log("Đi chơi tốn " + moneyCost + "$. Mức độ nghiện: " + gamblingAddictionLevel);
+            gamblingAddictionLevel++;
+            gambleCountTonight++; // Tăng biến đếm
+            Debug.Log($"Đi chơi tốn {moneyCost}$. Lần chơi: {gambleCountTonight}/5. Mức nghiện: {gamblingAddictionLevel}");
         }
     }
 
     public void EatFood(bool isCanteen)
     {
-        if (isCanteen)
-        {
-            hp += 10;
-        }
+        if (isCanteen) hp += 10;
         else
         {
             float foodPrice = 200f;
@@ -203,41 +260,63 @@ public class GameManager : MonoBehaviour
             }
         }
         if (hp > maxHp) hp = maxHp;
+
+        // Nếu ăn ở Canteen (buổi trưa), ăn xong tự động vào ca chiều
+        if (isCanteen && currentPhase == GamePhase.Noon)
+        {
+            TransitionToPhase(GamePhase.Afternoon);
+        }
     }
 
-    // Hình phạt nếu bị bảo vệ gác đêm tóm được
     public void CaughtByNightGuard()
     {
         Debug.Log("Bị bảo vệ phát hiện và chích điện! Ném về phòng.");
-        hp = maxHp; // Cho tỉnh lại với mức máu đầy để ngày mai làm việc
-        maxStamina -= 20; // Hình phạt: Tụt thể lực tối đa
-        if (maxStamina < 20) maxStamina = 20; // Giữ mức đáy
+        hp = maxHp;
+        maxStamina -= 20;
+        if (maxStamina < 20) maxStamina = 20;
         stamina = maxStamina;
 
         AdvanceToNextDay();
     }
 
     // ====================================================================
-    // 6. CHUYỂN NGÀY VÀ KIỂM TRA ENDING (ĐÊM 5)
+    // 8. CHUYỂN NGÀY VÀ KIỂM TRA ENDING (ĐÊM 5)
     // ====================================================================
     public void AdvanceToNextDay()
     {
+        Debug.Log($"==== KẾT THÚC NGÀY {currentDay} ====");
+
+        // KIỂM TRA NGÀY 5
+        if (currentDay == maxDays)
+        {
+            // Dựa vào số item lượm được lúc thám thính để quyết định
+            if (collectedQuestItems >= requiredItemsToEscape)
+                escapeProgress = 100f; // Đánh dấu đủ điều kiện
+
+            Debug.Log("ĐÊM 5! Bắt đầu rẽ nhánh Kết cục...");
+            // Gọi UI Chọn Quyết Định Đêm 5 ra (Trốn hay Ở lại)
+            return;
+        }
+
+        // RESET CHO NGÀY MỚI (FIX GÓC KHUẤT 3)
         currentDay++;
+        currentPhase = GamePhase.Morning;
         attemptedScamsToday = 0;
         successfulScamsToday = 0;
+        gambleCountTonight = 0;
+        hasAskedToContinue = false;
 
-        if (currentDay > maxDays)
+        // Mở khóa chức năng thám thính cho Đêm 2 trở đi
+        if (hasTalkedToNPC && currentDay >= 2)
         {
-            Debug.Log("ĐÊM 5! Bắt đầu rẽ nhánh Kết cục...");
-            // Thực tế bạn sẽ gọi CheckFinalEndings(true/false) từ giao diện Menu chọn của Đêm 5
+            unlockedScouting = true;
+            Debug.Log("Bạn đã mở khóa chức năng Thám Thính vào ban đêm!");
         }
-        else
-        {
-            Debug.Log("Bắt đầu Ngày thứ " + currentDay);
-        }
+
+        Debug.Log("Bắt đầu Ngày thứ " + currentDay + " - Ca Sáng.");
+        // SceneManager.LoadScene("MorningOfficeScene");
     }
 
-    // Hàm gọi khi người chơi đưa ra quyết định ở Đêm 5
     public void CheckFinalEndings(bool choseToEscape)
     {
         if (karma <= 0)
@@ -252,18 +331,19 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Nếu chọn Trốn Thoát:
         if (gamblingAddictionLevel >= 2)
         {
             TriggerEnding("ENDING B (Sa ngã): Muốn trốn nhưng cơn nghiện níu chân. Mãi kẹt lại.");
         }
-        else if (escapeProgress >= 100f || hasCarInfo)
+        else if (escapeProgress >= 100f || hasCarInfo || collectedQuestItems >= requiredItemsToEscape)
         {
             TriggerEnding("ENDING C: TRUE ENDING - Trốn thoát thành công!");
         }
         else
         {
-            TriggerEnding("ENDING D: Trốn thất bại do thiếu công cụ. Bị bắt lại.");
+            TriggerEnding("ENDING D: Trốn thất bại do thiếu công cụ. Bước sang NGÀY 6 ĐỊA NGỤC...");
+            currentDay++;
+            // SceneManager.LoadScene("Day6_HellRoute");
         }
     }
 

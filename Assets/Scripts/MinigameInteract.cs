@@ -1,30 +1,35 @@
 using UnityEngine;
-using TMPro; // Khai báo dùng UI Text hiện đại
 
 public class MinigameInteract : MonoBehaviour
 {
     [Header("UI Của Minigame Này")]
-    public GameObject minigameCanvas; // Kéo Canvas Tài Xỉu (đã tắt sẵn) vào đây
-
-    [Header("Gợi ý Nút Bấm (Press E)")]
-    public GameObject interactPromptUI; // Kéo chữ "Nhấn E để cược" ngoài màn hình vào đây
+    public GameObject minigameCanvas;
+    public GameObject interactPromptUI;
 
     [Header("Nhân Vật 3D (Khóa khi chơi)")]
     public MonoBehaviour playerMovementScript;
     public MonoBehaviour cameraLookScript;
+    public GameObject playerObject;
+
+    [Header("Hệ Thống Camera (GÓC NHÌN TỪ TRÊN XUỐNG)")]
+    public Camera mainCamera;
+    public Camera topDownCamera;
+
+    [Header("--- KẾT NỐI VỚI QUẢN LÝ TÀI XỈU ---")]
+    [Tooltip("Kéo cục TaiXiuManager vào đây để đánh thức nó dậy")]
+    public TaiXiuManager taiXiuManagerScript;
 
     private bool isPlayerNear = false;
     private bool isPlayingGame = false;
 
     void Start()
     {
-        // Vừa vào game thì giấu chữ E đi
         if (interactPromptUI != null) interactPromptUI.SetActive(false);
+        if (topDownCamera != null) topDownCamera.gameObject.SetActive(false);
     }
 
     void Update()
     {
-        // Đứng gần + Chưa mở sòng + Bấm phím E
         if (isPlayerNear && !isPlayingGame && Input.GetKeyDown(KeyCode.E))
         {
             EnterMinigame();
@@ -35,42 +40,57 @@ public class MinigameInteract : MonoBehaviour
     {
         isPlayingGame = true;
 
-        // Ẩn chữ E và Hiện sòng bạc
+        // Bật/tắt UI
         if (interactPromptUI != null) interactPromptUI.SetActive(false);
         if (minigameCanvas != null) minigameCanvas.SetActive(true);
 
-        // Khóa chân và mắt nhân vật
+        // Khóa nhân vật
         if (playerMovementScript != null) playerMovementScript.enabled = false;
         if (cameraLookScript != null) cameraLookScript.enabled = false;
 
-        // Thả chuột ra cho người chơi bấm nút
+        // Chuyển Camera
+        if (mainCamera != null) mainCamera.gameObject.SetActive(false);
+        if (topDownCamera != null) topDownCamera.gameObject.SetActive(true);
+        if (playerObject != null) playerObject.SetActive(false);
+
+        // Hiện chuột
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        // -----------------------------------------------------
+        // KÍCH HOẠT SỚI BẠC (CHẠY ĐỒNG HỒ VÀ NHẠC)
+        // -----------------------------------------------------
+        if (taiXiuManagerScript != null)
+        {
+            taiXiuManagerScript.OpenCasino();
+            Debug.Log("<color=green>ĐÃ KÍCH HOẠT SỚI BẠC THÀNH CÔNG!</color>");
+        }
+        else
+        {
+            Debug.LogError("<color=red>LỖI NGHIÊM TRỌNG: Bạn chưa kéo cục TaiXiuManager vào lỗ Tai Xiu Manager Script trong Goc_Ngoi_Choi!</color>");
+        }
     }
 
-    // Hàm này nối với nút [Hủy/Thoát] trong Tài Xỉu
     public void ExitMinigame()
     {
         isPlayingGame = false;
 
-        // Tắt sòng bạc
         if (minigameCanvas != null) minigameCanvas.SetActive(false);
-
-        // Nếu thoát ra mà vẫn đứng cạnh bàn thì hiện lại chữ E
         if (isPlayerNear && interactPromptUI != null) interactPromptUI.SetActive(true);
 
-        // Trả lại quyền chạy nhảy
         if (playerMovementScript != null) playerMovementScript.enabled = true;
         if (cameraLookScript != null) cameraLookScript.enabled = true;
 
-        // Khóa chuột lại vào giữa màn hình
+        if (topDownCamera != null) topDownCamera.gameObject.SetActive(false);
+        if (mainCamera != null) mainCamera.gameObject.SetActive(true);
+        if (playerObject != null) playerObject.SetActive(true);
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // NHỚ: Nhân vật phải được gắn Tag là "Player"
         if (other.CompareTag("Player"))
         {
             isPlayerNear = true;

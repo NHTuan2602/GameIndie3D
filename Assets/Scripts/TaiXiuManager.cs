@@ -18,7 +18,7 @@ public class TaiXiuManager : MonoBehaviour
 
     [Header("--- HỆ THỐNG TIỀN TỆ ---")]
     public int betAmount = 0;
-    public TextMeshProUGUI txtPlayerMoney; // ĐÃ FIX LẠI TÊN ĐÚNG
+    public TextMeshProUGUI txtPlayerMoney;
     public TextMeshProUGUI txtBetAmount;
 
     [Header("Ảnh Mệnh Giá Tiền")]
@@ -40,7 +40,6 @@ public class TaiXiuManager : MonoBehaviour
     public Button btnCloseCasino;
 
     [Header("--- KẾT NỐI VỚI BÀN 3D ---")]
-    [Tooltip("Kéo cái Bàn 3D (có chứa script MinigameInteract) vào đây")]
     public MinigameInteract interactPoint;
 
     [Header("--- CÀI ĐẶT XÚC XẮC ---")]
@@ -90,25 +89,22 @@ public class TaiXiuManager : MonoBehaviour
             if (diceImages[i] != null) originalDicePos[i] = diceImages[i].rectTransform.anchoredPosition;
         }
 
-        StartNewRound();
+        // ĐÃ XÓA TỰ ĐỘNG CHẠY Ở ĐÂY (Sửa Góc khuất 1)
     }
 
-    void OnEnable()
+    // ================== HÀM MỚI: ĐÁNH THỨC SỚI BẠC ==================
+    public void OpenCasino()
     {
+        // 1. Bật nhạc nền
         if (bgmSource != null && bgmClip != null)
         {
             bgmSource.clip = bgmClip;
             bgmSource.loop = true;
             bgmSource.Play();
         }
-    }
 
-    void OnDisable()
-    {
-        if (bgmSource != null)
-        {
-            bgmSource.Stop();
-        }
+        // 2. Bắt đầu đếm ngược ván mới
+        StartNewRound();
     }
 
     void Update()
@@ -134,7 +130,6 @@ public class TaiXiuManager : MonoBehaviour
 
     void UpdateMoneyUI()
     {
-        // ĐÃ FIX LẠI TÊN BIẾN HIỂN THỊ CHỮ
         if (txtPlayerMoney != null) txtPlayerMoney.text = $"Ví tiền: {GameManager.instance.money:N0} VNĐ";
         if (txtBetAmount != null) txtBetAmount.text = $"Đang cược: {betAmount:N0} VNĐ";
     }
@@ -173,7 +168,6 @@ public class TaiXiuManager : MonoBehaviour
             return;
         }
 
-        // ĐÃ FIX LỖI ÉP KIỂU FLOAT SANG INT
         int allInAmount = Mathf.FloorToInt(GameManager.instance.money);
         GameManager.instance.money = 0;
         betAmount += allInAmount;
@@ -247,10 +241,20 @@ public class TaiXiuManager : MonoBehaviour
         spawnedChips.Clear();
     }
 
+    // ================== HÀM ĐƯỢC NÂNG CẤP: ĐỨNG LÊN ==================
     public void CloseCasino()
     {
+        // 1. Tiêu diệt toàn bộ "Bóng ma xúc xắc" đang chạy ngầm
+        StopAllCoroutines();
+        isBettingPhase = false;
+
+        // 2. Trả lại tiền rác đang vứt trên bàn
         ClearBetCore();
 
+        // 3. Tắt nhạc sòng bạc
+        if (bgmSource != null) bgmSource.Stop();
+
+        // 4. Mở khóa nhân vật
         if (interactPoint != null)
         {
             interactPoint.ExitMinigame();
@@ -315,6 +319,7 @@ public class TaiXiuManager : MonoBehaviour
         }
     }
 
+    // ================== HÀM NÂNG CẤP: NHẬN DIỆN KHÁN GIẢ ==================
     void SetButtonsState(bool state)
     {
         if (btnTai != null) btnTai.interactable = state;
@@ -325,7 +330,21 @@ public class TaiXiuManager : MonoBehaviour
         if (btn500k != null) btn500k.interactable = state;
         if (btnClearBet != null) btnClearBet.interactable = state;
         if (btnAllIn != null) btnAllIn.interactable = state;
-        if (btnCloseCasino != null) btnCloseCasino.interactable = state;
+
+        // Xử lý góc khuất Nút Thoát
+        if (btnCloseCasino != null)
+        {
+            if (playerChoice == 0)
+            {
+                // Nếu là khán giả (chưa chốt cược), cho phép bấm nút Thoát bất cứ lúc nào!
+                btnCloseCasino.interactable = true;
+            }
+            else
+            {
+                // Nếu đã lỡ cược rồi thì bị khóa lại, chịu trận xem hết ván.
+                btnCloseCasino.interactable = state;
+            }
+        }
     }
 
     IEnumerator RollDiceRoutine()
@@ -466,7 +485,7 @@ public class TaiXiuManager : MonoBehaviour
         {
             int winAmount = betAmount * 2;
             GameManager.instance.money += winAmount;
-            statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>CHUC MUNG THANG LON  {betAmount:N0} VNĐ</color>";
+            statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>CHÚC MỪNG THẮNG LỚN {betAmount:N0} VNĐ</color>";
             PlaySound(winSound);
         }
         else
