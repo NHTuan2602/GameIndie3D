@@ -77,7 +77,10 @@ public class PlayerHUD : MonoBehaviour
             staminaSlider.value = (float)GameManager.instance.stamina / GameManager.instance.maxStamina;
 
         if (moneyText != null)
-            moneyText.text = "$" + GameManager.instance.money.ToString("F0");
+        {
+            // Hiển thị VNĐ. Dùng "N0" để có dấu phẩy phân cách hàng ngàn (VD: 25,000,000 VNĐ)
+            moneyText.text = GameManager.instance.money.ToString("N0") + " VNĐ";
+        }
 
         if (karmaText != null)
             karmaText.text = "Nghiệp: " + GameManager.instance.karma;

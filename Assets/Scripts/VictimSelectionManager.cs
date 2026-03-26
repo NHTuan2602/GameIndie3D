@@ -1,4 +1,4 @@
-using System.Collections.Generic; // MỚI THÊM: Bắt buộc có dòng này để dùng được List (Hộp ảo)
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -26,54 +26,39 @@ public class VictimSelectionManager : MonoBehaviour
     {
         if (allAvailableVictims.Length == 0) return;
 
-        // ==========================================
-        // MỚI SỬA: TẠO HỘP BỐC THĂM ẢO ĐỂ KHÔNG BỊ TRÙNG
-        // ==========================================
         List<VictimProfile> tempPool = new List<VictimProfile>(allAvailableVictims);
 
         for (int i = 0; i < 4; i++)
         {
-            // Rào chắn an toàn: Nếu hộp lỡ hết thăm thì đổ đầy lại
             if (tempPool.Count == 0)
             {
                 tempPool = new List<VictimProfile>(allAvailableVictims);
             }
 
-            // Bốc 1 lá thăm từ hộp ảo
             int randomIndex = Random.Range(0, tempPool.Count);
             currentDayVictims[i] = tempPool[randomIndex];
-
-            // XÉ LÁ THĂM ĐÓ ĐI ĐỂ NGƯỜI SAU KHÔNG BỐC TRÚNG NỮA!
             tempPool.RemoveAt(randomIndex);
 
             VictimProfile victim = currentDayVictims[i];
 
-            // ==========================================
-            // BỘ PHIÊN DỊCH ENUM SANG TIẾNG VIỆT
-            // ==========================================
             string diffString = "";
             switch (victim.difficultyLevel)
             {
-                case VictimProfile.Difficulty.De:
-                    diffString = "Dễ";
-                    break;
-                case VictimProfile.Difficulty.TrungBinh:
-                    diffString = "Trung Bình";
-                    break;
-                case VictimProfile.Difficulty.Kho:
-                    diffString = "Khó";
-                    break;
+                case VictimProfile.Difficulty.De: diffString = "Dễ"; break;
+                case VictimProfile.Difficulty.TrungBinh: diffString = "Trung Bình"; break;
+                case VictimProfile.Difficulty.Kho: diffString = "Khó"; break;
             }
 
-            // GỌI HÀM VÀ TRUYỀN BIẾN diffString VÀO ĐÂY
+            // ĐÃ SỬA: FORMAT HIỂN THỊ TIỀN VNĐ CÓ DẤU PHẨY (Ví dụ: 10,000,000 VNĐ)
+            string rewardText = victim.jobOrAge + " | Thưởng: " + victim.potentialReward.ToString("N0") + " VNĐ";
+
             victimRows[i].SetupRow(
                 victim.victimName,
-                victim.jobOrAge + " | Thưởng: $" + victim.potentialReward,
+                rewardText,
                 diffString,
                 victim.staminaCost
             );
 
-            // Gắn lệnh cho nút "OK" của từng hàng
             int index = i;
             victimRows[i].actionButton.onClick.RemoveAllListeners();
             victimRows[i].actionButton.onClick.AddListener(() => OnVictimSelected(index));
@@ -86,23 +71,23 @@ public class VictimSelectionManager : MonoBehaviour
     {
         VictimProfile selectedVictim = currentDayVictims[index];
 
-        // Gõ cửa GameManager xin phép trừ thể lực
         if (GameManager.instance != null)
         {
+            // Trừ Thể lực khi bắt đầu gọi
             bool canScam = GameManager.instance.StartScammingVictim(selectedVictim.staminaCost);
-            // Nếu kiệt sức chết, cấm không cho mở màn hình gõ chữ
             if (!canScam) return;
         }
 
-        // Cập nhật số tiền thưởng cho Mini-game
+        // ĐÃ NÂNG CẤP: Truyền số tiền thật (VNĐ) và Chỉ số Nghiệp chướng qua Minigame
         scamMinigame.maxMoneyReward = selectedVictim.potentialReward;
+        scamMinigame.karmaPenalty = selectedVictim.karmaPenalty;
 
-        // Tắt bảng danh sách, Mở màn hình gõ chữ
+        // Cân bằng lại tiền thưởng nóng của Sếp nếu lừa 5/5 (Ví dụ bằng 10% tiền lừa được)
+        scamMinigame.bossBonus = selectedVictim.potentialReward * 0.1f;
+
         selectionPanel.SetActive(false);
 
-        // =========================================================
-        // ĐÃ SỬA DÒNG NÀY: Bổ sung thêm selectedVictim.victimName 
-        // =========================================================
-        scamMinigame.StartMiniGame(selectedVictim.rounds, selectedVictim.victimName);
+        // ĐÃ NÂNG CẤP: Gửi kèm thêm Cả Avatar của nạn nhân qua nữa!
+        scamMinigame.StartMiniGame(selectedVictim.rounds, selectedVictim.victimName, selectedVictim.avatar);
     }
 }

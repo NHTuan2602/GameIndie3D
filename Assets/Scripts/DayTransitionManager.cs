@@ -1,72 +1,81 @@
 using System.Collections;
 using UnityEngine;
-using TMPro; // Bắt buộc phải có dòng này để điều khiển font chữ TextMeshPro
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class DayTransitionManager : MonoBehaviour
 {
+    public static DayTransitionManager instance;
+
     [Header("Cài đặt UI")]
     public CanvasGroup fadeCanvasGroup;
     public TextMeshProUGUI dayText;
 
     [Header("Cài đặt Thời gian")]
-    public float fadeDuration = 1.5f;       // Thời gian từ từ tối đen (giây)
-    public float blackScreenDuration = 2f;  // Thời gian màn hình đen thui để đọc chữ (giây)
+    public float fadeDuration = 1.5f;
+    public float blackScreenDuration = 2f;
 
-    private int currentDay = 1;             // Ngày hiện tại
-    private bool isTransitioning = false;   // Biến cờ kiểm tra xem có đang chuyển ngày không
+    private bool isTransitioning = false;
+
+    void Awake()
+    {
+        // Singleton để GameManager có thể gọi từ bất cứ đâu
+        if (instance == null) instance = this;
+    }
 
     void Start()
     {
-        // Khi mới vào game, đảm bảo màn hình không bị che đen
+        // Khởi đầu phải trong suốt và không chặn chuột
         if (fadeCanvasGroup != null)
         {
             fadeCanvasGroup.alpha = 0f;
-            // Tắt chức năng cản chuột bấm của màn đen (để bạn còn bấm nút UI khác được)
             fadeCanvasGroup.blocksRaycasts = false;
         }
-
-        if (dayText != null)
-        {
-            dayText.text = "Day " + currentDay;
-        }
+        if (dayText != null) dayText.text = "";
     }
 
-    void Update()
+    // Hàm chủ đạo để gọi từ GameManager
+    public void StartTransition(string nextSceneName)
     {
-        // [TEST] Nhấn phím T để giả lập việc hoàn thành 1 ngày và chuyển sang ngày hôm sau
-        if (Input.GetKeyDown(KeyCode.T) && !isTransitioning)
+        if (!isTransitioning)
         {
-            StartCoroutine(TransitionToNextDay());
+            StopAllCoroutines(); // Tránh việc gọi chồng chéo
+            StartCoroutine(TransitionRoutine(nextSceneName));
         }
     }
 
-    // Coroutine: Chạy đa luồng theo thời gian thực để tạo hiệu ứng mượt mà
-    public IEnumerator TransitionToNextDay()
+    IEnumerator TransitionRoutine(string nextSceneName)
     {
         isTransitioning = true;
-        fadeCanvasGroup.blocksRaycasts = true; // Chặn người chơi thao tác khi màn hình đang đen
+        fadeCanvasGroup.blocksRaycasts = true; // Chặn bấm nút bậy bạ
 
-        // 1. Màn hình từ từ tối đen (Tăng Alpha từ 0 -> 1)
+        // 1. Mờ dần sang đen (0 -> 1)
         float timer = 0f;
         while (timer < fadeDuration)
         {
             timer += Time.deltaTime;
             fadeCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / fadeDuration);
-            yield return null; // Chờ 1 khung hình rồi tiếp tục vòng lặp
+            yield return null;
         }
         fadeCanvasGroup.alpha = 1f;
 
-        // 2. Tăng số ngày lên và cập nhật chữ trên màn hình
-        currentDay++;
-        dayText.text = "Day " + currentDay;
+        // 2. Cập nhật chữ Ngày và LOAD SCENE NGẦM
+        if (GameManager.instance != null)
+        {
+            dayText.text = "NGÀY " + GameManager.instance.currentDay;
+        }
 
-        // --- TẠI ĐÂY BẠN CÓ THỂ GỌI CODE ĐỂ RESET VỊ TRÍ LÍNH GÁC, HOẶC PLAYER ---
-        // Ví dụ: playerTarget.position = viTriXuatPhat;
+        // Đợi 1 nhịp để đảm bảo chữ đã hiện lên rồi mới Load màn mới
+        yield return new WaitForSeconds(0.5f);
+        SceneManager.LoadScene(nextSceneName);
 
-        // 3. Đứng chờ màn hình đen một khoảng thời gian cho người chơi đọc chữ
+        // 3. Đứng chờ ở màn hình đen cho người chơi nghỉ ngơi
         yield return new WaitForSeconds(blackScreenDuration);
 
-        // 4. Màn hình từ từ sáng lại (Giảm Alpha từ 1 -> 0)
+        // Xóa chữ trước khi sáng lại
+        dayText.text = "";
+
+        // 4. Màn hình từ từ sáng lại (1 -> 0)
         timer = 0f;
         while (timer < fadeDuration)
         {
@@ -76,7 +85,7 @@ public class DayTransitionManager : MonoBehaviour
         }
         fadeCanvasGroup.alpha = 0f;
 
-        fadeCanvasGroup.blocksRaycasts = false; // Trả lại quyền thao tác cho người chơi
+        fadeCanvasGroup.blocksRaycasts = false;
         isTransitioning = false;
     }
 }

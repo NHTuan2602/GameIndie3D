@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
   victimName: "B\xE0 T\xE1m"
   jobOrAge: "75 tu\u1ED5i - H\u01B0u tr\xED"
+  avatar: {fileID: 0}
   staminaCost: 15
-  potentialReward: 5000
+  potentialReward: 20000000
+  karmaPenalty: 4
   difficultyLevel: 0
   rounds:
   - victimMessage: "Alo, s\u1ED1 l\u1EA1 g\u1ECDi c\xF4 c\xF3 vi\u1EC7c g\xEC kh\xF4ng
