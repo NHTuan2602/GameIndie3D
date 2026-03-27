@@ -26,9 +26,9 @@ public class ScamMinigame : MonoBehaviour
     public Slider timerSlider;
 
     [Header("Giao diện Điện thoại (MESSENGER MỚI)")]
-    public Image victimAvatarImage;     // Kéo Image Avatar vào đây
-    public TextMeshProUGUI victimNameText; // Kéo Text Tên nạn nhân vào đây (nếu có)
-    public Button btnBlockVictim;       // Kéo nút CHẶN vào đây
+    public Image victimAvatarImage;
+    public TextMeshProUGUI victimNameText;
+    public Button btnBlockVictim;
 
     [Header("Giao diện Pop-up Cản trở")]
     public GameObject distractionPanel;
@@ -71,7 +71,7 @@ public class ScamMinigame : MonoBehaviour
     {
         if (phonePanel != null) phonePanel.SetActive(false);
         if (distractionPanel != null) distractionPanel.SetActive(false);
-        if (btnBlockVictim != null) btnBlockVictim.gameObject.SetActive(false); // Giấu nút Block đi lúc mới vào
+        if (btnBlockVictim != null) btnBlockVictim.gameObject.SetActive(false);
 
         if (closeDistractionButton != null) closeDistractionButton.onClick.AddListener(CloseDistraction);
         if (btnHiddenSkip != null) btnHiddenSkip.onClick.AddListener(CheatSkipMinigame);
@@ -156,7 +156,7 @@ public class ScamMinigame : MonoBehaviour
         StartCoroutine(ProcessRoundEnd(false));
     }
 
-    // ĐÃ NÂNG CẤP: Nhận thêm biến Sprite Avatar (Để có thể truyền avatar từng người vào)
+    // ĐÃ TỐI ƯU HÓA: Xử lý hiển thị Tên và Avatar gọn gàng
     public void StartMiniGame(ScamRound[] roundsData, string vName, Sprite vAvatar = null)
     {
         currentRounds = roundsData;
@@ -170,8 +170,22 @@ public class ScamMinigame : MonoBehaviour
         if (distractionPanel != null) distractionPanel.SetActive(false);
         if (btnBlockVictim != null) btnBlockVictim.gameObject.SetActive(false);
 
+        // HIỂN THỊ TÊN GÓC TRÊN
         if (victimNameText != null) victimNameText.text = currentVictimName;
-        if (victimAvatarImage != null && vAvatar != null) victimAvatarImage.sprite = vAvatar;
+
+        // KIỂM TRA AVATAR: Có ảnh thì bật, không có thì tắt ô vuông đi
+        if (victimAvatarImage != null)
+        {
+            if (vAvatar != null)
+            {
+                victimAvatarImage.sprite = vAvatar;
+                victimAvatarImage.gameObject.SetActive(true);
+            }
+            else
+            {
+                victimAvatarImage.gameObject.SetActive(false);
+            }
+        }
 
         StartCoroutine(CountdownToStart());
     }
@@ -194,7 +208,6 @@ public class ScamMinigame : MonoBehaviour
     {
         ScamRound round = currentRounds[index];
 
-        // ĐÃ NÂNG CẤP: Thời gian bị ép ngắn lại nếu leo chức cao!
         float difficulty = GameManager.instance != null ? GameManager.instance.typingDifficultyMultiplier : 1.0f;
         timeRemaining = round.timeLimit * difficulty;
 
@@ -208,8 +221,11 @@ public class ScamMinigame : MonoBehaviour
             msg = "<color=#FF9900>[Nhắn nhầm à? Gì vậy?]</color>\n" + msg;
         }
 
+        // ĐÃ FIX: Bỏ cái Tên nạn nhân bị lặp ở đầu đoạn chat đi. Chỉ hiện nội dung thôi!
         if (chatHistoryText != null)
-            chatHistoryText.text = $"<color=#aaaaaa>{currentVictimName}:</color> {msg}";
+        {
+            chatHistoryText.text = $"<color=#FFFFFF>{msg}</color>";
+        }
 
         if (audioSource != null && messageSound != null) audioSource.PlayOneShot(messageSound);
 
@@ -218,6 +234,7 @@ public class ScamMinigame : MonoBehaviour
 
         StartCoroutine(ThinkingPhase(round));
     }
+
     IEnumerator ThinkingPhase(ScamRound round)
     {
         isTypingPhase = false;
@@ -240,7 +257,7 @@ public class ScamMinigame : MonoBehaviour
         }
     }
 
-    IEnumerator TriggerDistraction(string message, float totalTime) { /* Code giữ nguyên để tiết kiệm dòng */ yield break; }
+    IEnumerator TriggerDistraction(string message, float totalTime) { /* Giữ nguyên rút gọn */ yield break; }
     public void CloseDistraction() { isDistracted = false; if (distractionPanel != null) distractionPanel.SetActive(false); }
 
     IEnumerator ProcessRoundEnd(bool isSuccess)
@@ -287,12 +304,11 @@ public class ScamMinigame : MonoBehaviour
                 typingAreaText.text = "";
                 yield return new WaitForSeconds(3f);
 
-                EndGame(false, 0); // Thua 2 lần -> Thoát luônn
+                EndGame(false, 0);
             }
         }
     }
 
-    // TÍNH NĂNG MỚI: Hiệu ứng 3 chấm nảy lặp đi lặp lại
     IEnumerator RestPhase()
     {
         isResting = true;
@@ -304,11 +320,9 @@ public class ScamMinigame : MonoBehaviour
             audioSource.Play();
         }
 
-        float restTime = 4f; // Cho nghỉ 4 giây
+        float restTime = 4f;
         float dotTimer = 0f;
         int dotCount = 0;
-
-        string prefix = (consecutiveFails == 1) ? "đang gõ" : "đang gõ";
 
         while (restTime > 0)
         {
@@ -317,15 +331,14 @@ public class ScamMinigame : MonoBehaviour
             restTime -= Time.deltaTime;
             dotTimer -= Time.deltaTime;
 
-            // Mỗi 0.5s nhảy thêm 1 dấu chấm
             if (dotTimer <= 0)
             {
                 dotTimer = 0.5f;
-                dotCount = (dotCount + 1) % 4; // Nhảy 0, 1, 2, 3
+                dotCount = (dotCount + 1) % 4;
                 string dots = new string('.', dotCount);
-                chatHistoryText.text = $"<i><color=#aaaaaa>{currentVictimName} {prefix}{dots}</color></i>";
+                // ĐÃ FIX: Ẩn bớt tên đi, chỉ hiện "đang gõ..."
+                chatHistoryText.text = $"<i><color=#aaaaaa>đang gõ{dots}</color></i>";
             }
-
             yield return null;
         }
 
@@ -345,21 +358,17 @@ public class ScamMinigame : MonoBehaviour
             return;
         }
 
-        // Tính tiền USD lừa được
-        float rawMoneyUSDEarned = maxMoneyReward * ((float)successfulRounds / currentRounds.Length);
-        if (successfulRounds == currentRounds.Length) rawMoneyUSDEarned += bossBonus;
+        float rawMoneyEarned = maxMoneyReward * ((float)successfulRounds / currentRounds.Length);
+        if (successfulRounds == currentRounds.Length) rawMoneyEarned += bossBonus;
 
-        // Lấy % hoa hồng từ Sếp để hiển thị
         float commissionRate = GameManager.instance != null ? GameManager.instance.currentCommissionRate * 100f : 10f;
+        string endMsg = $"Khách đã chuyển <color=#00FF00>{rawMoneyEarned.ToString("N0")} VNĐ</color>!\nSếp chia <color=#FFFF00>{commissionRate}%</color> hoa hồng.";
 
-        string endMsg = $"Khách đã chuyển <color=#00FF00>{rawMoneyUSDEarned}$</color>!\nSếp chia <color=#FFFF00>{commissionRate}%</color> hoa hồng.";
-
-        StartCoroutine(ShowSuccessAndWaitForBlock(endMsg, rawMoneyUSDEarned));
+        StartCoroutine(ShowSuccessAndWaitForBlock(endMsg, rawMoneyEarned));
     }
 
     void FailEnd() { EndGame(false, 0); }
 
-    // TÍNH NĂNG MỚI: Dừng lại chờ bấm nút Block
     IEnumerator ShowSuccessAndWaitForBlock(string message, float finalMoney)
     {
         chatHistoryText.text = "<color=#00FF00>" + message + "</color>";
@@ -370,15 +379,12 @@ public class ScamMinigame : MonoBehaviour
             btnBlockVictim.gameObject.SetActive(true);
             btnBlockVictim.onClick.RemoveAllListeners();
             btnBlockVictim.onClick.AddListener(() => {
-                // Khi bấm nút thì tắt nút đi, nhét tiền vào túi và đóng màn hình
                 btnBlockVictim.gameObject.SetActive(false);
                 EndGame(true, finalMoney);
             });
         }
         else
         {
-            // Tránh lỗi nếu bạn quên tạo nút Block
-            Debug.Log("Không tìm thấy nút Block! Tự động kết thúc sau 3 giây.");
             yield return new WaitForSeconds(3f);
             EndGame(true, finalMoney);
         }

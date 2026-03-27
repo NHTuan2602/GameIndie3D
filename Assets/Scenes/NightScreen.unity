@@ -387,6 +387,7 @@ GameObject:
   - component: {fileID: 254619728}
   - component: {fileID: 254619727}
   - component: {fileID: 254619726}
+  - component: {fileID: 254619729}
   m_Layer: 5
   m_Name: FadeScreen
   m_TagString: Untagged
@@ -440,7 +441,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -464,6 +465,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 254619724}
   m_CullTransparentMesh: 1
+--- !u!114 &254619729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 254619724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c5c4cf94ae492044b9ca2c5ddaaf0f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DayTransitionManager
+  fadeCanvasGroup: {fileID: 254619726}
+  dayText: {fileID: 246134964}
+  fadeDuration: 1.5
+  blackScreenDuration: 2
 --- !u!1 &286461451
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,7 +888,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0.62352943}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2986,7 +3003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52fd45eb1fa859047b2083a0928fac84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NightMenuManager
-  txtTieuDe: {fileID: 0}
+  txtTieuDe: {fileID: 1096976025}
   btnNgu: {fileID: 1064951433}
   btnDanhBac: {fileID: 359539113}
   btnThamThinh: {fileID: 611407534}

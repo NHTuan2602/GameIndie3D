@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using TMPro; // KHAI BÁO THƯ VIỆN ĐỂ DÙNG TEXT
+using TMPro;
 
 public class NightMenuManager : MonoBehaviour
 {
     [Header("--- HIỂN THỊ CHỮ ---")]
-    public TextMeshProUGUI txtTieuDe; // Lỗ cắm mới để kéo cái Text tiêu đề vào
+    public TextMeshProUGUI txtTieuDe;
 
     [Header("--- KẾT NỐI NÚT BẤM ---")]
     public Button btnNgu;
@@ -18,16 +18,17 @@ public class NightMenuManager : MonoBehaviour
 
     void Start()
     {
-        // 1. Lấy dữ liệu Ngày từ Vị Thần GameManager để in ra màn hình
+        // Lấy dữ liệu Ngày từ Vị Thần GameManager để in ra màn hình
         if (txtTieuDe != null && GameManager.instance != null)
         {
             txtTieuDe.text = $"ĐÊM THỨ {GameManager.instance.currentDay}\n22:00 - BẠN MUỐN LÀM GÌ?";
         }
 
-        // 2. Mở khóa chuột
+        // Đảm bảo chuột luôn hiển thị và tự do ở Menu này
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+        // Tự động cắm dây cho các nút
         if (btnNgu != null) btnNgu.onClick.AddListener(ChonNgu);
         if (btnDanhBac != null) btnDanhBac.onClick.AddListener(ChonDanhBac);
         if (btnThamThinh != null) btnThamThinh.onClick.AddListener(ChonThamThinh);
@@ -43,15 +44,14 @@ public class NightMenuManager : MonoBehaviour
     private void CloseNightMenu()
     {
         if (nightMenuPanel != null) nightMenuPanel.SetActive(false);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // ĐÃ XÓA DÒNG KHÓA CHUỘT: Để chuột còn sống mà chơi game ngày hôm sau!
     }
 
     private void ChonNgu()
     {
         CloseNightMenu();
+        // ĐÃ XÓA DÒNG CAMPUCHIA: Chỉ giao việc cho GameManager. GameManager sẽ tự gọi Màn Đen!
         if (GameManager.instance != null) GameManager.instance.SleepThroughNight();
-        SceneManager.LoadScene("CampuchiaScene"); // Đổi đúng tên Scene ban ngày của bạn
     }
 
     private void ChonDanhBac()
