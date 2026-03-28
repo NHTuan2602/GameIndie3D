@@ -485,7 +485,7 @@ public class TaiXiuManager : MonoBehaviour
         {
             int winAmount = betAmount * 2;
             GameManager.instance.money += winAmount;
-            statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>CHÚC MỪNG THẮNG LỚN {betAmount:N0} VNĐ</color>";
+            statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>CHUC MUNG THANG LON {betAmount:N0} VNĐ</color>";
             PlaySound(winSound);
         }
         else

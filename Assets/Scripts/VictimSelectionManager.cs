@@ -49,7 +49,6 @@ public class VictimSelectionManager : MonoBehaviour
                 case VictimProfile.Difficulty.Kho: diffString = "Khó"; break;
             }
 
-            // ĐÃ SỬA: FORMAT HIỂN THỊ TIỀN VNĐ CÓ DẤU PHẨY (Ví dụ: 10,000,000 VNĐ)
             string rewardText = victim.jobOrAge + " | Thưởng: " + victim.potentialReward.ToString("N0") + " VNĐ";
 
             victimRows[i].SetupRow(
@@ -73,21 +72,18 @@ public class VictimSelectionManager : MonoBehaviour
 
         if (GameManager.instance != null)
         {
-            // Trừ Thể lực khi bắt đầu gọi
             bool canScam = GameManager.instance.StartScammingVictim(selectedVictim.staminaCost);
             if (!canScam) return;
         }
 
-        // ĐÃ NÂNG CẤP: Truyền số tiền thật (VNĐ) và Chỉ số Nghiệp chướng qua Minigame
         scamMinigame.maxMoneyReward = selectedVictim.potentialReward;
         scamMinigame.karmaPenalty = selectedVictim.karmaPenalty;
-
-        // Cân bằng lại tiền thưởng nóng của Sếp nếu lừa 5/5 (Ví dụ bằng 10% tiền lừa được)
         scamMinigame.bossBonus = selectedVictim.potentialReward * 0.1f;
 
         selectionPanel.SetActive(false);
 
-        // ĐÃ NÂNG CẤP: Gửi kèm thêm Cả Avatar của nạn nhân qua nữa!
+        // ĐÂY LÀ DÒNG QUYẾT ĐỊNH MẠNG SỐNG CỦA CÁI AVATAR!
+        // Đã thêm selectedVictim.avatar vào để ném ảnh sang màn hình Chat
         scamMinigame.StartMiniGame(selectedVictim.rounds, selectedVictim.victimName, selectedVictim.avatar);
     }
 }
