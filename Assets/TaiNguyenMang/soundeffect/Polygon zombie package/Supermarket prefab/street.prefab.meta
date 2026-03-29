@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: b6e5fe5f87491f04eb5a665e011b0afd
+timeCreated: 1517454197
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81953
+  packageName: POLYGON - Zombie Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/Polygon zombie package/Supermarket prefab/street.prefab
+  uploadId: 659046
