@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_11_Tun Anh 35 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Tu\u1EA5n Anh (35 tu\u1ED5i)"
+  jobOrAge: "Booking Bar / G\xE1i g\u1ECDi"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 9000000
+  karmaPenalty: 10
+  difficultyLevel: 0
+  rounds:
+  - victimMessage: "Ch\xE0o ng\u01B0\u1EDDi \u0111\u1EB9p, e \u0111ag r\u1EA3nh k,
+      a ck r\u1ED3i qa \u0111\xF3n lu\xF4n nha ^^"
+    scriptToType: Da em ranh anh a, anh chuyen tien roi gui vi tri qua nha.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "A \u0111\u1EBFn k.s\u1EA1n M\u01B0\u1EDDng Thanh r\u1ED3i, ph\xF2ng
+      402, gi\xE1 r\u1ED5 sao e?"
+    scriptToType: Da phi phuc vu qua dem la hai trieu, anh chuyen qua vi.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "G\xF5 d\u1EB9o d\u1EB9o v\xE0o cho kh\xE1ch n\xF3 x\u01B0\u1EDBng!"
+  - victimMessage: "\u1EE6a s d\u1EA1o n\xE0y b\u1EAFt bank tr\u01B0\u1EDBc th\u1EBF?
+      A ti\u1EC1n m\u1EB7t m\u1EDD."
+    scriptToType: Quan ly yeu cau chuyen truoc de phong canh sat anh a.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Bank r\u1ED3i, bao l\xE2u e t\u1EDBi? Nh\u1EDB m\u1EB7c b\u1ED9
+      ren \u0111en nha."
+    scriptToType: Anh phai chuyen them bay trieu tien bao lanh an toan nua.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "V\u1EB7t l\xF4ng con nh\u1EA1n n\xE0y cho tao!"
+  - victimMessage: "Phi\u1EC1n ph\u1EE9c th\u1EADt, a bank n\u1ED1t r\u1ED3i \u0111\u1EA5y,
+      l\u1EB9 l\xEAn e."
+    scriptToType: Da em dang xuong taxi len phong anh luon day.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 

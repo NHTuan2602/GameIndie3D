@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_05_Anh T Th Xy 45 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Anh T\u01B0 Th\u1EE3 X\xE2y (45 tu\u1ED5i)"
+  jobOrAge: "Xu\u1EA5t kh\u1EA9u lao \u0111\u1ED9ng gi\xE1 r\u1EBB"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 10000000
+  karmaPenalty: 38
+  difficultyLevel: 1
+  rounds:
+  - victimMessage: "Anh mu\u1ED1n \u0111i Nh\u1EADt lao \u0111\u1ED9ng th\xEC th\u1EE7
+      t\u1EE5c sao em?"
+    scriptToType: Ben em ho tro di nhat gia re khong can the chap.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "T\u1ED1t qu\xE1, anh kh\xF4ng c\xF3 b\u1EB1ng c\u1EA5p th\xEC
+      c\xF3 bay \u0111\u01B0\u1EE3c ko?"
+    scriptToType: Da duoc anh, ben em lo tron goi ho so visa.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "V\u1EBD \u0111\u01B0\u1EDDng h\u01B0\u01A1u ch\u1EA1y \u0111i!
+      B\u01A1m hy v\u1ECDng cho n\xF3!"
+  - victimMessage: "Th\u1EBF anh ph\u1EA3i \u0111\xF3ng tr\u01B0\u1EDBc bao nhi\xEAu
+      ti\u1EC1n \u0111\u1EC3 \u0111i?"
+    scriptToType: Anh dong truoc 10 trieu de giu cho tren chuyen bay.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Cho anh xin \u0111\u1ECBa ch\u1EC9 c\xF4ng ty anh l\xEAn \u0111\xF3ng
+      tr\u1EF1c ti\u1EBFp."
+    scriptToType: Cong ty o ha noi, anh o xa thi chuyen khoan qua.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "N\xF3 \u0111\xF2i \u0111\u1ECBa ch\u1EC9 k\xECa, l\u01B0\u01A1n
+      l\u1EB9o ngay!"
+  - victimMessage: "V\u1EE3 anh v\u1EEBa chuy\u1EC3n 10 tri\u1EC7u r\u1ED3i, em check
+      xem."
+    scriptToType: Da ke toan nhan duoc roi, de em lam giay to.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 

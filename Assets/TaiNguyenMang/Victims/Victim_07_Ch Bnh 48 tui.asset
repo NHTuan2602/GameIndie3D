@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_07_Ch Bnh 48 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Ch\xFA B\xECnh (48 tu\u1ED5i)"
+  jobOrAge: "M\u1EA1o danh nh\xE2n vi\xEAn ng\xE2n h\xE0ng"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 5000000
+  karmaPenalty: 25
+  difficultyLevel: 0
+  rounds:
+  - victimMessage: "Ng\xE2n h\xE0ng MB nh\u1EAFn tin t\xF4i tr\xFAng th\u01B0\u1EDFng
+      l\xE0 sao ch\xE1u?"
+    scriptToType: Da dung roi chu, chu trung mot chiec xe sh 150i.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Th\u1EADt h\u1EA3 ch\xE1u? H\xF4m nay ch\xFA tr\xFAng qu\u1EA3
+      r\u1ED3i."
+    scriptToType: Da chu dong phi truoc ba de lam giay to xe nhe.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "\u1EE6a sao kh\xF4ng tr\u1EEB th\u1EB3ng v\xE0o ti\u1EC1n th\u01B0\u1EDFng
+      \u0111i ch\xE1u?"
+    scriptToType: Da quy dinh cua nha nuoc la phai nop thue truoc a.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Gi\u1EA3i th\xEDch h\u1EE3p l\xFD v\xE0o kh\xF4ng l\xE3o
+      sinh nghi!"
+  - victimMessage: "Ph\xED h\u1EBFt bao nhi\xEAu \u0111\u1EC3 ch\xFA ra tr\u1EE5
+      ATM chuy\u1EC3n."
+    scriptToType: Da het 5 trieu a, chu chuyen luon de xac nhan.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Ch\xFA chuy\u1EC3n xong r\u1ED3i, khi n\xE0o xu\u1ED1ng nh\u1EADn
+      xe?"
+    scriptToType: Da sang mai chu qua so 1 le duan nhan xe a.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Ch\u1ED1t xong block s\u1ED1 ngay l\u1EADp t\u1EE9c!"

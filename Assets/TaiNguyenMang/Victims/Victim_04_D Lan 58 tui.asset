@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_04_D Lan 58 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "D\xEC Lan (58 tu\u1ED5i)"
+  jobOrAge: "C\u1EA3nh b\xE1o kh\xF3a Sim"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 6000000
+  karmaPenalty: 35
+  difficultyLevel: 0
+  rounds:
+  - victimMessage: chau oi sim cua di xai 10 nam sao lai khoa
+    scriptToType: Bo thong tin yeu cau xac minh sim chinh chu a.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: gio phai lam sao di so mat lien lac voi con
+    scriptToType: Di doc ma otp gui ve may de chau nang cap.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "M\xF3c \u0111\u01B0\u1EE3c c\xE1i m\xE3 OTP l\xE0 tao th\u01B0\u1EDFng
+      l\u1EDBn!"
+  - victimMessage: nha mang gui ma so la 6 5 4 3 2 1 ne chau
+    scriptToType: Da di doi mot lat de he thong dong bo du lieu.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: sao tai khoan ngan hang cua di bao bi tru tien
+    scriptToType: Da do la phi dich vu kiem tra thoi khong sao.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "B\u1ED1c ph\xE9t h\u1EE3p l\xFD v\xE0o kh\xF4ng n\xF3 kh\xF3a
+      th\u1EBB b\xE2y gi\u1EDD!"
+  - victimMessage: tru het 6 trieu cua di roi chau oi la sao
+    scriptToType: Di binh tinh de he thong hoan tien lai vao may.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 

@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_15_Phc 18 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Ph\xFAc (18 tu\u1ED5i)"
+  jobOrAge: "D\u1ECBch v\u1EE5 hack Facebook"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 5000000
+  karmaPenalty: 15
+  difficultyLevel: 1
+  rounds:
+  - victimMessage: "\xF4ng hack dc nick fb con nyc tui khum? bn ti\u1EC1n?"
+    scriptToType: Ben toi nhan hack xuyen tuong, gia nam trieu mot nick.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "\u1EA3o z, c\xF3 b\u1ECB ph\xE1t hi\u1EC7n k \xF4ng, tui mu\u1ED1n
+      \u0111\u1ECDc tr\u1ED9m tn thui."
+    scriptToType: Bao mat an danh tuyet doi, tao cho ong ca nut xoa tin.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "N\u1ED5 \xE1c v\xE0o cho th\u1EB1ng s\u1EEDu nhi n\xE0y
+      s\u1EE3!"
+  - victimMessage: "vip pro! c\u1ECDc bao nhi\xEAu r\xF9i l\xE0m, xog vi\u1EC7c tui
+      bank n\u1ED1t."
+    scriptToType: Giao dich tren mang uy tin la chinh, ong chuyen du luon di.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "tui \u0111ang \u0111i m\u01B0\u1EE3n ti\u1EC1n th\xE8n b\u1EA1n,
+      ck xong \xF4ng ti\u1EBFn h\xE0nh l\u1EB9 nha."
+    scriptToType: Ok chuyen xong nhan link fb qua day cho toi xoa bay mau.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "C\u1EA5m cho n\xF3 c\u1ECDc, b\u1EAFt n\xF4n h\u1EBFt 5
+      c\u1EE7 ra!"
+  - victimMessage: "bank r nha! h\xF3ng n\xF3 b\u1ECB bay acc haha."
+    scriptToType: Dang khoi dong phan mem hack roi, tam nam phut la xong.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 

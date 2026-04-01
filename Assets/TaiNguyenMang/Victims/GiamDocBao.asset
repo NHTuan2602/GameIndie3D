@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: GiamDocBao
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Gi\xE1m \u0111\u1ED1c B\u1EA1o"
+  jobOrAge: "55 tu\u1ED5i - Th\u1EA7u x\xE2y d\u1EF1ng"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 35
+  potentialReward: 70000000
+  karmaPenalty: 2
+  difficultyLevel: 2
+  rounds:
+  - victimMessage: "Alo, ai \u0111\u1EA5y? \u0110ang b\u1EADn h\u1ECDp, n\xF3i nhanh!"
+    scriptToType: Chao anh Bao, toi la can bo ben Cuc Thue. Ho so cua cong ty anh
+      dang co van de nghiem trong.
+    timeLimit: 35
+    hasDistraction: 0
+    distractionMessage: "Em ch\xE1n s\u1ED1ng r\u1ED3i \u0111\xFAng kh\xF4ng, chat
+      nhanh l\xEAn coi"
+  - victimMessage: "Thu\u1EBF m\xE1 g\xEC? K\u1EBF to\xE1n nh\xE0 t\xF4i lo h\u1EBFt
+      r\u1ED3i, \u0111\u1EEBng c\xF3 v\u1EDB v\u1EA9n."
+    scriptToType: Chung toi da nam duoc bang chung anh tron thue 3 nam nay. Ngay
+      mai se co doan thanh tra xuong.
+    timeLimit: 30
+    hasDistraction: 1
+    distractionMessage: "G\xF5 nhanh l\xEAn! L\xE3o n\xE0y s\u1EAFp c\xFAp m\xE1y
+      r\u1ED3i!"
+  - victimMessage: "\u1EA4y ch\u1EBFt... anh l\xE0 c\xE1n b\u1ED9 n\xE0o \u0111\u1EA5y?
+      C\xF3 c\xE1ch n\xE0o ch\xE2m ch\u01B0\u1EDBc cho doanh nghi\u1EC7p kh\xF4ng
+      anh?"
+    scriptToType: Neu anh muon em chuyen nay, hay chuyen ngay 50 trieu vao tai khoan
+      cua lanh dao de lo lot ho so.
+    timeLimit: 40
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "50 tri\u1EC7u \xE1? Cho t\xF4i xin 1 ng\xE0y thu x\u1EBFp \u0111\u01B0\u1EE3c
+      kh\xF4ng?"
+    scriptToType: Nhanh len, giam doc sap ky quyet dinh roi. Chuyen ngay de toi con
+      rut ho so cua anh ra!
+    timeLimit: 40
+    hasDistraction: 1
+    distractionMessage: "M\xE0y g\xF5 ch\u1EADm tao ch\xEDch \u0111i\u1EC7n b\xE2y
+      gi\u1EDD"
+  - victimMessage: "R\u1ED3i r\u1ED3i t\xF4i chuy\u1EC3n r\u1ED3i! Anh ki\u1EC3m
+      tra gi\xFAp t\xF4i v\u1EDBi!"
+    scriptToType: Da nhan duoc tien. Anh yen tam, moi chuyen da duoc giai quyet on
+      thoa. Xoa tin nhan nay di.
+    timeLimit: 35
+    hasDistraction: 0
+    distractionMessage: 

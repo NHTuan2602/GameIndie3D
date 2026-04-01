@@ -1,0 +1,135 @@
+6. Ông Năm (65 tuổi) - Thủ đoạn: Gọi điện báo con cấp cứu
+Mức độ: Dễ. Tiền: 10M. Nghiệp: -40.
+Hiệp 1 - V: "alo ai day phai thang binh khong con" P: "Da dung roi bo, con dang o benh vien bi tai nan." Popup: "Gõ nhanh lên! Khách đang hoảng kìa!"
+Hiệp 2 - V: "troi dat oi con bi sao nang khong o vien nao" P: "Con dang cap cuu o cho ray bo chuyen tien gap."
+Hiệp 3 - V: "bo dang run tay qua bo phai lam sao bay gio" P: "Bo bao nguoi ta chuyen khoan vao so nay cho con." Popup: "Mày gõ sai chính tả tao trừ lương bây giờ!"
+Hiệp 4 - V: "tien o dau ra bay gio de bo chay di muon" P: "Nhanh len bo oi bac si bao phai dong tam ung."
+Hiệp 5 - V: "bo biet roi bo dang vay mien la con khong sao" P: "Bo chuyen du 10 trieu de con vao phong mo nhe." Popup: "Chốt sale lẹ đi tao đi ăn cơm!"
+
+7. Bà Sáu (70 tuổi) - Thủ đoạn: Lừa chuyển tiền từ thiện
+Mức độ: Dễ. Tiền: 5M. Nghiệp: -40.
+Hiệp 1 - V: "co gui tien vao quy mo coi duc son roi nha" P: "Da co gui nham vao so tai khoan ca nhan roi a."
+Hiệp 2 - V: "chet vay lam sao chua tra lai cho co duoc khong" P: "Co phai chuyen them 5 trieu de xac minh tai khoan." Popup: "Bà già này dễ lừa lắm, dí tới bến cho tao!"
+Hiệp 3 - V: "co gia roi khong biet thao tac chau giup co" P: "Co cu ra ngan hang bao ho chuyen vao so nay."
+Hiệp 4 - V: "day la tien tiet kiem tri benh cua co do" P: "Co chuyen xong chau se hoan tra lai toan bo a." Popup: "Đừng có mềm lòng! Lừa mạnh tay vào!"
+Hiệp 5 - V: "co chuyen roi do chau kiem tra giup co nha" P: "Da nhan duoc tien roi de chau xu ly cho co."
+
+8. Bác Hùng (60 tuổi) - Thủ đoạn: Công an dọa phạt nguội
+Mức độ: Trung bình. Tiền: 8M. Nghiệp: -35.
+Hiệp 1 - V: "toi chay xe dap lam gi co bien so ma bi phat" P: "Day la thong bao tu toa an, bac da vi pham."
+Hiệp 2 - V: "toa an nao toi la cuu chien binh dung co xiec" P: "Ho so cua bac lien quan den duong day ma tuy." Popup: "Dọa cho lão sợ điếu đổ đi!"
+Hiệp 3 - V: "ma tuy cai gi anh la ai toi se bao cong an" P: "Chung toi la dieu tra vien, yeu cau bac hop tac."
+Hiệp 4 - V: "vay bay gio toi phai lam gi de chung minh" P: "Bac chuyen tien vao tai khoan cua vien kiem sat." Popup: "Cá cắn câu rồi! Gõ nhanh đừng để nó tỉnh!"
+Hiệp 5 - V: "duoc roi toi hieu roi de toi di ra the atm" P: "Bac giup bao mat thong tin khong duoc ke voi ai."
+
+9. Dì Lan (58 tuổi) - Thủ đoạn: Cảnh báo khóa Sim
+Mức độ: Dễ. Tiền: 6M. Nghiệp: -35.
+Hiệp 1 - V: "chau oi sim cua di xai 10 nam sao lai khoa" P: "Bo thong tin yeu cau xac minh sim chinh chu a."
+Hiệp 2 - V: "gio phai lam sao di so mat lien lac voi con" P: "Di doc ma otp gui ve may de chau nang cap." Popup: "Móc được cái mã OTP là tao thưởng lớn!"
+Hiệp 3 - V: "nha mang gui ma so la 6 5 4 3 2 1 ne chau" P: "Da di doi mot lat de he thong dong bo du lieu."
+Hiệp 4 - V: "sao tai khoan ngan hang cua di bao bi tru tien" P: "Da do la phi dich vu kiem tra thoi khong sao." Popup: "Bốc phét hợp lý vào không nó khóa thẻ bây giờ!"
+Hiệp 5 - V: "tru het 6 trieu cua di roi chau oi la sao" P: "Di binh tinh de he thong hoan tien lai vao may."
+
+10. Anh Tư Thợ Xây (45 tuổi) - Thủ đoạn: Xuất khẩu lao động giá rẻ
+Mức độ: Trung bình. Tiền: 10M. Nghiệp: -38.
+Hiệp 1 - V: "Anh muốn đi Nhật lao động thì thủ tục sao em?" P: "Ben em ho tro di nhat gia re khong can the chap."
+Hiệp 2 - V: "Tốt quá, anh không có bằng cấp thì có bay được ko?" P: "Da duoc anh, ben em lo tron goi ho so visa." Popup: "Vẽ đường hươu chạy đi! Bơm hy vọng cho nó!"
+Hiệp 3 - V: "Thế anh phải đóng trước bao nhiêu tiền để đi?" P: "Anh dong truoc 10 trieu de giu cho tren chuyen bay."
+Hiệp 4 - V: "Cho anh xin địa chỉ công ty anh lên đóng trực tiếp." P: "Cong ty o ha noi, anh o xa thi chuyen khoan qua." Popup: "Nó đòi địa chỉ kìa, lươn lẹo ngay!"
+Hiệp 5 - V: "Vợ anh vừa chuyển 10 triệu rồi, em check xem." P: "Da ke toan nhan duoc roi, de em lam giay to."
+
+11. Cô Hoa (50 tuổi) - Thủ đoạn: Quà tặng từ "Bạn trai Tây"
+Mức độ: Trung bình. Tiền: 10M. Nghiệp: -30.
+Hiệp 1 - V: "Anh Mathew nói gửi quà cho chị rồi, kiện hàng mã số bao nhiêu em?" P: "Da kien hang tu my cua chi dang bi giu o hai quan."
+Hiệp 2 - V: "Trời ơi, trong đó có đô la với trang sức đó, làm sao lấy ra?" P: "Chi phai dong phi thue thu nhap de lanh hang ra." Popup: "Bà này mê trai Tây lắm, bào mạnh vào!"
+Hiệp 3 - V: "Bao nhiêu vậy em, chị lo quá." P: "Da phi la 10 trieu, chi chuyen ngay keo bi tich thu."
+Hiệp 4 - V: "Chị không có đủ, em linh động cho chị đóng trước 5 triệu được ko?" P: "Vay chi chuyen tam truoc roi em linh dong cho." Popup: "Đừng có kì kèo! Vét sạch túi bả cho tao!"
+Hiệp 5 - V: "Chị chuyển rồi đó, chừng nào chị nhận được quà vậy em?" P: "Da trong chieu nay xe chuyen hang se qua nha chi."
+
+12. Chú Bình (48 tuổi) - Thủ đoạn: Mạo danh nhân viên ngân hàng
+Mức độ: Dễ. Tiền: 5M. Nghiệp: -25.
+Hiệp 1 - V: "Ngân hàng MB nhắn tin tôi trúng thưởng là sao cháu?" P: "Da dung roi chu, chu trung mot chiec xe sh 150i."
+Hiệp 2 - V: "Thật hả cháu? Hôm nay chú trúng quả rồi." P: "Da chu dong phi truoc ba de lam giay to xe nhe."
+Hiệp 3 - V: "Ủa sao không trừ thẳng vào tiền thưởng đi cháu?" P: "Da quy dinh cua nha nuoc la phai nop thue truoc a." Popup: "Giải thích hợp lý vào không lão sinh nghi!"
+Hiệp 4 - V: "Phí hết bao nhiêu để chú ra trụ ATM chuyển." P: "Da het 5 trieu a, chu chuyen luon de xac nhan."
+Hiệp 5 - V: "Chú chuyển xong rồi, khi nào xuống nhận xe?" P: "Da sang mai chu qua so 1 le duan nhan xe a." Popup: "Chốt xong block số ngay lập tức!"
+
+13. Chị Mai (42 tuổi) - Thủ đoạn: Giải ngân vay App không cần thế chấp
+Mức độ: Khó. Tiền: 5M. Nghiệp: -40.
+Hiệp 1 - V: "Chị đang cần gấp 50 triệu trả nợ, app em giải ngân nhanh không?" P: "Da giai ngan trong 5 phut ma khong can the chap."
+Hiệp 2 - V: "Chị tải app về rồi, nhưng hệ thống báo lỗi số tài khoản?" P: "Da do chi nhap sai nen tien bi dong bang tren app." Popup: "Đổ lỗi cho khách hàng ngay!"
+Hiệp 3 - V: "Trời ơi cứu chị với, giờ làm sao để lấy tiền ra?" P: "Chi phai chuyen 5 trieu de xac minh mo dong bang."
+Hiệp 4 - V: "Chị vay tiền mà sao bắt chị đóng tiền, chị nghèo lắm rồi." P: "Chi dong xong he thong se tra lai du 55 trieu luon." Popup: "Thấy khách nghèo mà mềm lòng là tao chích điện mày!"
+Hiệp 5 - V: "Chị mượn tạm vay nóng chuyển rồi đó, mở khóa cho chị đi." P: "Da he thong dang xu ly chi doi khoang muoi phut."
+
+14. Hoàng (30 tuổi) - Thủ đoạn: Phím lệnh Forex / Crypto
+Mức độ: Trung bình. Tiền: 10M. Nghiệp: -15.
+Hiệp 1 - V: "Group phím lệnh VIP đợt này winrate cao ko bro?" P: "Ty le thang tren chin muoi phan tram, ngay kiem tram do."
+Hiệp 2 - V: "Oke, muốn vào group kín đánh theo chuyên gia thì điều kiện gì?" P: "Ban nap toi thieu muoi trieu de mo tai khoan copy trade." Popup: "Đánh vào lòng tham của bọn Trader này!"
+Hiệp 3 - V: "Tiền nạp vào tài khoản của tôi hay của sàn?" P: "Nap vao san uy tin quoc te, bao mat tuyet doi bro a."
+Hiệp 4 - V: "Tôi nạp rồi, bao giờ chuyên gia đọc lệnh?" P: "Toi nay tam gio len discord de nghe doc lenh nha." Popup: "Tốc độ lên! KPI hôm nay chưa đạt đâu!"
+Hiệp 5 - V: "Báo nạp thành công rồi, nhớ add tôi vào group kín nha." P: "Da xac nhan xong, toi nay chung ta cung x2 tai khoan."
+
+15. Thảo Ngân (28 tuổi) - Thủ đoạn: Bán Combo Du Lịch giá sốc
+Mức độ: Khó. Tiền: 8M. Nghiệp: -20.
+Hiệp 1 - V: "Check ib em combo đi Nha Trang 3N2Đ ở Mường Thanh vs ạ." P: "Da combo bao gom ve may bay va khach san la bon trieu."
+Hiệp 2 - V: "Ủa sao rẻ vậy shop? Mình đi 2 người là 8 củ đúng ko?" P: "Da dung roi, dang co chuong trinh flash sale duy nhat hnay." Popup: "Khách VIP, gõ cho tử tế vào!"
+Hiệp 3 - V: "Có sợ lừa đảo ko ta, sao thấy nhiều bóc phốt trên hội nhóm quá." P: "Ben em co giay phep kinh doanh dang hoang, chi yen tam."
+Hiệp 4 - V: "Dạ ok, mình cọc trước 30% đúng ko b?" P: "Gia flash sale nen chi vui long chuyen khoan full 100% a." Popup: "Ép bank full! Không cọc cạch gì hết!"
+Hiệp 5 - V: "Mình bank full 8 củ rồi nha, xuất vé gửi mail m với." P: "Da em dang thao tac xuat ve, tam muoi phut nua chi check."
+
+16. Tuấn Anh (35 tuổi) - Thủ đoạn: Booking Bar / Gái gọi
+Mức độ: Dễ. Tiền: 9M. Nghiệp: -10.
+Hiệp 1 - V: "Chào người đẹp, e đag rảnh k, a ck rồi qa đón luôn nha ^^" P: "Da em ranh anh a, anh chuyen tien roi gui vi tri qua nha."
+Hiệp 2 - V: "A đến k.sạn Mường Thanh rồi, phòng 402, giá rổ sao e?" P: "Da phi phuc vu qua dem la hai trieu, anh chuyen qua vi." Popup: "Gõ dẹo dẹo vào cho khách nó xướng!"
+Hiệp 3 - V: "Ủa s dạo này bắt bank trước thế? A tiền mặt mờ." P: "Quan ly yeu cau chuyen truoc de phong canh sat anh a."
+Hiệp 4 - V: "Bank rồi, bao lâu e tới? Nhớ mặc bộ ren đen nha." P: "Anh phai chuyen them bay trieu tien bao lanh an toan nua." Popup: "Vặt lông con nhạn này cho tao!"
+Hiệp 5 - V: "Phiền phức thật, a bank nốt rồi đấy, lẹ lên e." P: "Da em dang xuong taxi len phong anh luon day."
+
+17. Trang (32 tuổi) - Thủ đoạn: Giao hàng Ship COD ảo
+Mức độ: Trung bình. Tiền: 5M. Nghiệp: -25.
+Hiệp 1 - V: "Alo anh shipper giao hàng để lại trước cổng đúng k?" P: "Da dung roi chi, chi chuyen khoan phi ship nam tram nha."
+Hiệp 2 - V: "Ủa e có đặt đơn nào 500k đâu ta, mng gởi lộn k?" P: "Ten voi so dien thoai ghi ro rang tren don hang day chi." Popup: "Lừa đơn ảo dễ lắm, đừng để hụt!"
+Hiệp 3 - V: "Chắc chồng e đặt rồi k nói, stk nào a?" P: "Chi chuyen vao so nay roi ghi noi dung nhan hang nhe."
+Hiệp 4 - V: "E ck rồi nha. Tí đi làm về e mở xem là gì." P: "Da chi kiem tra lai giup, tai khoan em chua nhan duoc." Popup: "Giả vờ lỗi ngân hàng để lừa bank đúp 2 lần!"
+Hiệp 5 - V: "App ngân hàng báo trừ tiền rồi mà anh, a check lại nha." P: "Da tin nhan den roi, cam on chi nhe."
+
+18. Mạnh (26 tuổi) - Thủ đoạn: Xe máy thanh lý hải quan
+Mức độ: Khó. Tiền: 10M. Nghiệp: -20.
+Hiệp 1 - V: "Xe SH hải quan thanh lý còn ko ad ơi? Cho e xin giá." P: "Da xe sh y nguyen ban gia hai muoi trieu con mot chiec."
+Hiệp 2 - V: "Giấy tờ hợp lệ đi đường ko? Mình sợ hugo bế lắm." P: "Bao di duong thoai mai, co ca the nganh chong tich thu." Popup: "Chém gió uy tín lên! Nhắn lấp lửng nó chạy mất đấy!"
+Hiệp 3 - V: "Mình muốn lên bãi xem xe trực tiếp đc ko ad?" P: "Bai xe nam trong khu quan su nen khong vao duoc."
+Hiệp 4 - V: "Ok vậy cọc trước bao nhiêu để m ship xe về tận nhà?" P: "Anh coc truoc muoi trieu roi nhan vien se danh xe xuong."
+Hiệp 5 - V: "Done nha ad! Mình ck 10 củ rồi, test xe ok thanh toán nốt." P: "Da ben em dang dua xe len xe tai cho xuong cho anh." Popup: "10 củ ngon ơ! Làm tốt lắm!"
+
+19. Linh (20 tuổi) - Thủ đoạn: Bán mèo cảnh giá rẻ
+Mức độ: Dễ. Tiền: 6M. Nghiệp: -35.
+Hiệp 1 - V: "shop ưi bé mèo anh lông ngắn này 1tr5 thệc hỏ" P: "Da dung roi ban, dang sale dong gia do a."
+Hiệp 2 - V: "b ở đâu dza tui qua đón bé lun dc khum" P: "Ben minh chi nhan ship, ban chuyen khoan truoc nha." Popup: "Sinh viên dễ dụ, chốt nhanh lên!"
+Hiệp 3 - V: "hic tui sợ lừa đảo lém, hay ship cod dc hong shop" P: "Shop lam an uy tin, meo song khong the ship cod duoc."
+Hiệp 4 - V: "dạ dza cho tui stk nha, thương pé quá r" P: "Ban chuyen khoan roi nhan dia chi de shop gui." Popup: "Tay mày bị tàn tật hay sao gõ chậm thế!"
+Hiệp 5 - V: "oki tui ck rùi á, shop check nha" P: "Da de shop xac nhan roi chuan bi dong hang."
+
+20. Phúc (18 tuổi) - Thủ đoạn: Dịch vụ hack Facebook
+Mức độ: Trung bình. Tiền: 5M. Nghiệp: -15.
+Hiệp 1 - V: "ông hack dc nick fb con nyc tui khum? bn tiền?" P: "Ben toi nhan hack xuyen tuong, gia nam trieu mot nick."
+Hiệp 2 - V: "ảo z, có bị phát hiện k ông, tui muốn đọc trộm tn thui." P: "Bao mat an danh tuyet doi, tao cho ong ca nut xoa tin." Popup: "Nổ ác vào cho thằng sửu nhi này sợ!"
+Hiệp 3 - V: "vip pro! cọc bao nhiêu rùi làm, xog việc tui bank nốt." P: "Giao dich tren mang uy tin la chinh, ong chuyen du luon di."
+Hiệp 4 - V: "tui đang đi mượn tiền thèn bạn, ck xong ông tiến hành lẹ nha." P: "Ok chuyen xong nhan link fb qua day cho toi xoa bay mau." Popup: "Cấm cho nó cọc, bắt nôn hết 5 củ ra!"
+Hiệp 5 - V: "bank r nha! hóng nó bị bay acc haha." P: "Dang khoi dong phan mem hack roi, tam nam phut la xong."
+
+21. LyLy (19 tuổi) - Thủ đoạn: Trúng Give away điện thoại
+Mức độ: Khó. Tiền: 5M. Nghiệp: -25.
+Hiệp 1 - V: "omg tui trúng iphone 15 pro max thệc hả" P: "Chuc mung ban da trung thuong tu event cua cong ty."
+Hiệp 2 - V: "zui quá huhu 😭 bh tui nhận đc giải dza ad ưi?" P: "Ban dong phi xuat kho hai trieu de minh gui dien thoai." Popup: "Ngồi thẳng lưng lên! Có 1 cái kịch bản mà gõ cũng chậm!"
+Hiệp 3 - V: "ủa trúng thưởng mà cũng bắt đóng phí hả ad, hơi ảo nha." P: "Do la quy dinh cua bo cong thuong de chong rua tien."
+Hiệp 4 - V: "zạ thui ráng mượn bạn, phí 2 chẹo đúg k ad?" P: "Dung roi kem them ba trieu tien thue hai quan nua."
+Hiệp 5 - V: "huhu cạn tiền r, e ck 5 chẹo gòi, ad ship hỏa tốc nhe." P: "Da cong ty dang dong goi dien thoai cho ban roi a." Popup: "Tuyệt vời, cuối tháng tao thưởng cho cái bánh bao!"
+
+22. Khang (22 tuổi) - Thủ đoạn: Pass giày hiệu fake/bùng tiền
+Mức độ: Trung bình. Tiền: 7M. Nghiệp: -15.
+Hiệp 1 - V: "pass đôi jordan 1 real hả b? cho xin vid check tem đi r bank" P: "Giay real chinh hang tram phan tram, check auth thoai mai."
+Hiệp 2 - V: "ok giá 7 củ chốt. ck trước 50% ship nhận hàng ck nốt nha b" P: "Minh dang can tien gap nen pass re, ban chuyen full nha." Popup: "Khách nó khôn đấy, gõ cẩn thận!"
+Hiệp 3 - V: "chơi lớn luôn, mà gd trung gian k bro? sợ ăn cú lừa lắm." P: "Ban vao tuong minh xem, uy tin muoi nam tren group giay."
+Hiệp 4 - V: "uk thấy fb có vẻ xịn. gửi stk đây bro." P: "Chuyen xong chup bill roi cho minh thong tin ship hang."
+Hiệp 5 - V: "bank r đấy, đóng hộp cẩn thận k móp mũi giày tui nha bro." P: "Yen tam minh boc chong soc ba lop cho ban luon roi." Popup: "Ngon! Block ngay kẻo nó hối hận!"

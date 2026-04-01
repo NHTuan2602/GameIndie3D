@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_12_Trang 32 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Trang (32 tu\u1ED5i)"
+  jobOrAge: "Giao h\xE0ng Ship COD \u1EA3o"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 5000000
+  karmaPenalty: 25
+  difficultyLevel: 1
+  rounds:
+  - victimMessage: "Alo anh shipper giao h\xE0ng \u0111\u1EC3 l\u1EA1i tr\u01B0\u1EDBc
+      c\u1ED5ng \u0111\xFAng k?"
+    scriptToType: Da dung roi chi, chi chuyen khoan phi ship nam tram nha.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "\u1EE6a e c\xF3 \u0111\u1EB7t \u0111\u01A1n n\xE0o 500k \u0111\xE2u
+      ta, mng g\u1EDFi l\u1ED9n k?"
+    scriptToType: Ten voi so dien thoai ghi ro rang tren don hang day chi.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "L\u1EEBa \u0111\u01A1n \u1EA3o d\u1EC5 l\u1EAFm, \u0111\u1EEBng
+      \u0111\u1EC3 h\u1EE5t!"
+  - victimMessage: "Ch\u1EAFc ch\u1ED3ng e \u0111\u1EB7t r\u1ED3i k n\xF3i, stk n\xE0o
+      a?"
+    scriptToType: Chi chuyen vao so nay roi ghi noi dung nhan hang nhe.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "E ck r\u1ED3i nha. T\xED \u0111i l\xE0m v\u1EC1 e m\u1EDF xem
+      l\xE0 g\xEC."
+    scriptToType: Da chi kiem tra lai giup, tai khoan em chua nhan duoc.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Gi\u1EA3 v\u1EDD l\u1ED7i ng\xE2n h\xE0ng \u0111\u1EC3 l\u1EEBa
+      bank \u0111\xFAp 2 l\u1EA7n!"
+  - victimMessage: "App ng\xE2n h\xE0ng b\xE1o tr\u1EEB ti\u1EC1n r\u1ED3i m\xE0
+      anh, a check l\u1EA1i nha."
+    scriptToType: Da tin nhan den roi, cam on chi nhe.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 

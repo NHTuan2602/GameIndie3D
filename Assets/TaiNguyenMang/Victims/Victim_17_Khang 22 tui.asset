@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_17_Khang 22 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Khang (22 tu\u1ED5i)"
+  jobOrAge: "Pass gi\xE0y hi\u1EC7u fake/b\xF9ng ti\u1EC1n"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 7000000
+  karmaPenalty: 15
+  difficultyLevel: 1
+  rounds:
+  - victimMessage: "pass \u0111\xF4i jordan 1 real h\u1EA3 b? cho xin vid check tem
+      \u0111i r bank"
+    scriptToType: Giay real chinh hang tram phan tram, check auth thoai mai.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "ok gi\xE1 7 c\u1EE7 ch\u1ED1t. ck tr\u01B0\u1EDBc 50% ship nh\u1EADn
+      h\xE0ng ck n\u1ED1t nha b"
+    scriptToType: Minh dang can tien gap nen pass re, ban chuyen full nha.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Kh\xE1ch n\xF3 kh\xF4n \u0111\u1EA5y, g\xF5 c\u1EA9n th\u1EADn!"
+  - victimMessage: "ch\u01A1i l\u1EDBn lu\xF4n, m\xE0 gd trung gian k bro? s\u1EE3
+      \u0103n c\xFA l\u1EEBa l\u1EAFm."
+    scriptToType: Ban vao tuong minh xem, uy tin muoi nam tren group giay.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "uk th\u1EA5y fb c\xF3 v\u1EBB x\u1ECBn. g\u1EEDi stk \u0111\xE2y
+      bro."
+    scriptToType: Chuyen xong chup bill roi cho minh thong tin ship hang.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "bank r \u0111\u1EA5y, \u0111\xF3ng h\u1ED9p c\u1EA9n th\u1EADn
+      k m\xF3p m\u0169i gi\xE0y tui nha bro."
+    scriptToType: Yen tam minh boc chong soc ba lop cho ban luon roi.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Ngon! Block ngay k\u1EBBo n\xF3 h\u1ED1i h\u1EADn!"

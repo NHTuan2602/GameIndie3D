@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_16_LyLy 19 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "LyLy (19 tu\u1ED5i)"
+  jobOrAge: "Tr\xFAng Give away \u0111i\u1EC7n tho\u1EA1i"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 5000000
+  karmaPenalty: 25
+  difficultyLevel: 2
+  rounds:
+  - victimMessage: "omg tui tr\xFAng iphone 15 pro max th\u1EC7c h\u1EA3"
+    scriptToType: Chuc mung ban da trung thuong tu event cua cong ty.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "zui qu\xE1 huhu \U0001F62D bh tui nh\u1EADn \u0111c gi\u1EA3i
+      dza ad \u01B0i?"
+    scriptToType: Ban dong phi xuat kho hai trieu de minh gui dien thoai.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Ng\u1ED3i th\u1EB3ng l\u01B0ng l\xEAn! C\xF3 1 c\xE1i k\u1ECBch
+      b\u1EA3n m\xE0 g\xF5 c\u0169ng ch\u1EADm!"
+  - victimMessage: "\u1EE7a tr\xFAng th\u01B0\u1EDFng m\xE0 c\u0169ng b\u1EAFt \u0111\xF3ng
+      ph\xED h\u1EA3 ad, h\u01A1i \u1EA3o nha."
+    scriptToType: Do la quy dinh cua bo cong thuong de chong rua tien.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "z\u1EA1 thui r\xE1ng m\u01B0\u1EE3n b\u1EA1n, ph\xED 2 ch\u1EB9o
+      \u0111\xFAg k ad?"
+    scriptToType: Dung roi kem them ba trieu tien thue hai quan nua.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "huhu c\u1EA1n ti\u1EC1n r, e ck 5 ch\u1EB9o g\xF2i, ad ship h\u1ECFa
+      t\u1ED1c nhe."
+    scriptToType: Da cong ty dang dong goi dien thoai cho ban roi a.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Tuy\u1EC7t v\u1EDDi, cu\u1ED1i th\xE1ng tao th\u01B0\u1EDFng
+      cho c\xE1i b\xE1nh bao!"

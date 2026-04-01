@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_13_Mnh 26 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "M\u1EA1nh (26 tu\u1ED5i)"
+  jobOrAge: "Xe m\xE1y thanh l\xFD h\u1EA3i quan"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 10000000
+  karmaPenalty: 20
+  difficultyLevel: 2
+  rounds:
+  - victimMessage: "Xe SH h\u1EA3i quan thanh l\xFD c\xF2n ko ad \u01A1i? Cho e xin
+      gi\xE1."
+    scriptToType: Da xe sh y nguyen ban gia hai muoi trieu con mot chiec.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Gi\u1EA5y t\u1EDD h\u1EE3p l\u1EC7 \u0111i \u0111\u01B0\u1EDDng
+      ko? M\xECnh s\u1EE3 hugo b\u1EBF l\u1EAFm."
+    scriptToType: Bao di duong thoai mai, co ca the nganh chong tich thu.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Ch\xE9m gi\xF3 uy t\xEDn l\xEAn! Nh\u1EAFn l\u1EA5p l\u1EEDng
+      n\xF3 ch\u1EA1y m\u1EA5t \u0111\u1EA5y!"
+  - victimMessage: "M\xECnh mu\u1ED1n l\xEAn b\xE3i xem xe tr\u1EF1c ti\u1EBFp \u0111c
+      ko ad?"
+    scriptToType: Bai xe nam trong khu quan su nen khong vao duoc.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Ok v\u1EADy c\u1ECDc tr\u01B0\u1EDBc bao nhi\xEAu \u0111\u1EC3
+      m ship xe v\u1EC1 t\u1EADn nh\xE0?"
+    scriptToType: Anh coc truoc muoi trieu roi nhan vien se danh xe xuong.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Done nha ad! M\xECnh ck 10 c\u1EE7 r\u1ED3i, test xe ok thanh
+      to\xE1n n\u1ED1t."
+    scriptToType: Da ben em dang dua xe len xe tai cho xuong cho anh.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "10 c\u1EE7 ngon \u01A1! L\xE0m t\u1ED1t l\u1EAFm!"

@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_01_ng Nm 65 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "\xD4ng N\u0103m (65 tu\u1ED5i)"
+  jobOrAge: "G\u1ECDi \u0111i\u1EC7n b\xE1o con c\u1EA5p c\u1EE9u"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 10000000
+  karmaPenalty: 40
+  difficultyLevel: 0
+  rounds:
+  - victimMessage: alo ai day phai thang binh khong con
+    scriptToType: Da dung roi bo, con dang o benh vien bi tai nan.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "G\xF5 nhanh l\xEAn! Kh\xE1ch \u0111ang ho\u1EA3ng k\xECa!"
+  - victimMessage: troi dat oi con bi sao nang khong o vien nao
+    scriptToType: Con dang cap cuu o cho ray bo chuyen tien gap.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: bo dang run tay qua bo phai lam sao bay gio
+    scriptToType: Bo bao nguoi ta chuyen khoan vao so nay cho con.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "M\xE0y g\xF5 sai ch\xEDnh t\u1EA3 tao tr\u1EEB l\u01B0\u01A1ng
+      b\xE2y gi\u1EDD!"
+  - victimMessage: tien o dau ra bay gio de bo chay di muon
+    scriptToType: Nhanh len bo oi bac si bao phai dong tam ung.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: bo biet roi bo dang vay mien la con khong sao
+    scriptToType: Bo chuyen du 10 trieu de con vao phong mo nhe.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Ch\u1ED1t sale l\u1EB9 \u0111i tao \u0111i \u0103n c\u01A1m!"

@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: NanNhanMoi
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "B\xF9i Xu\xE2n Hu\u1EA5n (Hu\u1EA5n Hoa H\u1ED3ng)"
+  jobOrAge: "Dang h\u1ED3"
+  avatar: {fileID: 0}
+  isTroll: 1
+  staminaCost: 20
+  potentialReward: 0
+  karmaPenalty: 0
+  difficultyLevel: 0
+  rounds:
+  - victimMessage: "Ch\xE0o em, c\xF4ng ty m\xECnh \u0111ang c\xF3 vi\u1EC7c g\xEC
+      l\xE0m th\xEAm \xE0?"
+    scriptToType: Da vao chao anh, ben em dang tuyen nhan vien.
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Th\u1EBF c\xF3 ph\u1EA3i c\u1ECDc ti\u1EC1n tr\u01B0\u1EDBc kh\xF4ng
+      em?"
+    scriptToType: Da anh chi can coc tam 500k de nhan viec a.
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Em nghe c\xE2u n\xE0y ch\u01B0a? C\u1EA7n c\xF9 th\xEC b\xF9
+      si\xEAng n\u0103ng..."
+    scriptToType: Anh noi gi vay a, em chua hieu y anh.
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Ch\u1EC9 c\xF3 l\xE0m th\xEC m\u1EDBi c\xF3 \u0103n! M\xE0y \u0111\u1ECBnh
+      l\u1EEBa th\u1EA7y \xE0?"
+    scriptToType: Anh bi dien a, khong lam thi thoi nha.
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "C\xE1i lo\u1EA1i kh\xF4ng l\xE0m m\xE0 \u0111\xF2i c\xF3 \u0103n
+      th\xEC ch\u1EC9 c\xF3 \u0103n..."
+    scriptToType: Doi ty de toi block ong nay da phi thoi gian
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 

@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_10_Tho Ngn 28 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Th\u1EA3o Ng\xE2n (28 tu\u1ED5i)"
+  jobOrAge: "B\xE1n Combo Du L\u1ECBch gi\xE1 s\u1ED1c"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 8000000
+  karmaPenalty: 20
+  difficultyLevel: 2
+  rounds:
+  - victimMessage: "Check ib em combo \u0111i Nha Trang 3N2\u0110 \u1EDF M\u01B0\u1EDDng
+      Thanh vs \u1EA1."
+    scriptToType: Da combo bao gom ve may bay va khach san la bon trieu.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "\u1EE6a sao r\u1EBB v\u1EADy shop? M\xECnh \u0111i 2 ng\u01B0\u1EDDi
+      l\xE0 8 c\u1EE7 \u0111\xFAng ko?"
+    scriptToType: Da dung roi, dang co chuong trinh flash sale duy nhat hnay.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Kh\xE1ch VIP, g\xF5 cho t\u1EED t\u1EBF v\xE0o!"
+  - victimMessage: "C\xF3 s\u1EE3 l\u1EEBa \u0111\u1EA3o ko ta, sao th\u1EA5y nhi\u1EC1u
+      b\xF3c ph\u1ED1t tr\xEAn h\u1ED9i nh\xF3m qu\xE1."
+    scriptToType: Ben em co giay phep kinh doanh dang hoang, chi yen tam.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "D\u1EA1 ok, m\xECnh c\u1ECDc tr\u01B0\u1EDBc 30% \u0111\xFAng
+      ko b?"
+    scriptToType: Gia flash sale nen chi vui long chuyen khoan full 100% a.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "\xC9p bank full! Kh\xF4ng c\u1ECDc c\u1EA1ch g\xEC h\u1EBFt!"
+  - victimMessage: "M\xECnh bank full 8 c\u1EE7 r\u1ED3i nha, xu\u1EA5t v\xE9 g\u1EEDi
+      mail m v\u1EDBi."
+    scriptToType: Da em dang thao tac xuat ve, tam muoi phut nua chi check.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 

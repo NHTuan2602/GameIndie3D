@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: NanNhanMoi 3
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "J\xE2y 9 8"
+  jobOrAge: "Cu\u1ED9c \u0111\u1EDDi phi\xEAu b\u1EA1c \"t\u1EC9\""
+  avatar: {fileID: 0}
+  isTroll: 1
+  staminaCost: 20
+  potentialReward: 5000000
+  karmaPenalty: 20
+  difficultyLevel: 0
+  rounds:
+  - victimMessage: "Ch\xE0o b\u1EA1n, d\u1EA1o n\xE0y s\u1EF1 nghi\u1EC7p \u0111ang
+      g\u1EB7p ch\xFAt s\xF3ng gi\xF3, nghe n\xF3i b\xEAn b\u1EA1n c\xF3 s\u1ED1
+      chu\u1EA9n \u0111\u1EC3 g\u1EE1 g\u1EA1c?"
+    scriptToType: Da dung roi anh, ben em co noi tuyen tu cong ty xo so
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Th\u1EBF ph\xED l\u1EA5y s\u1ED1 VIP l\xE0 bao nhi\xEAu h\u1EA3
+      b\u1EA1n? C\u1EE1 5 c\u1EE7 kh\xF4ng?"
+    scriptToType: Phi vao nhom vip la 5 trieu, dam bao no hai nhay a.
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Bao n\u1ED5 100% kh\xF4ng \u0111\u1EA5y? \u0110\u1EEBng \u0111\u1EC3
+      t\xF4i b\u1EA1c ph\u1EADn nh\xE9"
+    scriptToType: Chinh xac anh a, chung toi lam an uy tin bao lo
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Nghe v\u1EA7ng h\xE0o quang ch\xF3i l\u1ECDi qu\xE1 nh\u1EC9,
+      \u0111\u1EC3 t\xF4i xem x\xE9t"
+    scriptToType: Anh cu chuyen truoc 50 phan tram de lay so hom nay nhe.
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Nh\u01B0ng m\xE0 n\xE0y, s\u1ED1 chu\u1EA9n 100% th\xEC sao b\u1EA1n
+      kh\xF4ng c\u1EAFm s\u1ED5 \u0111\u1ECF nh\xE0 b\u1EA1n m\xE0 t\u1EF1 \u0111\xE1nh
+      \u0111i, \u0111i b\xE1n 5 c\u1EE7 l\xF9a \u0111om \u0111\xF3m l\xE0m g\xEC"
+    scriptToType: DJT CON ME CUOC DOI
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 

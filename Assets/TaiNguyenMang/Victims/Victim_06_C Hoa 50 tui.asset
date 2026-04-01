@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_06_C Hoa 50 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "C\xF4 Hoa (50 tu\u1ED5i)"
+  jobOrAge: "Qu\xE0 t\u1EB7ng t\u1EEB \"B\u1EA1n trai T\xE2y\""
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 10000000
+  karmaPenalty: 30
+  difficultyLevel: 1
+  rounds:
+  - victimMessage: "Anh Mathew n\xF3i g\u1EEDi qu\xE0 cho ch\u1ECB r\u1ED3i, ki\u1EC7n
+      h\xE0ng m\xE3 s\u1ED1 bao nhi\xEAu em?"
+    scriptToType: Da kien hang tu my cua chi dang bi giu o hai quan.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Tr\u1EDDi \u01A1i, trong \u0111\xF3 c\xF3 \u0111\xF4 la v\u1EDBi
+      trang s\u1EE9c \u0111\xF3, l\xE0m sao l\u1EA5y ra?"
+    scriptToType: Chi phai dong phi thue thu nhap de lanh hang ra.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "B\xE0 n\xE0y m\xEA trai T\xE2y l\u1EAFm, b\xE0o m\u1EA1nh
+      v\xE0o!"
+  - victimMessage: "Bao nhi\xEAu v\u1EADy em, ch\u1ECB lo qu\xE1."
+    scriptToType: Da phi la 10 trieu, chi chuyen ngay keo bi tich thu.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Ch\u1ECB kh\xF4ng c\xF3 \u0111\u1EE7, em linh \u0111\u1ED9ng
+      cho ch\u1ECB \u0111\xF3ng tr\u01B0\u1EDBc 5 tri\u1EC7u \u0111\u01B0\u1EE3c
+      ko?"
+    scriptToType: Vay chi chuyen tam truoc roi em linh dong cho.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "\u0110\u1EEBng c\xF3 k\xEC k\xE8o! V\xE9t s\u1EA1ch t\xFAi
+      b\u1EA3 cho tao!"
+  - victimMessage: "Ch\u1ECB chuy\u1EC3n r\u1ED3i \u0111\xF3, ch\u1EEBng n\xE0o ch\u1ECB
+      nh\u1EADn \u0111\u01B0\u1EE3c qu\xE0 v\u1EADy em?"
+    scriptToType: Da trong chieu nay xe chuyen hang se qua nha chi.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 

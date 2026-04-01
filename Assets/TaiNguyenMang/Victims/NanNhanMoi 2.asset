@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: NanNhanMoi 2
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "\u1ED8 I I "
+  jobOrAge: "N\xE0 n\xE1 na na "
+  avatar: {fileID: 0}
+  isTroll: 1
+  staminaCost: 20
+  potentialReward: 5000000
+  karmaPenalty: 20
+  difficultyLevel: 0
+  rounds:
+  - victimMessage: "Ch\xE0o b\u1EA1n, m\xECnh \u0111ang t\xECm vi\u1EC7c online bu\u1ED5i
+      t\u1ED1i."
+    scriptToType: Chao ban, ben minh dang can nguoi review san pham
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "C\xF4ng vi\u1EC7c nghe h\u1EE3p l\xFD \u0111\u1EA5y. L\u01B0\u01A1ng
+      l\u1EADu th\u1EBF n\xE0o?"
+    scriptToType: Lam xong chuyen khoan luon, thu nhap ngay 2 trieu
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Nhi\u1EC1u th\u1EBF c\u01A1 \xE0? Th\u1EBF b\u1EA1n l\xE0m lu\xF4n
+      \u0111i, tuy\u1EC3n m\xECnh l\xE0m g\xEC?"
+    scriptToType: Cong ty co chi tieu nen phai tuyen them nguoi
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "H\u1EE3p l\xFD! ... Nh\u01B0ng m\xE0 tao \u0111\xE9o l\xE0m \u0111\u1EA5y,
+      b\u1EF1c kh\xF4ng? L\xEAu l\xEAu."
+    scriptToType: Cai the loai gi day, toan gap dam tre trau.
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Ch\u01B0a t\xE0y \u0111\xE2u"
+    scriptToType: 
+    timeLimit: 0
+    hasDistraction: 0
+    distractionMessage: 

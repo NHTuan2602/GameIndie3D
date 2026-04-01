@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_09_Hong 30 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Ho\xE0ng (30 tu\u1ED5i)"
+  jobOrAge: "Ph\xEDm l\u1EC7nh Forex / Crypto"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 10000000
+  karmaPenalty: 15
+  difficultyLevel: 1
+  rounds:
+  - victimMessage: "Group ph\xEDm l\u1EC7nh VIP \u0111\u1EE3t n\xE0y winrate cao
+      ko bro?"
+    scriptToType: Ty le thang tren chin muoi phan tram, ngay kiem tram do.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Oke, mu\u1ED1n v\xE0o group k\xEDn \u0111\xE1nh theo chuy\xEAn
+      gia th\xEC \u0111i\u1EC1u ki\u1EC7n g\xEC?"
+    scriptToType: Ban nap toi thieu muoi trieu de mo tai khoan copy trade.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "\u0110\xE1nh v\xE0o l\xF2ng tham c\u1EE7a b\u1ECDn Trader
+      n\xE0y!"
+  - victimMessage: "Ti\u1EC1n n\u1EA1p v\xE0o t\xE0i kho\u1EA3n c\u1EE7a t\xF4i hay
+      c\u1EE7a s\xE0n?"
+    scriptToType: Nap vao san uy tin quoc te, bao mat tuyet doi bro a.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "T\xF4i n\u1EA1p r\u1ED3i, bao gi\u1EDD chuy\xEAn gia \u0111\u1ECDc
+      l\u1EC7nh?"
+    scriptToType: Toi nay tam gio len discord de nghe doc lenh nha.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "T\u1ED1c \u0111\u1ED9 l\xEAn! KPI h\xF4m nay ch\u01B0a \u0111\u1EA1t
+      \u0111\xE2u!"
+  - victimMessage: "B\xE1o n\u1EA1p th\xE0nh c\xF4ng r\u1ED3i, nh\u1EDB add t\xF4i
+      v\xE0o group k\xEDn nha."
+    scriptToType: Da xac nhan xong, toi nay chung ta cung x2 tai khoan.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 

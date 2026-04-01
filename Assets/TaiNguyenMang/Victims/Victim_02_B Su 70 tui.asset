@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_02_B Su 70 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "B\xE0 S\xE1u (70 tu\u1ED5i)"
+  jobOrAge: "L\u1EEBa chuy\u1EC3n ti\u1EC1n t\u1EEB thi\u1EC7n"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 5000000
+  karmaPenalty: 40
+  difficultyLevel: 0
+  rounds:
+  - victimMessage: co gui tien vao quy mo coi duc son roi nha
+    scriptToType: Da co gui nham vao so tai khoan ca nhan roi a.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: chet vay lam sao chua tra lai cho co duoc khong
+    scriptToType: Co phai chuyen them 5 trieu de xac minh tai khoan.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "B\xE0 gi\xE0 n\xE0y d\u1EC5 l\u1EEBa l\u1EAFm, d\xED t\u1EDBi
+      b\u1EBFn cho tao!"
+  - victimMessage: co gia roi khong biet thao tac chau giup co
+    scriptToType: Co cu ra ngan hang bao ho chuyen vao so nay.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: day la tien tiet kiem tri benh cua co do
+    scriptToType: Co chuyen xong chau se hoan tra lai toan bo a.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "\u0110\u1EEBng c\xF3 m\u1EC1m l\xF2ng! L\u1EEBa m\u1EA1nh
+      tay v\xE0o!"
+  - victimMessage: co chuyen roi do chau kiem tra giup co nha
+    scriptToType: Da nhan duoc tien roi de chau xu ly cho co.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 

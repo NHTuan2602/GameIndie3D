@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 447e0ac5183aef842bf6d9331cf14cf3, type: 3}
+  m_Name: Victim_08_Ch Mai 42 tui
+  m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
+  victimName: "Ch\u1ECB Mai (42 tu\u1ED5i)"
+  jobOrAge: "Gi\u1EA3i ng\xE2n vay App kh\xF4ng c\u1EA7n th\u1EBF ch\u1EA5p"
+  avatar: {fileID: 0}
+  isTroll: 0
+  staminaCost: 20
+  potentialReward: 5000000
+  karmaPenalty: 40
+  difficultyLevel: 2
+  rounds:
+  - victimMessage: "Ch\u1ECB \u0111ang c\u1EA7n g\u1EA5p 50 tri\u1EC7u tr\u1EA3 n\u1EE3,
+      app em gi\u1EA3i ng\xE2n nhanh kh\xF4ng?"
+    scriptToType: Da giai ngan trong 5 phut ma khong can the chap.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Ch\u1ECB t\u1EA3i app v\u1EC1 r\u1ED3i, nh\u01B0ng h\u1EC7 th\u1ED1ng
+      b\xE1o l\u1ED7i s\u1ED1 t\xE0i kho\u1EA3n?"
+    scriptToType: Da do chi nhap sai nen tien bi dong bang tren app.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "\u0110\u1ED5 l\u1ED7i cho kh\xE1ch h\xE0ng ngay!"
+  - victimMessage: "Tr\u1EDDi \u01A1i c\u1EE9u ch\u1ECB v\u1EDBi, gi\u1EDD l\xE0m
+      sao \u0111\u1EC3 l\u1EA5y ti\u1EC1n ra?"
+    scriptToType: Chi phai chuyen 5 trieu de xac minh mo dong bang.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
+  - victimMessage: "Ch\u1ECB vay ti\u1EC1n m\xE0 sao b\u1EAFt ch\u1ECB \u0111\xF3ng
+      ti\u1EC1n, ch\u1ECB ngh\xE8o l\u1EAFm r\u1ED3i."
+    scriptToType: Chi dong xong he thong se tra lai du 55 trieu luon.
+    timeLimit: 15
+    hasDistraction: 1
+    distractionMessage: "Th\u1EA5y kh\xE1ch ngh\xE8o m\xE0 m\u1EC1m l\xF2ng l\xE0
+      tao ch\xEDch \u0111i\u1EC7n m\xE0y!"
+  - victimMessage: "Ch\u1ECB m\u01B0\u1EE3n t\u1EA1m vay n\xF3ng chuy\u1EC3n r\u1ED3i
+      \u0111\xF3, m\u1EDF kh\xF3a cho ch\u1ECB \u0111i."
+    scriptToType: Da he thong dang xu ly chi doi khoang muoi phut.
+    timeLimit: 15
+    hasDistraction: 0
+    distractionMessage: 
