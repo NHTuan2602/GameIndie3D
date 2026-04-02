@@ -8,12 +8,12 @@ public class VictimSelectionManager : MonoBehaviour
     [Header("Danh sách 25 Nạn Nhân (Kéo thả vào đây)")]
     public List<VictimProfile> allVictims;
 
-    [Header("UI Của 3 Thẻ Chọn")]
-    public GameObject selectionPanel; // Bảng chứa 3 lựa chọn
-    public Button[] btnSelectVictims; // 3 Nút bấm chọn
-    public TextMeshProUGUI[] nameTexts;
-    public TextMeshProUGUI[] jobTexts;
-    public TextMeshProUGUI[] rewardTexts; // Sẽ luôn hiển thị "??? VNĐ"
+    [Header("UI Của 4 Thẻ Chọn")]
+    public GameObject selectionPanel; // Bảng chứa lựa chọn
+    public Button[] btnSelectVictims; // 4 Nút bấm chọn
+    public TextMeshProUGUI[] nameTexts; // 4 Ô tên
+    public TextMeshProUGUI[] jobTexts; // 4 Ô công việc
+    public TextMeshProUGUI[] rewardTexts; // 4 Ô tiền thưởng
     public Image[] avatarImages;
 
     [Header("Tham chiếu")]
@@ -22,7 +22,9 @@ public class VictimSelectionManager : MonoBehaviour
     // Danh sách nội bộ để lọc không bị trùng
     private List<VictimProfile> normalPool = new List<VictimProfile>();
     private List<VictimProfile> trollPool = new List<VictimProfile>();
-    private VictimProfile[] currentChoices = new VictimProfile[3];
+
+    // ĐÃ FIX: Chứa 4 người thay vì 3
+    private VictimProfile[] currentChoices = new VictimProfile[4];
 
     void Start()
     {
@@ -32,6 +34,9 @@ public class VictimSelectionManager : MonoBehaviour
             if (victim.isTroll) trollPool.Add(victim);
             else normalPool.Add(victim);
         }
+
+        // THÊM ĐÚNG DÒNG NÀY VÀO ĐỂ ÉP NÓ IN CHỮ RA NGAY KHI BẤM PLAY:
+        ShowSelectionUI(1);
     }
 
     // GỌI HÀM NÀY MỖI KHI BẮT ĐẦU CA SÁNG/CHIỀU
@@ -40,23 +45,23 @@ public class VictimSelectionManager : MonoBehaviour
         selectionPanel.SetActive(true);
         List<VictimProfile> tempChoices = new List<VictimProfile>();
 
-        // Luật Ngày 1: Toàn người bình thường
+        // ĐÃ FIX: Luật Ngày 1: Toàn người bình thường (Random 4 người)
         if (currentDay == 1 || trollPool.Count == 0)
         {
-            tempChoices = GetRandomVictims(normalPool, 3);
+            tempChoices = GetRandomVictims(normalPool, 4);
         }
-        // Luật Ngày 2, 3, 4, 5: Bắt buộc có 1 Troll (Nếu còn) và 2 Bình thường
+        // ĐÃ FIX: Luật Ngày 2, 3, 4, 5: Bắt buộc có 1 Troll (Nếu còn) và 3 Bình thường (Tổng 4)
         else
         {
             tempChoices.AddRange(GetRandomVictims(trollPool, 1));
-            tempChoices.AddRange(GetRandomVictims(normalPool, 2));
+            tempChoices.AddRange(GetRandomVictims(normalPool, 3));
         }
 
         // Đảo lộn vị trí để người chơi không biết Troll nằm ở ô nào
         ShuffleList(tempChoices);
 
-        // Hiển thị lên UI
-        for (int i = 0; i < 3; i++)
+        // ĐÃ FIX: Hiển thị lên UI (Vòng lặp 4 lần)
+        for (int i = 0; i < 4; i++)
         {
             if (i < tempChoices.Count)
             {
@@ -67,11 +72,18 @@ public class VictimSelectionManager : MonoBehaviour
                 // GIẤU SỐ TIỀN THƯỞNG
                 rewardTexts[i].text = "Tài sản: ??? VNĐ";
 
-                if (tempChoices[i].avatar != null) avatarImages[i].sprite = tempChoices[i].avatar;
+                // Gán Avatar nếu có
+                if (avatarImages != null && avatarImages.Length > i && tempChoices[i].avatar != null)
+                {
+                    avatarImages[i].sprite = tempChoices[i].avatar;
+                }
 
                 int index = i; // Bắt buộc phải gán biến tạm cho listener
-                btnSelectVictims[i].onClick.RemoveAllListeners();
-                btnSelectVictims[i].onClick.AddListener(() => OnVictimChosen(index));
+                if (btnSelectVictims != null && btnSelectVictims.Length > i)
+                {
+                    btnSelectVictims[i].onClick.RemoveAllListeners();
+                    btnSelectVictims[i].onClick.AddListener(() => OnVictimChosen(index));
+                }
             }
         }
     }
@@ -116,7 +128,7 @@ public class VictimSelectionManager : MonoBehaviour
         selectionPanel.SetActive(false);
 
         // Truyền dữ liệu sang Minigame để bắt đầu gõ phím
-        minigameController.maxMoneyReward = chosenVictim.potentialReward; // Cập nhật tiền thật
+        minigameController.maxMoneyReward = chosenVictim.potentialReward;
         minigameController.karmaPenalty = chosenVictim.karmaPenalty;
         minigameController.StartMiniGame(chosenVictim.rounds, chosenVictim.victimName, chosenVictim.avatar);
     }
