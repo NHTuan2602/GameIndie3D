@@ -314,7 +314,7 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 1, g: 0.8105155, b: 0.3726415, a: 1}
-  m_Intensity: 20
+  m_Intensity: 5.2
   m_Range: 20
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -377,7 +377,7 @@ Transform:
   m_GameObject: {fileID: 11443598}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -128.59, y: 14.7, z: -0.531}
+  m_LocalPosition: {x: -135, y: 16.5, z: -0.531}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2006,6 +2006,10 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: c8affc6f9b83d674fa5571b842a84f03, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c8affc6f9b83d674fa5571b842a84f03, type: 3}
+      propertyPath: m_CastShadows
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c8affc6f9b83d674fa5571b842a84f03, type: 3}
       propertyPath: m_Name

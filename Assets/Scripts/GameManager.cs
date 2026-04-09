@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviour
     public int consecutiveScamFails = 0;
 
     [Header("Vật phẩm Vượt ngục (Góp nhặt ban đêm)")]
+    // BỔ SUNG: Biến kiểm tra sổ tay
+    public bool hasNotebook = false;
     public bool hasWrench = false;
     public bool hasMap = false;
     public bool hasCalledPolice = false;
@@ -59,6 +61,14 @@ public class GameManager : MonoBehaviour
     {
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
         else Destroy(gameObject);
+    }
+
+    // BỔ SUNG: Hàm kiểm tra quyền thu thập đồ vật ban đêm
+    public bool CanCollectItems()
+    {
+        // Từ đêm 2 trở đi, nếu chưa nhặt Sổ Tay thì KHÔNG được nhặt các đồ vật khác
+        if (currentDay >= 2 && !hasNotebook) return false;
+        return true;
     }
 
     public void TakeShockDamage(int damageAmount)
@@ -135,7 +145,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // ĐÃ FIX: Đổi GenerateVictimList() thành ShowSelectionUI(currentDay)
             VictimSelectionManager vsm = FindObjectOfType<VictimSelectionManager>();
             if (vsm != null) vsm.ShowSelectionUI(currentDay);
         }

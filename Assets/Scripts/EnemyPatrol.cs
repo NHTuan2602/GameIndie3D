@@ -70,18 +70,35 @@ public class EnemyPatrol : MonoBehaviour
 
         if (distanceToPlayer <= viewRadius)
         {
-            Vector3 directionToPlayer = (playerTarget.position - transform.position).normalized;
+            // BƯỚC 1: Tìm tâm vật lý chính xác của người chơi (Tránh lỗi bắn tia trượt qua đầu)
+            CharacterController playerCC = playerTarget.GetComponent<CharacterController>();
+            Vector3 playerCenter = playerTarget.position;
 
+            if (playerCC != null)
+            {
+                // Dò đúng vào tâm khối va chạm hiện tại (tự cập nhật khi ngồi/đứng)
+                playerCenter = playerTarget.position + playerCC.center;
+            }
+            else
+            {
+                playerCenter = playerTarget.position + Vector3.up * 1f; // Backup dự phòng
+            }
+
+            Vector3 directionToPlayer = (playerCenter - transform.position).normalized;
+
+            // BƯỚC 2: Kiểm tra xem người chơi có nằm trong góc nón tầm nhìn không
             if (Vector3.Angle(transform.forward, directionToPlayer) < viewAngle / 2)
             {
-                Vector3 enemyEye = transform.position + Vector3.up * 1f;
-                Vector3 playerEye = playerTarget.position + Vector3.up * 1f;
+                // Nâng mắt quái vật lên 1.5 mét để tránh bắn tia kẹt vào chính bụng của nó
+                Vector3 enemyEye = transform.position + Vector3.up * 1.5f;
 
                 RaycastHit hit;
 
-                if (Physics.Linecast(enemyEye, playerEye, out hit))
+                // BƯỚC 3: Bắn tia Linecast kiểm tra vật cản
+                if (Physics.Linecast(enemyEye, playerCenter, out hit))
                 {
-                    if (hit.transform == playerTarget)
+                    // Dùng CompareTag("Player") an toàn tuyệt đối so với việc so sánh Transform
+                    if (hit.transform == playerTarget || hit.transform.CompareTag("Player"))
                     {
                         // PHÁT HIỆN NGƯỜI CHƠI -> BẬT CHẾ ĐỘ RƯỢT ĐUỔI
                         if (!isChasing)
@@ -93,7 +110,7 @@ public class EnemyPatrol : MonoBehaviour
                             // Đổi màu đèn pin sang ĐỎ rực
                             if (enemyFlashlight != null) enemyFlashlight.color = Color.red;
                         }
-                        return;
+                        return; // Dừng hàm lại ở đây vì đã phát hiện
                     }
                 }
             }
