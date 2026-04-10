@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections; // Bắt buộc phải có cái này để chạy đếm ngược 5 giây
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyPatrol : MonoBehaviour
@@ -12,14 +13,13 @@ public class EnemyPatrol : MonoBehaviour
     public float patrolSpeed = 3.5f;
     public float chaseSpeed = 7f;
 
-    [Header("Cài đặt Tầm nhìn (Field of View)")]
+    [Header("Cài đặt Tầm nhìn")]
     public float viewRadius = 10f;
     [Range(0, 360)]
     public float viewAngle = 90f;
     public Transform playerTarget;
 
     [Header("Cài đặt Đèn pin AI")]
-    [Tooltip("Kéo thả Spot Light của Enemy vào đây")]
     public Light enemyFlashlight;
 
     private NavMeshAgent agent;
@@ -27,6 +27,9 @@ public class EnemyPatrol : MonoBehaviour
     private bool isWaiting = false;
     private float waitTimer = 0f;
     private bool isChasing = false;
+
+    // MỚI: Trạng thái choáng
+    private bool isStunned = false;
 
     void Start()
     {
@@ -38,7 +41,6 @@ public class EnemyPatrol : MonoBehaviour
             agent.SetDestination(waypoints[0].position);
         }
 
-        // Tự động đồng bộ góc chiếu sáng và độ xa của đèn pin với tầm nhìn của AI
         if (enemyFlashlight != null)
         {
             enemyFlashlight.color = Color.white;
@@ -49,11 +51,13 @@ public class EnemyPatrol : MonoBehaviour
 
     void Update()
     {
+        // Nếu đang bị choáng thì đứng im, không nhìn, không đuổi
+        if (isStunned) return;
+
         CheckPlayerInSight();
 
         if (isChasing)
         {
-            // Cập nhật liên tục vị trí của Player để đuổi theo
             agent.SetDestination(playerTarget.position);
         }
         else
@@ -62,6 +66,67 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
+    // ==========================================
+    // PHẦN XỬ LÝ VA CHẠM (BẮT NGƯỜI & LÀM CHOÁNG)
+    // ==========================================
+    private void OnTriggerEnter(Collider other)
+    {
+        // Đặt bẫy Log để xem quái đụng trúng cái gì (Nhìn góc dưới bên trái màn hình Unity)
+        Debug.Log("<color=cyan>QUÁI VẬT VỪA CHẠM VÀO: " + other.gameObject.name + " | CÓ TAG LÀ: " + other.tag + "</color>");
+
+        // Nếu chạm đúng Player và quái đang không bị choáng
+        if (other.CompareTag("Player") && !isStunned)
+        {
+            HandleCatchingPlayer();
+        }
+    }
+
+    void HandleCatchingPlayer()
+    {
+        // Gọi sang GameManager để tính toán 3 mạng
+        if (GameManager.instance != null)
+        {
+            bool shouldResetLevel = GameManager.instance.OnPlayerCaught();
+
+            if (!shouldResetLevel)
+            {
+                // Nếu chưa hết 3 mạng -> Vùng vẫy làm choáng quái vật 5 giây
+                StartCoroutine(GetStunned(5f));
+            }
+            // Nếu shouldResetLevel = true thì GameManager đã tự động đá về phòng ngủ rồi, quái không cần làm gì thêm.
+        }
+        else
+        {
+            Debug.LogError("LỖI: Không tìm thấy GameManager trong Scene! Hãy chạy game từ đầu hoặc ném Prefab GameManager vào Scene.");
+        }
+    }
+
+    IEnumerator GetStunned(float duration)
+    {
+        isStunned = true;
+        isChasing = false;
+        agent.isStopped = true; // Phanh gấp, không di chuyển nữa
+
+        // Hiệu ứng: Đèn pin và màu người đổi sang VÀNG CHÓI
+        if (enemyFlashlight != null) enemyFlashlight.color = Color.yellow;
+        GetComponent<Renderer>().material.color = Color.yellow;
+
+        // Đứng hình 5 giây
+        yield return new WaitForSeconds(duration);
+
+        // Hết 5 giây, tỉnh dậy
+        isStunned = false;
+        agent.isStopped = false; // Cho phép đi lại
+        if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
+        GetComponent<Renderer>().material.color = Color.white;
+
+        // Trở về đi tuần tra (để người chơi có cơ hội trốn)
+        agent.SetDestination(waypoints[currentWaypointIndex].position);
+    }
+
+    // ==========================================
+    // PHẦN TẦM NHÌN (ĐÃ FIX LỖI TIA BẮN QUA ĐẦU)
+    // ==========================================
     void CheckPlayerInSight()
     {
         if (playerTarget == null) return;
@@ -70,62 +135,42 @@ public class EnemyPatrol : MonoBehaviour
 
         if (distanceToPlayer <= viewRadius)
         {
-            // BƯỚC 1: Tìm tâm vật lý chính xác của người chơi (Tránh lỗi bắn tia trượt qua đầu)
             CharacterController playerCC = playerTarget.GetComponent<CharacterController>();
             Vector3 playerCenter = playerTarget.position;
 
-            if (playerCC != null)
-            {
-                // Dò đúng vào tâm khối va chạm hiện tại (tự cập nhật khi ngồi/đứng)
-                playerCenter = playerTarget.position + playerCC.center;
-            }
-            else
-            {
-                playerCenter = playerTarget.position + Vector3.up * 1f; // Backup dự phòng
-            }
+            if (playerCC != null) playerCenter = playerTarget.position + playerCC.center;
+            else playerCenter = playerTarget.position + Vector3.up * 1f;
 
             Vector3 directionToPlayer = (playerCenter - transform.position).normalized;
 
-            // BƯỚC 2: Kiểm tra xem người chơi có nằm trong góc nón tầm nhìn không
             if (Vector3.Angle(transform.forward, directionToPlayer) < viewAngle / 2)
             {
-                // Nâng mắt quái vật lên 1.5 mét để tránh bắn tia kẹt vào chính bụng của nó
                 Vector3 enemyEye = transform.position + Vector3.up * 1.5f;
-
                 RaycastHit hit;
 
-                // BƯỚC 3: Bắn tia Linecast kiểm tra vật cản
                 if (Physics.Linecast(enemyEye, playerCenter, out hit))
                 {
-                    // Dùng CompareTag("Player") an toàn tuyệt đối so với việc so sánh Transform
                     if (hit.transform == playerTarget || hit.transform.CompareTag("Player"))
                     {
-                        // PHÁT HIỆN NGƯỜI CHƠI -> BẬT CHẾ ĐỘ RƯỢT ĐUỔI
                         if (!isChasing)
                         {
                             isChasing = true;
                             agent.speed = chaseSpeed;
                             GetComponent<Renderer>().material.color = Color.red;
-
-                            // Đổi màu đèn pin sang ĐỎ rực
                             if (enemyFlashlight != null) enemyFlashlight.color = Color.red;
                         }
-                        return; // Dừng hàm lại ở đây vì đã phát hiện
+                        return;
                     }
                 }
             }
         }
 
-        // MẤT DẤU NGƯỜI CHƠI -> QUAY LẠI ĐI TUẦN
         if (isChasing)
         {
             isChasing = false;
             agent.speed = patrolSpeed;
             GetComponent<Renderer>().material.color = Color.white;
-
-            // Đổi màu đèn pin về lại màu TRẮNG
             if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
-
             agent.SetDestination(waypoints[currentWaypointIndex].position);
         }
     }

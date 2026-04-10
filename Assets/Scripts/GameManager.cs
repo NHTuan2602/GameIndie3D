@@ -13,6 +13,14 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    // ==========================================
+    // BỔ SUNG: CHẾ ĐỘ DÀNH CHO NHÀ PHÁT TRIỂN
+    // ==========================================
+    [Header("Chế độ Dev (Dành cho Test)")]
+    public bool enableDevMode = false; // Tích vào đây để bật hack
+    public int testStartDay = 2;       // Muốn test đêm mấy thì gõ vào đây
+    public bool testHasNotebook = false; // Tích vào đây nếu muốn có sẵn Sổ tay từ đầu
+
     [Header("Thông tin Nhân vật")]
     public string playerName = "Tuấn";
 
@@ -42,7 +50,6 @@ public class GameManager : MonoBehaviour
     public int consecutiveScamFails = 0;
 
     [Header("Vật phẩm Vượt ngục (Góp nhặt ban đêm)")]
-    // BỔ SUNG: Biến kiểm tra sổ tay
     public bool hasNotebook = false;
     public bool hasWrench = false;
     public bool hasMap = false;
@@ -50,6 +57,10 @@ public class GameManager : MonoBehaviour
     public bool hasRope = false;
     public int collectedQuestItems = 0;
     public int requiredItemsToEscape = 3;
+
+    [Header("Hệ thống Mạng (Đêm thám thính)")]
+    public int caughtCountThisNight = 0;
+    public int maxCaughtBeforeReset = 3;
 
     [Header("--- HỆ THỐNG VÒNG LẶP ---")]
     public GamePhase currentPhase = GamePhase.Morning;
@@ -63,10 +74,45 @@ public class GameManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    // BỔ SUNG: Hàm kiểm tra quyền thu thập đồ vật ban đêm
+    // BỔ SUNG: Chạy Dev Mode ngay khi bắt đầu game
+    void Start()
+    {
+        if (enableDevMode)
+        {
+            Debug.Log("<color=cyan>--- ĐANG CHẠY CHẾ ĐỘ DEV MODE ---</color>");
+            currentDay = testStartDay;
+            hasNotebook = testHasNotebook;
+
+            // Ép thời gian sang buổi đêm nếu bạn đang test Scene Night
+            if (SceneManager.GetActiveScene().name.Contains("Night"))
+            {
+                currentPhase = GamePhase.Night;
+            }
+        }
+    }
+
+    public bool OnPlayerCaught()
+    {
+        caughtCountThisNight++;
+
+        if (caughtCountThisNight >= maxCaughtBeforeReset)
+        {
+            Debug.Log("<color=red>BỊ BẮT QUÁ 3 LẦN! CHÍCH ĐIỆN VỀ PHÒNG NGỦ.</color>");
+            caughtCountThisNight = 0;
+            CaughtByNightGuard();
+            return true;
+        }
+        else
+        {
+            int livesLeft = maxCaughtBeforeReset - caughtCountThisNight;
+            Debug.Log($"<color=orange>VÙNG VẪY THÀNH CÔNG! Lính canh bị choáng. Còn {livesLeft} mạng.</color>");
+            TakeShockDamage(20);
+            return false;
+        }
+    }
+
     public bool CanCollectItems()
     {
-        // Từ đêm 2 trở đi, nếu chưa nhặt Sổ Tay thì KHÔNG được nhặt các đồ vật khác
         if (currentDay >= 2 && !hasNotebook) return false;
         return true;
     }
@@ -225,7 +271,10 @@ public class GameManager : MonoBehaviour
         maxStamina -= 20;
         if (maxStamina < 20) maxStamina = 20;
         stamina = maxStamina;
-        AdvanceToNextDay();
+
+        Debug.Log("Bị bảo vệ tóm cổ! Đuổi thẳng về phòng ngủ (NightScreen).");
+        currentPhase = GamePhase.Night;
+        SceneManager.LoadScene("NightScreen");
     }
 
     public void FinishScoutingNight()
@@ -257,6 +306,7 @@ public class GameManager : MonoBehaviour
         gambleCountTonight = 0;
         consecutiveScamFails = 0;
         hasAskedToContinue = false;
+        caughtCountThisNight = 0;
 
         TransitionToPhase(GamePhase.Morning);
     }
