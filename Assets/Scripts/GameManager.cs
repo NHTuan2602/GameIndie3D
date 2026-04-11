@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public int testStartDay = 2;       // Muốn test đêm mấy thì gõ vào đây
     public bool testHasNotebook = false; // Tích vào đây nếu muốn có sẵn Sổ tay từ đầu
 
-    [Header("Thông tin Nhân vật")]
+    [Header("Thông định Nhân vật")]
     public string playerName = "Tuấn";
 
     [Header("Chỉ số Sinh tồn")]
@@ -70,13 +70,11 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        // 1. Khởi tạo Singleton
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
         else Destroy(gameObject);
-    }
 
-    // BỔ SUNG: Chạy Dev Mode ngay khi bắt đầu game
-    void Start()
-    {
+        // 2. CHẠY DEV MODE NGAY TẠI ĐÂY
         if (enableDevMode)
         {
             Debug.Log("<color=cyan>--- ĐANG CHẠY CHẾ ĐỘ DEV MODE ---</color>");
@@ -98,7 +96,7 @@ public class GameManager : MonoBehaviour
         if (caughtCountThisNight >= maxCaughtBeforeReset)
         {
             Debug.Log("<color=red>BỊ BẮT QUÁ 3 LẦN! CHÍCH ĐIỆN VỀ PHÒNG NGỦ.</color>");
-            caughtCountThisNight = 0;
+            // ĐÃ XÓA LỆNH RESET Ở ĐÂY - Giữ nguyên bằng chứng để NightScreenManager kiểm tra!
             CaughtByNightGuard();
             return true;
         }
@@ -306,6 +304,8 @@ public class GameManager : MonoBehaviour
         gambleCountTonight = 0;
         consecutiveScamFails = 0;
         hasAskedToContinue = false;
+
+        // MỘT KHI ĐÃ SANG NGÀY MỚI THÌ MỚI ĐƯỢC RESET LẠI SỔ ĐEN
         caughtCountThisNight = 0;
 
         TransitionToPhase(GamePhase.Morning);
