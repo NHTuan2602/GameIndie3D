@@ -71,12 +71,30 @@ public class EnemyPatrol : MonoBehaviour
     // ==========================================
     private void OnTriggerEnter(Collider other)
     {
-        // Đặt bẫy Log để xem quái đụng trúng cái gì (Nhìn góc dưới bên trái màn hình Unity)
+        // Đặt bẫy Log để xem quái đụng trúng cái gì
         Debug.Log("<color=cyan>QUÁI VẬT VỪA CHẠM VÀO: " + other.gameObject.name + " | CÓ TAG LÀ: " + other.tag + "</color>");
 
         // Nếu chạm đúng Player và quái đang không bị choáng
         if (other.CompareTag("Player") && !isStunned)
         {
+            // --- FIX GÓC KHUẤT: BÀN TAY XUYÊN THẤU ---
+            // Lấy tâm bụng của AI (cao 1m) và tâm của người chơi
+            Vector3 enemyCenter = transform.position + Vector3.up * 1f;
+            Vector3 playerCenter = other.bounds.center;
+
+            RaycastHit hit;
+            // Bắn một tia từ AI đến người chơi để xem có bị cản không
+            if (Physics.Linecast(enemyCenter, playerCenter, out hit))
+            {
+                // Nếu tia đụng trúng cái Bàn hoặc Tường (không phải Player)
+                if (!hit.transform.CompareTag("Player"))
+                {
+                    Debug.Log("<color=yellow>AI sờ trúng người nhưng bị CÁI BÀN cản lại! Tha mạng!</color>");
+                    return; // Hủy lệnh bắt người, thoát ra ngay!
+                }
+            }
+
+            // Nếu không có gì cản thì mới tiến hành bắt người
             HandleCatchingPlayer();
         }
     }
@@ -93,7 +111,6 @@ public class EnemyPatrol : MonoBehaviour
                 // Nếu chưa hết 3 mạng -> Vùng vẫy làm choáng quái vật 5 giây
                 StartCoroutine(GetStunned(5f));
             }
-            // Nếu shouldResetLevel = true thì GameManager đã tự động đá về phòng ngủ rồi, quái không cần làm gì thêm.
         }
         else
         {
@@ -125,7 +142,7 @@ public class EnemyPatrol : MonoBehaviour
     }
 
     // ==========================================
-    // PHẦN TẦM NHÌN (ĐÃ FIX LỖI TIA BẮN QUA ĐẦU)
+    // PHẦN TẦM NHÌN
     // ==========================================
     void CheckPlayerInSight()
     {
