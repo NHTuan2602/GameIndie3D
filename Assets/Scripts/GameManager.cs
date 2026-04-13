@@ -17,9 +17,9 @@ public class GameManager : MonoBehaviour
     // BỔ SUNG: CHẾ ĐỘ DÀNH CHO NHÀ PHÁT TRIỂN
     // ==========================================
     [Header("Chế độ Dev (Dành cho Test)")]
-    public bool enableDevMode = false; // Tích vào đây để bật hack
-    public int testStartDay = 2;       // Muốn test đêm mấy thì gõ vào đây
-    public bool testHasNotebook = false; // Tích vào đây nếu muốn có sẵn Sổ tay từ đầu
+    public bool enableDevMode = false;
+    public int testStartDay = 2;
+    public bool testHasNotebook = false;
 
     [Header("Thông định Nhân vật")]
     public string playerName = "Tuấn";
@@ -68,25 +68,42 @@ public class GameManager : MonoBehaviour
     public bool unlockedScouting = false;
     public int gambleCountTonight = 0;
 
+    // ==========================================
+    // SỰ KIỆN ĐÊM 5 (VƯỢT NGỤC)
+    // ==========================================
+    [Header("Sự kiện Đêm 5")]
+    public bool isEscapeStart = false;
+    public int escapeProgress = 0; // 0: Đu dây, 1: Cắt rào, 2: Đua xe
+    public bool isRedAlert = false;
+
     void Awake()
     {
-        // 1. Khởi tạo Singleton
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
         else Destroy(gameObject);
 
-        // 2. CHẠY DEV MODE NGAY TẠI ĐÂY
         if (enableDevMode)
         {
             Debug.Log("<color=cyan>--- ĐANG CHẠY CHẾ ĐỘ DEV MODE ---</color>");
             currentDay = testStartDay;
             hasNotebook = testHasNotebook;
 
-            // Ép thời gian sang buổi đêm nếu bạn đang test Scene Night
             if (SceneManager.GetActiveScene().name.Contains("Night"))
             {
                 currentPhase = GamePhase.Night;
             }
         }
+    }
+
+    public void StartEscape()
+    {
+        isEscapeStart = true;
+        isRedAlert = true;
+        // Kích hoạt còi hú, đèn đỏ toàn khu trại
+        RenderSettings.ambientLight = Color.red;
+        Debug.Log("<color=red>BÁO ĐỘNG ĐỎ! CHẾ ĐỘ VƯỢT NGỤC KÍCH HOẠT!</color>");
+
+        // Bạn có thể dùng lệnh SceneManager.LoadScene() ở đây để load thẳng vào màn đua xe
+        // SceneManager.LoadScene("EscapeBikeScene");
     }
 
     public bool OnPlayerCaught()
@@ -96,7 +113,6 @@ public class GameManager : MonoBehaviour
         if (caughtCountThisNight >= maxCaughtBeforeReset)
         {
             Debug.Log("<color=red>BỊ BẮT QUÁ 3 LẦN! CHÍCH ĐIỆN VỀ PHÒNG NGỦ.</color>");
-            // ĐÃ XÓA LỆNH RESET Ở ĐÂY - Giữ nguyên bằng chứng để NightScreenManager kiểm tra!
             CaughtByNightGuard();
             return true;
         }
@@ -305,7 +321,6 @@ public class GameManager : MonoBehaviour
         consecutiveScamFails = 0;
         hasAskedToContinue = false;
 
-        // MỘT KHI ĐÃ SANG NGÀY MỚI THÌ MỚI ĐƯỢC RESET LẠI SỔ ĐEN
         caughtCountThisNight = 0;
 
         TransitionToPhase(GamePhase.Morning);

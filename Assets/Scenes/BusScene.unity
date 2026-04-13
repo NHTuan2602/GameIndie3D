@@ -853,7 +853,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1603294395}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &886476854
 GameObject:
@@ -887,7 +887,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1603294395}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &886476856
 CapsuleCollider:
@@ -1974,7 +1974,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1603294395}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 185.068, y: 0.94099426, z: 37.293}
 --- !u!1 &1628777487
 GameObject:
@@ -2111,7 +2111,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1603294395}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1701351406
 MonoBehaviour:
@@ -2411,12 +2411,6 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1701351405}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 884365769}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 44543887}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
       insertIndex: -1
@@ -2433,15 +2427,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 553703824}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1604468422}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2071339610}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 886476855}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
 --- !u!1 &2010836557 stripped
@@ -2503,7 +2488,7 @@ Transform:
   m_LocalScale: {x: 10, y: 1, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1603294395}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &2071339611
 MeshCollider:
@@ -2596,3 +2581,8 @@ SceneRoots:
   - {fileID: 1628777491}
   - {fileID: 1954905042}
   - {fileID: 173519665}
+  - {fileID: 1701351405}
+  - {fileID: 884365769}
+  - {fileID: 1604468422}
+  - {fileID: 2071339610}
+  - {fileID: 886476855}
