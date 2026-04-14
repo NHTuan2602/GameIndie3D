@@ -3,15 +3,14 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class EscapeBikeController : MonoBehaviour
 {
-    [Header("Cài đặt Di chuyển Tự do")]
+    [Header("Cài đặt Di chuyển")]
     public float forwardSpeed = 30f;
     public float steerSpeed = 15f;
     public float gravity = -15f;
 
-    // ĐÃ XÓA HOÀN TOÀN: roadBoundary vì đã dùng tường tàng hình vật lý
-
-    [Header("Hệ thống Radar Định vị (Mới)")]
-    public int currentDetectedLane = 1; // 1: Làn 1 (Trái), 3: Làn 3 (Giữa), 2: Làn 2 (Phải)
+    [Header("Radar Định vị Làn đường")]
+    public int currentDetectedLane = 3; // Mặc định ở giữa
+    private int lastLane = -1; // Biến phụ để theo dõi sự thay đổi
 
     private CharacterController controller;
 
@@ -28,21 +27,11 @@ public class EscapeBikeController : MonoBehaviour
 
     void ApplyFreeMovement()
     {
-        // 1. Nhận phím lạng lách (A/D hoặc Mũi tên)
         float horizontalInput = Input.GetAxis("Horizontal");
-
-        // 2. Tính toán vận tốc (Trục X: Lách, Trục Y: Rơi, Trục Z: Tiến)
         float moveX = horizontalInput * steerSpeed;
-        float fallSpeed = gravity;
-
-        if (controller.isGrounded)
-        {
-            fallSpeed = -2f; // Ép nhẹ xuống mặt đường để xe không bị nảy lên
-        }
+        float fallSpeed = controller.isGrounded ? -2f : gravity;
 
         Vector3 moveVector = new Vector3(moveX, fallSpeed, forwardSpeed);
-
-        // 3. Lệnh di chuyển tự do. Xe sẽ tự trượt khi tông trúng tường tàng hình.
         controller.Move(moveVector * Time.deltaTime);
     }
 
@@ -50,18 +39,44 @@ public class EscapeBikeController : MonoBehaviour
     {
         float x = transform.position.x;
 
-        // BỘ NHẬN DIỆN LÀN ĐƯỜNG THEO TỌA ĐỘ BẢN ĐỒ MỚI
+        // 1. Logic phân làn theo tọa độ Tuấn cung cấp
         if (x <= 4.894493f)
         {
-            currentDetectedLane = 1; // Khu vực từ -30.23792 đổ xuống 4.894493
+            currentDetectedLane = 1;
         }
         else if (x >= 35.10812f)
         {
-            currentDetectedLane = 2; // Khu vực từ 35.10812 đổ lên
+            currentDetectedLane = 2;
         }
         else
         {
-            currentDetectedLane = 3; // Khu vực "Còn lại" kẹp ở giữa
+            currentDetectedLane = 3;
         }
+
+        // 2. CHỈ DEBUG KHI CÓ SỰ THAY ĐỔI (Tránh spam Console)
+        if (currentDetectedLane != lastLane)
+        {
+            string laneName = "";
+            switch (currentDetectedLane)
+            {
+                case 1: laneName = "<color=cyan>LÀN 1 (TRÁI)</color>"; break;
+                case 2: laneName = "<color=yellow>LÀN 2 (PHẢI)</color>"; break;
+                case 3: laneName = "<color=white>LÀN 3 (GIỮA)</color>"; break;
+            }
+
+            Debug.Log($"[Radar] Tọa độ X: {x:F2} | Trạng thái: {laneName}");
+            lastLane = currentDetectedLane;
+        }
+    }
+
+    // 3. VẼ VẠCH NGƯỠNG TRONG CỬA SỔ SCENE ĐỂ DỄ QUAN SÁT
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Vector3 pos = transform.position;
+        // Vẽ vạch ngăn làn 1 và làn 3
+        Gizmos.DrawLine(new Vector3(4.894493f, pos.y, pos.z - 5), new Vector3(4.894493f, pos.y, pos.z + 10));
+        // Vẽ vạch ngăn làn 3 và làn 2
+        Gizmos.DrawLine(new Vector3(35.10812f, pos.y, pos.z - 5), new Vector3(35.10812f, pos.y, pos.z + 10));
     }
 }
