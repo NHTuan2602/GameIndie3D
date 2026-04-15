@@ -4,13 +4,17 @@ using UnityEngine;
 public class EscapeBikeController : MonoBehaviour
 {
     [Header("Cài đặt Di chuyển")]
-    public float forwardSpeed = 30f;
-    public float steerSpeed = 15f;
+    public float forwardSpeed = 40f; // Tốc độ tiến thẳng
+    public float steerSpeed = 30f;   // Tốc độ lách qua lại
     public float gravity = -15f;
 
-    [Header("Radar Định vị Làn đường")]
-    public int currentDetectedLane = 3; // Mặc định ở giữa
-    private int lastLane = -1; // Biến phụ để theo dõi sự thay đổi
+    [Header("Radar Định vị Làn đường (Chuẩn Mới)")]
+    // KÉO 2 BIẾN NÀY ĐỂ VẠCH ĐỎ KHỚP VỚI VẠCH VÀNG TRÊN SCENE
+    public float leftLaneBoundary = -5f;
+    public float rightLaneBoundary = 5f;
+
+    public int currentDetectedLane = 2; // 1: Trái, 2: Giữa, 3: Phải
+    private int lastLane = -1;
 
     private CharacterController controller;
 
@@ -39,29 +43,19 @@ public class EscapeBikeController : MonoBehaviour
     {
         float x = transform.position.x;
 
-        // 1. Logic phân làn theo tọa độ Tuấn cung cấp
-        if (x <= 4.894493f)
-        {
-            currentDetectedLane = 1;
-        }
-        else if (x >= 35.10812f)
-        {
-            currentDetectedLane = 2;
-        }
-        else
-        {
-            currentDetectedLane = 3;
-        }
+        // Tự động phân làn dựa vào 2 ranh giới bạn set trên Inspector
+        if (x < leftLaneBoundary) currentDetectedLane = 1;
+        else if (x > rightLaneBoundary) currentDetectedLane = 3;
+        else currentDetectedLane = 2;
 
-        // 2. CHỈ DEBUG KHI CÓ SỰ THAY ĐỔI (Tránh spam Console)
         if (currentDetectedLane != lastLane)
         {
             string laneName = "";
             switch (currentDetectedLane)
             {
                 case 1: laneName = "<color=cyan>LÀN 1 (TRÁI)</color>"; break;
-                case 2: laneName = "<color=yellow>LÀN 2 (PHẢI)</color>"; break;
-                case 3: laneName = "<color=white>LÀN 3 (GIỮA)</color>"; break;
+                case 2: laneName = "<color=white>LÀN 2 (GIỮA)</color>"; break;
+                case 3: laneName = "<color=yellow>LÀN 3 (PHẢI)</color>"; break;
             }
 
             Debug.Log($"[Radar] Tọa độ X: {x:F2} | Trạng thái: {laneName}");
@@ -69,14 +63,12 @@ public class EscapeBikeController : MonoBehaviour
         }
     }
 
-    // 3. VẼ VẠCH NGƯỠNG TRONG CỬA SỔ SCENE ĐỂ DỄ QUAN SÁT
+    // Vẽ vạch đỏ ra màn hình Scene để dễ căn chỉnh bằng mắt
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Vector3 pos = transform.position;
-        // Vẽ vạch ngăn làn 1 và làn 3
-        Gizmos.DrawLine(new Vector3(4.894493f, pos.y, pos.z - 5), new Vector3(4.894493f, pos.y, pos.z + 10));
-        // Vẽ vạch ngăn làn 3 và làn 2
-        Gizmos.DrawLine(new Vector3(35.10812f, pos.y, pos.z - 5), new Vector3(35.10812f, pos.y, pos.z + 10));
+        Gizmos.DrawLine(new Vector3(leftLaneBoundary, pos.y, pos.z - 10), new Vector3(leftLaneBoundary, pos.y, pos.z + 50));
+        Gizmos.DrawLine(new Vector3(rightLaneBoundary, pos.y, pos.z - 10), new Vector3(rightLaneBoundary, pos.y, pos.z + 50));
     }
 }

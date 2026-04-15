@@ -7,27 +7,37 @@ public class EscapeCombatManager : MonoBehaviour
 
     [Header("Chỉ số Địch")]
     public float enemyHealth = 100f;
-    public float attackDamage = 25f;
+    public float attackDamage = 20f;
     public UnityEngine.UI.Slider enemyHealthBar;
 
+    [Header("Vật phẩm ném")]
+    public int brickCount = 0; // Số lượng đồ đang có
+    public TextMeshProUGUI inventoryUI;
+    public GameObject projectilePrefab; // Prefab viên gạch/chai lọ
+    public Transform throwPoint; // Vị trí ném (trên xe đạp)
+
     [Header("UI Giải toán")]
-    public GameObject mathPanel;
     public TextMeshProUGUI questionText;
     public TMP_InputField answerField;
-
     private int currentAnswer;
 
     void Awake() => Instance = this;
 
-    void Start()
+    void Start() { GenerateQuestion(); }
+
+    void Update()
     {
-        GenerateQuestion();
+        // Nhấn Space để ném đồ nếu có gạch
+        if (Input.GetKeyDown(KeyCode.Space) && brickCount > 0)
+        {
+            ThrowObject();
+        }
     }
 
     public void GenerateQuestion()
     {
-        int a = Random.Range(1, 10);
-        int b = Random.Range(1, 10);
+        int a = Random.Range(10, 50);
+        int b = Random.Range(10, 50);
         currentAnswer = a + b;
         questionText.text = $"{a} + {b} = ?";
         answerField.text = "";
@@ -38,23 +48,31 @@ public class EscapeCombatManager : MonoBehaviour
     {
         if (int.Parse(answerField.text) == currentAnswer)
         {
-            AttackEnemy();
+            brickCount++; // Giải đúng nhận thêm 1 món đồ
+            UpdateUI();
             GenerateQuestion();
         }
+    }
+
+    void ThrowObject()
+    {
+        brickCount--;
+        UpdateUI();
+
+        // Spawn vật thể ném về phía sau
+        GameObject projectile = Instantiate(projectilePrefab, throwPoint.position, Quaternion.identity);
+        // Code cho vật thể bay ngược lại và trừ máu địch khi va chạm
+
+        AttackEnemy();
     }
 
     void AttackEnemy()
     {
         enemyHealth -= attackDamage;
         enemyHealthBar.value = enemyHealth;
-
-        // Hiệu ứng bắn súng/ném đồ
-        Debug.Log("<color=green>TRÚNG ĐÍCH! Địch mất máu.</color>");
-
-        if (enemyHealth <= 0)
-        {
-            Debug.Log("<color=cyan>CHIẾN THẮNG! Địch đã bị hạ gục.</color>");
-            // Chuyển sang kết phim (Ending)
-        }
+        if (enemyHealth <= 0) WinByCombat();
     }
+
+    void UpdateUI() { if (inventoryUI) inventoryUI.text = "Đồ ném: x" + brickCount; }
+    void WinByCombat() { Debug.Log("ĐỊCH ĐÃ TÉ XE! BẠN ĐÃ THOÁT."); }
 }
