@@ -1,21 +1,24 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class PursuitManager : MonoBehaviour
 {
     public static PursuitManager instance;
 
-    [Header("Chỉ số Truy đuổi")]
-    public float pursuerDistance = 50f;
-    public float catchDistance = 5f;
-    public float winDistance = 150f;
-    public float basePursuerSpeed = 30f;
+    [Header("Chỉ số Sinh tồn & Chiến đấu")]
+    public float distanceRan = 0f;
+    public float winDistance = 10f;
+    public int enemiesRemaining = 10;
+    public int currentEnemyHealth = 3;
 
-    [Header("Kết nối Object & UI")]
+    [Header("Kết nối UI & Object")]
     public EscapeBikeController player;
-    public TextMeshProUGUI distanceUI;
-    public TextMeshProUGUI statusUI; // <-- TÔI ĐÃ THÊM LẠI NÓ (Để hiển thị Tốc độ / Thông báo)
+    public GameObject projectilePrefab;
+    public TextMeshProUGUI statusUI;
+    public GameObject killNotificationUI;
+    public TextMeshProUGUI killMessageText;
     public GameObject gameOverPanel;
     public GameObject winPanel;
 
@@ -35,56 +38,68 @@ public class PursuitManager : MonoBehaviour
             return;
         }
 
-        // --- 1. LOGIC KHOẢNG CÁCH DỰA VÀO TỐC ĐỘ ---
-        float speedDelta = player.forwardSpeed - basePursuerSpeed;
-        pursuerDistance += speedDelta * Time.deltaTime;
+        distanceRan += (player.forwardSpeed * Time.deltaTime) / 1000f;
 
-        // --- 2. CẬP NHẬT GIAO DIỆN ---
-        if (distanceUI != null)
-            distanceUI.text = $"Địch cách: {pursuerDistance:F1}m\n(Mục tiêu: {winDistance}m)";
+        if (player.forwardSpeed <= 10f) GameOver("BỊ BẮT DO TỐC ĐỘ QUÁ THẤP!");
 
-        // Cập nhật Đồng hồ tốc độ liên tục
-        if (statusUI != null)
-            statusUI.text = $"TỐC ĐỘ: {player.forwardSpeed} km/h";
+        // Chỉ hiện số Tốc độ theo đúng ý bạn
+        if (statusUI != null) statusUI.text = $"{player.forwardSpeed:F0} km/h";
+    }
 
-        // --- 3. KIỂM TRA THẮNG / THUA ---
-        if (pursuerDistance <= catchDistance)
+    public void UseItemImmediately()
+    {
+        if (isGameOver) return;
+
+        // Đẻ cục gạch (chỉ để bay cho đẹp mắt)
+        if (projectilePrefab != null)
         {
-            GameOver("BẠN ĐÃ BỊ TÚM GỌN!\nNhấn SPACE để thử lại.");
+            Instantiate(projectilePrefab, player.transform.position + Vector3.up, Quaternion.identity);
         }
-        else if (pursuerDistance >= winDistance)
+
+        // Bắt đầu chờ 1 giây mới thực sự trừ máu
+        StartCoroutine(HandleDamageAndNotification());
+    }
+
+    IEnumerator HandleDamageAndNotification()
+    {
+        yield return new WaitForSeconds(1f);
+        EnemyTakeDamage(); // Gọi hàm public ở dưới
+    }
+
+    // ĐÃ THÊM PUBLIC CHO HÀM NÀY
+    public void EnemyTakeDamage()
+    {
+        currentEnemyHealth--;
+        Debug.Log("Địch trúng đòn! Máu còn: " + currentEnemyHealth);
+
+        if (currentEnemyHealth <= 0)
         {
-            WinGame("CẮT ĐUÔI THÀNH CÔNG!\nNhấn SPACE để chơi tiếp.");
+            enemiesRemaining--;
+            ShowKillNotification($"ĐÃ TIÊU DIỆT XE TRUY ĐUỔI #{10 - enemiesRemaining}!");
+
+            if (enemiesRemaining <= 0) WinGame();
+            else currentEnemyHealth = 3;
         }
     }
 
-    public void AddDistanceBonus(float bonusMeters)
+    void ShowKillNotification(string message)
     {
-        pursuerDistance += bonusMeters;
-        Debug.Log($"Né xe thành công! Thưởng {bonusMeters}m");
+        if (killNotificationUI != null)
+        {
+            killMessageText.text = message;
+            killNotificationUI.SetActive(true);
+            StopCoroutine("HideNotification");
+            StartCoroutine(HideNotification(2.5f));
+        }
     }
 
-    public void GameOver(string reason)
+    IEnumerator HideNotification(float delay)
     {
-        isGameOver = true;
-        if (player != null) player.enabled = false;
-        if (gameOverPanel != null) gameOverPanel.SetActive(true);
-
-        // Hiện lý do chết lên màn hình
-        if (statusUI != null) statusUI.text = $"<color=red>{reason}</color>";
-
-        Time.timeScale = 0;
+        yield return new WaitForSeconds(delay);
+        if (killNotificationUI != null) killNotificationUI.SetActive(false);
     }
 
-    public void WinGame(string reason)
-    {
-        isGameOver = true;
-        if (player != null) player.enabled = false;
-        if (winPanel != null) winPanel.SetActive(true);
-
-        // Hiện lý do thắng lên màn hình
-        if (statusUI != null) statusUI.text = $"<color=yellow>{reason}</color>";
-
-        Time.timeScale = 0;
-    }
+    // ĐÃ THÊM PUBLIC CHO 2 HÀM NÀY
+    public void GameOver(string r) { isGameOver = true; gameOverPanel.SetActive(true); Time.timeScale = 0; }
+    public void WinGame() { isGameOver = true; winPanel.SetActive(true); Time.timeScale = 0; }
 }

@@ -4,7 +4,8 @@ using UnityEngine;
 public class EscapeBikeController : MonoBehaviour
 {
     [Header("Cài đặt Di chuyển")]
-    public float forwardSpeed = 40f; // Tốc độ tiến thẳng
+    public float forwardSpeed = 40f; // Tốc độ hiện tại
+    public float maxSpeed = 50f;     // CHỐT CHẶN: Tốc độ tối đa
     public float steerSpeed = 30f;   // Tốc độ lách qua lại
     public float gravity = -15f;
 
@@ -25,6 +26,10 @@ public class EscapeBikeController : MonoBehaviour
 
     void Update()
     {
+        // LƯỚI LỌC TỐC ĐỘ: Bắt ép tốc độ không bao giờ được vượt quá maxSpeed
+        // Nếu forwardSpeed vọt lên 60 do ăn dốc, hàm Mathf.Min sẽ ép nó về lại 50 ngay lập tức
+        forwardSpeed = Mathf.Min(forwardSpeed, maxSpeed);
+
         ApplyFreeMovement();
         DetectCurrentLane();
     }
