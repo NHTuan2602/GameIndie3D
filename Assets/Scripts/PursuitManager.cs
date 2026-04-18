@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PursuitManager : MonoBehaviour
 {
@@ -10,13 +11,13 @@ public class PursuitManager : MonoBehaviour
     [Header("Chỉ số Sinh tồn & Chiến đấu")]
     public float distanceRan = 0f;
     public float winDistance = 10f;
-    public int enemiesRemaining = 10;
-    public int currentEnemyHealth = 3;
+    public int enemiesRemaining = 10; // Địch có 10 tên, tương đương 10 máu
 
     [Header("Kết nối UI & Object")]
     public EscapeBikeController player;
     public GameObject projectilePrefab;
     public TextMeshProUGUI statusUI;
+    public Slider healthBar;
     public GameObject killNotificationUI;
     public TextMeshProUGUI killMessageText;
     public GameObject gameOverPanel;
@@ -25,6 +26,16 @@ public class PursuitManager : MonoBehaviour
     private bool isGameOver = false;
 
     void Awake() { instance = this; }
+
+    void Start()
+    {
+        // Khởi tạo thanh máu (10 nấc tương ứng 10 tên địch)
+        if (healthBar != null)
+        {
+            healthBar.maxValue = 10;
+            healthBar.value = enemiesRemaining;
+        }
+    }
 
     void Update()
     {
@@ -42,15 +53,16 @@ public class PursuitManager : MonoBehaviour
 
         if (player.forwardSpeed <= 10f) GameOver("BỊ BẮT DO TỐC ĐỘ QUÁ THẤP!");
 
-        // Chỉ hiện số Tốc độ theo đúng ý bạn
         if (statusUI != null) statusUI.text = $"{player.forwardSpeed:F0} km/h";
+
+        // ÉP THANH MÁU CHẠY THEO SỐ ĐỊCH CÒN LẠI
+        if (healthBar != null) healthBar.value = enemiesRemaining;
     }
 
     public void UseItemImmediately()
     {
         if (isGameOver) return;
 
-        // Đẻ cục gạch (chỉ để bay cho đẹp mắt)
         if (projectilePrefab != null)
         {
             Instantiate(projectilePrefab, player.transform.position + Vector3.up, Quaternion.identity);
@@ -63,22 +75,27 @@ public class PursuitManager : MonoBehaviour
     IEnumerator HandleDamageAndNotification()
     {
         yield return new WaitForSeconds(1f);
-        EnemyTakeDamage(); // Gọi hàm public ở dưới
+        EnemyTakeDamage();
     }
 
-    // ĐÃ THÊM PUBLIC CHO HÀM NÀY
     public void EnemyTakeDamage()
     {
-        currentEnemyHealth--;
-        Debug.Log("Địch trúng đòn! Máu còn: " + currentEnemyHealth);
+        enemiesRemaining--; // Trừ 1 địch (đồng thời thanh máu cũng tự tụt 1)
 
-        if (currentEnemyHealth <= 0)
+        // Lấy tên từ GameManager (nếu có), nếu test màn lẻ không có GameManager thì mặc định là "BẠN"
+        string pName = "BẠN";
+        if (GameManager.instance != null)
         {
-            enemiesRemaining--;
-            ShowKillNotification($"ĐÃ TIÊU DIỆT XE TRUY ĐUỔI #{10 - enemiesRemaining}!");
+            pName = GameManager.instance.playerName;
+        }
 
-            if (enemiesRemaining <= 0) WinGame();
-            else currentEnemyHealth = 3;
+        // Hiện thông báo: "TUẤN ĐÃ HẠ KẺ ĐỊCH THỨ 1"
+        int killedIndex = 10 - enemiesRemaining;
+        ShowKillNotification($"{pName.ToUpper()} ĐÃ HẠ KẺ ĐỊCH THỨ {killedIndex}!");
+
+        if (enemiesRemaining <= 0)
+        {
+            WinGame();
         }
     }
 
@@ -89,7 +106,7 @@ public class PursuitManager : MonoBehaviour
             killMessageText.text = message;
             killNotificationUI.SetActive(true);
             StopCoroutine("HideNotification");
-            StartCoroutine(HideNotification(2.5f));
+            StartCoroutine(HideNotification(2.5f)); // Hiện 2.5 giây rồi tắt
         }
     }
 
@@ -99,7 +116,6 @@ public class PursuitManager : MonoBehaviour
         if (killNotificationUI != null) killNotificationUI.SetActive(false);
     }
 
-    // ĐÃ THÊM PUBLIC CHO 2 HÀM NÀY
     public void GameOver(string r) { isGameOver = true; gameOverPanel.SetActive(true); Time.timeScale = 0; }
     public void WinGame() { isGameOver = true; winPanel.SetActive(true); Time.timeScale = 0; }
 }
