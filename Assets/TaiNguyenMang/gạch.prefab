@@ -4904,6 +4904,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "g\u1EA1ch"
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0be2403e5b8907a469de63ffa9aa51a4, type: 3}
+      propertyPath: m_TagString
+      value: Brick
+      objectReference: {fileID: 0}
     - target: {fileID: 1151388028547126963, guid: 0be2403e5b8907a469de63ffa9aa51a4, type: 3}
       propertyPath: m_LocalPosition.y
       value: -3.92

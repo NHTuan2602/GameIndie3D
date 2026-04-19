@@ -4,17 +4,18 @@ using UnityEngine;
 public class EscapeBikeController : MonoBehaviour
 {
     [Header("Cài đặt Di chuyển")]
-    public float forwardSpeed = 40f; // Tốc độ hiện tại
-    public float maxSpeed = 50f;     // CHỐT CHẶN: Tốc độ tối đa
-    public float steerSpeed = 30f;   // Tốc độ lách qua lại
+    public float baseSpeed = 40f;
+    public float forwardSpeed = 40f;
+    public float maxSpeed = 50f;
+    public float deceleration = 2f;
+    public float steerSpeed = 30f;
     public float gravity = -15f;
 
-    [Header("Radar Định vị Làn đường (Chuẩn Mới)")]
-    // KÉO 2 BIẾN NÀY ĐỂ VẠCH ĐỎ KHỚP VỚI VẠCH VÀNG TRÊN SCENE
+    [Header("Radar Định vị Làn đường")]
     public float leftLaneBoundary = -5f;
     public float rightLaneBoundary = 5f;
 
-    public int currentDetectedLane = 2; // 1: Trái, 2: Giữa, 3: Phải
+    public int currentDetectedLane = 2;
     private int lastLane = -1;
 
     private CharacterController controller;
@@ -22,13 +23,19 @@ public class EscapeBikeController : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        forwardSpeed = baseSpeed;
     }
 
     void Update()
     {
-        // LƯỚI LỌC TỐC ĐỘ: Bắt ép tốc độ không bao giờ được vượt quá maxSpeed
-        // Nếu forwardSpeed vọt lên 60 do ăn dốc, hàm Mathf.Min sẽ ép nó về lại 50 ngay lập tức
+        // 1. LƯỚI LỌC TỐC ĐỘ: Không bao giờ vượt quá maxSpeed
         forwardSpeed = Mathf.Min(forwardSpeed, maxSpeed);
+
+        // 2. MA SÁT KÉO LẠI: Nếu đang chạy nhanh hơn tốc độ gốc, thì từ từ giảm lại
+        if (forwardSpeed > baseSpeed)
+        {
+            forwardSpeed -= deceleration * Time.deltaTime;
+        }
 
         ApplyFreeMovement();
         DetectCurrentLane();
@@ -48,27 +55,16 @@ public class EscapeBikeController : MonoBehaviour
     {
         float x = transform.position.x;
 
-        // Tự động phân làn dựa vào 2 ranh giới bạn set trên Inspector
         if (x < leftLaneBoundary) currentDetectedLane = 1;
         else if (x > rightLaneBoundary) currentDetectedLane = 3;
         else currentDetectedLane = 2;
 
         if (currentDetectedLane != lastLane)
         {
-            string laneName = "";
-            switch (currentDetectedLane)
-            {
-                case 1: laneName = "<color=cyan>LÀN 1 (TRÁI)</color>"; break;
-                case 2: laneName = "<color=white>LÀN 2 (GIỮA)</color>"; break;
-                case 3: laneName = "<color=yellow>LÀN 3 (PHẢI)</color>"; break;
-            }
-
-            Debug.Log($"[Radar] Tọa độ X: {x:F2} | Trạng thái: {laneName}");
             lastLane = currentDetectedLane;
         }
     }
 
-    // Vẽ vạch đỏ ra màn hình Scene để dễ căn chỉnh bằng mắt
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

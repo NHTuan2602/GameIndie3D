@@ -2,29 +2,37 @@ using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour
 {
-    [Header("Tọa độ Tâm 3 Làn")]
+    [Header("Tọa độ Mặt Đường")]
+    public float roadMinX = -4.5f;
+    public float roadMaxX = 4.5f;
+
+    [Header("Tọa độ 3 Làn (CHỈ DÙNG CHO BIỂN BÁO)")]
     public float[] laneCenters = new float[3] { -3f, 0f, 3f };
-    public float laneWidth = 2.5f; // Độ rộng của một làn đường để tính toán độ lệch
 
     [Header("Kho Vật Phẩm (Prefabs)")]
     public GameObject[] dangerPrefabs;
-    public GameObject[] buffPrefabs;   // Xe tải dốc nằm ở đây
+    public GameObject[] buffPrefabs;
     public GameObject brickPrefab;
+    public GameObject trafficSignGatePrefab;
 
     [Header("Cài đặt Sinh sản")]
     public Transform player;
     public float spawnDistanceAhead = 80f;
-    public float spawnInterval = 2f;    // Nhịp sinh vật cản (xe/dốc)
-    public float brickInterval = 6f;    // Cứ 6 giây sinh 1 cục gạch
+    public float spawnInterval = 2f;
+    public float brickInterval = 6f;
+    [Range(0f, 1f)] public float buffChance = 0.2f;
 
-    [Range(0f, 1f)] public float buffChance = 0.2f; // Thêm lại: 20% tỉ lệ ra xe tải dốc thay vì xe địch
+    [Header("Cài đặt Radar Chống Trùng Lặp")]
+    public int maxSpawnAttempts = 3; // Số lần thử tìm chỗ trống tối đa
+    // Hộp radar quét: Rộng 3m, Cao 2m, Dài 40m (20f x 2)
+    public Vector3 clearanceBoxSize = new Vector3(1.5f, 1f, 20f);
 
     private float obstacleTimer;
     private float brickTimer;
+    private int spawnCount = 0;
 
     void Update()
     {
-        // 1. Quản lý nhịp sinh vật cản (Xe địch, ổ gà, HOẶC dốc)
         obstacleTimer += Time.deltaTime;
         if (obstacleTimer >= spawnInterval)
         {
@@ -32,7 +40,6 @@ public class ObstacleSpawner : MonoBehaviour
             obstacleTimer = 0f;
         }
 
-        // 2. Quản lý nhịp sinh gạch riêng biệt
         brickTimer += Time.deltaTime;
         if (brickTimer >= brickInterval)
         {
@@ -43,32 +50,87 @@ public class ObstacleSpawner : MonoBehaviour
 
     void SpawnObstacleRow()
     {
-        int laneIndex = Random.Range(0, 3);
-        float randomOffset = Random.Range(-laneWidth * 0.2f, laneWidth * 0.2f);
-        float spawnX = laneCenters[laneIndex] + randomOffset;
+        spawnCount++;
 
+        // 1. BIỂN BÁO (Đẻ ở giữa đường)
+        if (spawnCount % 5 == 0 && trafficSignGatePrefab != null)
+        {
+            float gateX = laneCenters[1];
+            Spawn(trafficSignGatePrefab, gateX);
+            return;
+        }
+
+        // 2. CHƯỚNG NGẠI VẬT & DỐC (Có dùng Radar dò đường)
         GameObject prefabToSpawn = null;
-
-        // BỐC THĂM: Xem nhịp này đẻ ra Xe Tải Dốc hay Xe VinFast?
         if (Random.value < buffChance && buffPrefabs.Length > 0)
         {
-            // Trúng số 20% -> Thả xe tải dốc
             prefabToSpawn = buffPrefabs[Random.Range(0, buffPrefabs.Length)];
         }
         else if (dangerPrefabs.Length > 0)
         {
-            // Trượt (80%) -> Thả xe địch hoặc ổ gà
             prefabToSpawn = dangerPrefabs[Random.Range(0, dangerPrefabs.Length)];
         }
 
-        Spawn(prefabToSpawn, spawnX);
+        if (prefabToSpawn != null)
+        {
+            // CỐ GẮNG TÌM MỘT CHỖ TRỐNG (Tối đa 3 lần thử)
+            for (int i = 0; i < maxSpawnAttempts; i++)
+            {
+                float randomX = Random.Range(roadMinX, roadMaxX);
+                Vector3 checkPos = new Vector3(randomX, 1f, player.position.z + spawnDistanceAhead);
+
+                if (IsPathClear(checkPos))
+                {
+                    Spawn(prefabToSpawn, randomX);
+                    break; // Đã tìm thấy chỗ an toàn và đẻ xong -> Thoát vòng lặp
+                }
+                // Nếu không Clear, vòng lặp sẽ tự động quay lại bốc số randomX khác!
+            }
+        }
     }
 
     void SpawnSingleBrick()
     {
-        int laneIndex = Random.Range(0, 3);
-        float spawnX = laneCenters[laneIndex]; // Gạch vẫn nằm giữa làn
-        Spawn(brickPrefab, spawnX);
+        // Gạch cũng quét Radar để không bị kẹt lấp ló sau đuôi xe địch
+        for (int i = 0; i < maxSpawnAttempts; i++)
+        {
+            float randomX = Random.Range(roadMinX, roadMaxX);
+            Vector3 checkPos = new Vector3(randomX, 1f, player.position.z + spawnDistanceAhead);
+
+            if (IsPathClear(checkPos))
+            {
+                Spawn(brickPrefab, randomX);
+                break;
+            }
+        }
+    }
+
+    // ================= BỘ NÃO RADAR QUÉT KHÔNG GIAN =================
+    bool IsPathClear(Vector3 spawnPos)
+    {
+        // Tung ra một cái hộp tàng hình tại vị trí chuẩn bị đẻ
+        Collider[] hits = Physics.OverlapBox(spawnPos, clearanceBoxSize, Quaternion.identity);
+
+        foreach (Collider hit in hits)
+        {
+            // Nếu phát hiện có vật thể nào mang 3 Tag này đang nằm trong hộp
+            if (hit.CompareTag("Obstacle") || hit.CompareTag("Ramp") || hit.CompareTag("Buff") || hit.CompareTag("Brick"))
+            {
+                return false; // Báo động: Đường này đang bị kẹt!
+            }
+        }
+        return true; // Đường quang mây tạnh, cho đẻ!
+    }
+
+    // Vẽ hình cái hộp Radar ra màn hình Scene để bạn dễ căn chỉnh độ dài
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(0, 1, 0, 0.3f);
+        if (player != null)
+        {
+            Vector3 checkPos = new Vector3(0, 1f, player.position.z + spawnDistanceAhead);
+            Gizmos.DrawCube(checkPos, clearanceBoxSize * 2);
+        }
     }
 
     void Spawn(GameObject prefab, float x)

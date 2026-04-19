@@ -121,9 +121,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5400628461227149772}
+  - component: {fileID: -4000604449121269178}
   m_Layer: 0
   m_Name: Xe_Tai_Doc
-  m_TagString: Untagged
+  m_TagString: Buff
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -146,6 +147,25 @@ Transform:
   - {fileID: 7246663512018927918}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-4000604449121269178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5709303475149400157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df5763d704f76ba48b7ef049bcae0f14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVehicle
+  driveSpeed: 5
+  headLights: []
+  flashSpeed: 15
+  baseIntensity: 50
+  maxIntensity: 300
+  audioSource: {fileID: 0}
+  passBySound: {fileID: 0}
 --- !u!1 &8648622715835192378
 GameObject:
   m_ObjectHideFlags: 0

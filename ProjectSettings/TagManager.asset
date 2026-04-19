@@ -7,6 +7,11 @@ TagManager:
   - Target
   - WaterBottle
   - Bus
+  - Obstacle
+  - Ramp
+  - Item
+  - Brick
+  - Buff
   layers:
   - Default
   - TransparentFX

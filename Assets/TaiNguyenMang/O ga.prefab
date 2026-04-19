@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: O ga
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6a16dfcaf72a9e0469234be2315b3852, type: 3}
+      propertyPath: m_TagString
+      value: Obstacle
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -96,8 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Obstacle
   type: 1
-  speedModifier: 15
-  effectDuration: 2
+  speedChange: 10
 --- !u!65 &7449711836989968724
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -11,7 +11,7 @@ public class PursuitManager : MonoBehaviour
     [Header("Chỉ số Sinh tồn & Chiến đấu")]
     public float distanceRan = 0f;
     public float winDistance = 10f;
-    public int enemiesRemaining = 10; // Địch có 10 tên, tương đương 10 máu
+    public int enemiesRemaining = 10;
 
     [Header("Kết nối UI & Object")]
     public EscapeBikeController player;
@@ -29,7 +29,6 @@ public class PursuitManager : MonoBehaviour
 
     void Start()
     {
-        // Khởi tạo thanh máu (10 nấc tương ứng 10 tên địch)
         if (healthBar != null)
         {
             healthBar.maxValue = 10;
@@ -55,10 +54,10 @@ public class PursuitManager : MonoBehaviour
 
         if (statusUI != null) statusUI.text = $"{player.forwardSpeed:F0} km/h";
 
-        // ÉP THANH MÁU CHẠY THEO SỐ ĐỊCH CÒN LẠI
         if (healthBar != null) healthBar.value = enemiesRemaining;
     }
 
+    // ================== COMBO ÂM THANH NÉM GẠCH ==================
     public void UseItemImmediately()
     {
         if (isGameOver) return;
@@ -68,36 +67,39 @@ public class PursuitManager : MonoBehaviour
             Instantiate(projectilePrefab, player.transform.position + Vector3.up, Quaternion.identity);
         }
 
-        // Bắt đầu chờ 1 giây mới thực sự trừ máu
+        // COMBO BƯỚC 1 & 2: Vừa phát tiếng TING (Nhặt đồ) vừa phát tiếng VÚT (Ném luôn)
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlayPickup();
+            AudioManager.instance.PlayThrow();
+        }
+
+        // Chờ 0.8 giây cho viên gạch bay trên không trung rồi mới tính sát thương
         StartCoroutine(HandleDamageAndNotification());
     }
 
     IEnumerator HandleDamageAndNotification()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.8f); // Đã giảm từ 1s xuống 0.8s cho cảm giác dứt khoát hơn
         EnemyTakeDamage();
     }
 
     public void EnemyTakeDamage()
     {
-        enemiesRemaining--; // Trừ 1 địch (đồng thời thanh máu cũng tự tụt 1)
+        enemiesRemaining--;
 
-        // Lấy tên từ GameManager (nếu có), nếu test màn lẻ không có GameManager thì mặc định là "BẠN"
+        // COMBO BƯỚC 3: Đổi thành tiếng KÍNH VỠ / ĐỊCH LA LÊN (Chứ không gọi tiếng rầm tông xe nữa)
+        if (AudioManager.instance != null) AudioManager.instance.PlayEnemyHurt();
+
         string pName = "BẠN";
-        if (GameManager.instance != null)
-        {
-            pName = GameManager.instance.playerName;
-        }
+        if (GameManager.instance != null) pName = GameManager.instance.playerName;
 
-        // Hiện thông báo: "TUẤN ĐÃ HẠ KẺ ĐỊCH THỨ 1"
         int killedIndex = 10 - enemiesRemaining;
         ShowKillNotification($"{pName.ToUpper()} ĐÃ HẠ KẺ ĐỊCH THỨ {killedIndex}!");
 
-        if (enemiesRemaining <= 0)
-        {
-            WinGame();
-        }
+        if (enemiesRemaining <= 0) WinGame();
     }
+    // =============================================================
 
     void ShowKillNotification(string message)
     {
@@ -106,7 +108,7 @@ public class PursuitManager : MonoBehaviour
             killMessageText.text = message;
             killNotificationUI.SetActive(true);
             StopCoroutine("HideNotification");
-            StartCoroutine(HideNotification(2.5f)); // Hiện 2.5 giây rồi tắt
+            StartCoroutine(HideNotification(2.5f));
         }
     }
 
@@ -116,6 +118,31 @@ public class PursuitManager : MonoBehaviour
         if (killNotificationUI != null) killNotificationUI.SetActive(false);
     }
 
-    public void GameOver(string r) { isGameOver = true; gameOverPanel.SetActive(true); Time.timeScale = 0; }
-    public void WinGame() { isGameOver = true; winPanel.SetActive(true); Time.timeScale = 0; }
+    public void GameOver(string r)
+    {
+        if (isGameOver) return;
+        isGameOver = true;
+
+        if (AudioManager.instance != null && AudioManager.instance.bgmSource != null)
+        {
+            AudioManager.instance.bgmSource.Stop();
+            AudioManager.instance.PlayHit(); // Đây mới là lúc dùng tiếng RẦM (Tông xe)
+        }
+
+        StartCoroutine(ShowGameOverDelayed());
+    }
+
+    IEnumerator ShowGameOverDelayed()
+    {
+        Time.timeScale = 0;
+        yield return new WaitForSecondsRealtime(1.5f);
+        gameOverPanel.SetActive(true);
+    }
+
+    public void WinGame()
+    {
+        isGameOver = true;
+        winPanel.SetActive(true);
+        Time.timeScale = 0;
+    }
 }
