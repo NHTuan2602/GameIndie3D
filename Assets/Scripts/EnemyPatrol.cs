@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections; // Bắt buộc phải có cái này để chạy đếm ngược 5 giây
+using System.Collections;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyPatrol : MonoBehaviour
 {
     [Header("Cài đặt Tuần tra")]
@@ -17,28 +16,32 @@ public class EnemyPatrol : MonoBehaviour
     public float viewRadius = 10f;
     [Range(0, 360)]
     public float viewAngle = 90f;
-    public Transform playerTarget;
+    public Transform playerTarget; // BẮT BUỘC KÉO PLAYER VÀO ĐÂY Ở INSPECTOR
 
     [Header("Cài đặt Đèn pin AI")]
     public Light enemyFlashlight;
 
     private NavMeshAgent agent;
+    private Animator anim;
     private int currentWaypointIndex = 0;
     private bool isWaiting = false;
     private float waitTimer = 0f;
     private bool isChasing = false;
-
-    // MỚI: Trạng thái choáng
     private bool isStunned = false;
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        agent.speed = patrolSpeed;
+        // Tự động tìm Agent và Animator thông minh (gắn ở đâu cũng chạy được)
+        agent = GetComponentInParent<NavMeshAgent>();
+        if (agent == null) agent = GetComponentInChildren<NavMeshAgent>();
 
-        if (waypoints.Length > 0)
+        anim = GetComponentInChildren<Animator>();
+        if (anim == null) anim = GetComponentInParent<Animator>();
+
+        if (agent != null)
         {
-            agent.SetDestination(waypoints[0].position);
+            agent.speed = patrolSpeed;
+            if (waypoints.Length > 0) agent.SetDestination(waypoints[0].position);
         }
 
         if (enemyFlashlight != null)
@@ -51,7 +54,17 @@ public class EnemyPatrol : MonoBehaviour
 
     void Update()
     {
-        // Nếu đang bị choáng thì đứng im, không nhìn, không đuổi
+        // CHỐNG LỖI SẬP GAME: Nếu quên kéo Player vào Inspector thì code dừng lại an toàn
+        if (agent == null || playerTarget == null) return;
+
+        // Xử lý Animation mượt mà
+        if (anim != null)
+        {
+            bool isMoving = agent.velocity.magnitude > 0.1f;
+            anim.SetBool("isWalking", isMoving && !isChasing);
+            anim.SetBool("isRunning", isMoving && isChasing);
+        }
+
         if (isStunned) return;
 
         CheckPlayerInSight();
@@ -66,55 +79,25 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // PHẦN XỬ LÝ VA CHẠM (BẮT NGƯỜI & LÀM CHOÁNG)
-    // ==========================================
     private void OnTriggerEnter(Collider other)
     {
-        // Đặt bẫy Log để xem quái đụng trúng cái gì
-        Debug.Log("<color=cyan>QUÁI VẬT VỪA CHẠM VÀO: " + other.gameObject.name + " | CÓ TAG LÀ: " + other.tag + "</color>");
-
-        // Nếu chạm đúng Player và quái đang không bị choáng
         if (other.CompareTag("Player") && !isStunned)
         {
-            // --- FIX GÓC KHUẤT: BÀN TAY XUYÊN THẤU ---
-            // Lấy tâm bụng của AI (cao 1m) và tâm của người chơi
-            Vector3 enemyCenter = transform.position + Vector3.up * 1f;
-            Vector3 playerCenter = other.bounds.center;
-
-            RaycastHit hit;
-            // Bắn một tia từ AI đến người chơi để xem có bị cản không
-            if (Physics.Linecast(enemyCenter, playerCenter, out hit))
-            {
-                // Nếu tia đụng trúng cái Bàn hoặc Tường (không phải Player)
-                if (!hit.transform.CompareTag("Player"))
-                {
-                    Debug.Log("<color=yellow>AI sờ trúng người nhưng bị CÁI BÀN cản lại! Tha mạng!</color>");
-                    return; // Hủy lệnh bắt người, thoát ra ngay!
-                }
-            }
-
-            // Nếu không có gì cản thì mới tiến hành bắt người
             HandleCatchingPlayer();
         }
     }
 
     void HandleCatchingPlayer()
     {
-        // Gọi sang GameManager để tính toán 3 mạng
         if (GameManager.instance != null)
         {
             bool shouldResetLevel = GameManager.instance.OnPlayerCaught();
-
-            if (!shouldResetLevel)
-            {
-                // Nếu chưa hết 3 mạng -> Vùng vẫy làm choáng quái vật 5 giây
-                StartCoroutine(GetStunned(5f));
-            }
+            if (!shouldResetLevel) StartCoroutine(GetStunned(5f));
         }
         else
         {
-            Debug.LogError("LỖI: Không tìm thấy GameManager trong Scene! Hãy chạy game từ đầu hoặc ném Prefab GameManager vào Scene.");
+            // Dự phòng: Nếu chưa có GameManager, cứ choáng tạm 5s
+            StartCoroutine(GetStunned(5f));
         }
     }
 
@@ -122,73 +105,55 @@ public class EnemyPatrol : MonoBehaviour
     {
         isStunned = true;
         isChasing = false;
-        agent.isStopped = true; // Phanh gấp, không di chuyển nữa
+        if (agent != null) agent.isStopped = true;
 
-        // Hiệu ứng: Đèn pin và màu người đổi sang VÀNG CHÓI
+        if (anim != null)
+        {
+            anim.SetBool("isRunning", false);
+            anim.SetBool("isWalking", false);
+        }
+
         if (enemyFlashlight != null) enemyFlashlight.color = Color.yellow;
-        GetComponent<Renderer>().material.color = Color.yellow;
 
-        // Đứng hình 5 giây
         yield return new WaitForSeconds(duration);
 
-        // Hết 5 giây, tỉnh dậy
+        isStunned = true; // Sửa lỗi: Giữ trạng thái stun đến khi hết hàm
         isStunned = false;
-        agent.isStopped = false; // Cho phép đi lại
-        if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
-        GetComponent<Renderer>().material.color = Color.white;
 
-        // Trở về đi tuần tra (để người chơi có cơ hội trốn)
-        agent.SetDestination(waypoints[currentWaypointIndex].position);
+        if (agent != null) agent.isStopped = false;
+        if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
+
+        if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
     }
 
-    // ==========================================
-    // PHẦN TẦM NHÌN
-    // ==========================================
     void CheckPlayerInSight()
     {
-        if (playerTarget == null) return;
-
         float distanceToPlayer = Vector3.Distance(transform.position, playerTarget.position);
 
         if (distanceToPlayer <= viewRadius)
         {
-            CharacterController playerCC = playerTarget.GetComponent<CharacterController>();
-            Vector3 playerCenter = playerTarget.position;
-
-            if (playerCC != null) playerCenter = playerTarget.position + playerCC.center;
-            else playerCenter = playerTarget.position + Vector3.up * 1f;
-
-            Vector3 directionToPlayer = (playerCenter - transform.position).normalized;
+            Vector3 directionToPlayer = (playerTarget.position - transform.position).normalized;
 
             if (Vector3.Angle(transform.forward, directionToPlayer) < viewAngle / 2)
             {
-                Vector3 enemyEye = transform.position + Vector3.up * 1.5f;
-                RaycastHit hit;
-
-                if (Physics.Linecast(enemyEye, playerCenter, out hit))
+                // Phát hiện trong nón nhìn -> Đuổi!
+                if (!isChasing)
                 {
-                    if (hit.transform == playerTarget || hit.transform.CompareTag("Player"))
-                    {
-                        if (!isChasing)
-                        {
-                            isChasing = true;
-                            agent.speed = chaseSpeed;
-                            GetComponent<Renderer>().material.color = Color.red;
-                            if (enemyFlashlight != null) enemyFlashlight.color = Color.red;
-                        }
-                        return;
-                    }
+                    isChasing = true;
+                    agent.speed = chaseSpeed;
+                    if (enemyFlashlight != null) enemyFlashlight.color = Color.red;
                 }
+                return;
             }
         }
 
+        // Nếu người chơi chạy thoát khỏi tầm nhìn
         if (isChasing)
         {
             isChasing = false;
             agent.speed = patrolSpeed;
-            GetComponent<Renderer>().material.color = Color.white;
             if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
-            agent.SetDestination(waypoints[currentWaypointIndex].position);
+            if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
         }
     }
 
@@ -202,6 +167,7 @@ public class EnemyPatrol : MonoBehaviour
             {
                 isWaiting = true;
                 waitTimer = 0f;
+                if (anim != null) anim.SetBool("isWalking", false);
             }
             else
             {
