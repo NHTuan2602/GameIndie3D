@@ -32,11 +32,13 @@ public class PlayerController : MonoBehaviour
     public float jumpStaminaCost = 15f;
     public Slider staminaBar;
 
-    private CharacterController controller;
+    [Header("Cài đặt Tương tác (MỞ CỬA, NHẶT ĐỒ)")]
+    public float interactRange = 3f; // Tầm với tay của nhân vật
+    public LayerMask interactLayer;  // Lọc chỉ chạm vào Layer "Interactable" để đỡ nặng máy
 
-    // Biến lưu trữ vận tốc tổng hợp (MỚI)
+    private CharacterController controller;
     private Vector3 currentMovement;
-    private float verticalVelocity; // Tách riêng trục Y
+    private float verticalVelocity;
     private Vector2 currentDir = Vector2.zero;
     private Vector2 currentDirVelocity = Vector2.zero;
 
@@ -44,7 +46,6 @@ public class PlayerController : MonoBehaviour
     private bool isSprinting = false;
     private bool wantsToStand = false;
 
-    // Biến nội suy Ngồi
     private float targetHeight;
     private float targetCenterY;
     private float targetCameraY;
@@ -76,9 +77,36 @@ public class PlayerController : MonoBehaviour
         HandleStamina();
         HandleCrouch();
         SmoothCrouchTransition();
-
-        // Gom tính toán vào 1 hàm duy nhất
         CalculateAndApplyMovement();
+
+        // HÀM MỚI: Xử lý bấm nút tương tác
+        HandleInteraction();
+    }
+
+    // =====================================
+    // HÀM MỚI: BẮN TIA RAYCAST ĐỂ MỞ CỬA
+    // =====================================
+    void HandleInteraction()
+    {
+        // Bấm phím E để tương tác
+        if (Input.GetKeyDown(KeyCode.E) && playerCamera != null)
+        {
+            RaycastHit hit;
+            // Bắn 1 tia từ camera thẳng tới trước mặt
+            if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, interactRange, interactLayer))
+            {
+                // Kiểm tra xem tia đó có đâm trúng cái Cửa không
+                DoorController door = hit.collider.GetComponentInParent<DoorController>();
+                if (door != null)
+                {
+                    door.ToggleDoor(); // Ra lệnh mở/đóng cửa
+                }
+                else
+                {
+                    Debug.Log("Nhìn thấy: " + hit.collider.name + " nhưng không phải cửa!");
+                }
+            }
+        }
     }
 
     void HandleStamina()
@@ -174,24 +202,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // HÀM MỚI: TÍNH TOÁN VÀ DI CHUYỂN TRONG 1 LẦN GỌI (SỬA LỖI KHỰNG)
     void CalculateAndApplyMovement()
     {
-        // 1. Lấy input và làm mượt nó (Gia tốc)
         Vector2 targetDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        targetDir.Normalize(); // Sửa lỗi đi chéo bị nhanh hơn
+        targetDir.Normalize();
 
         currentDir = Vector2.SmoothDamp(currentDir, targetDir, ref currentDirVelocity, movementSmoothTime);
 
-        // 2. Xác định tốc độ hiện tại
         float currentSpeed = walkSpeed;
         if (isCrouching) currentSpeed = sneakSpeed;
         else if (isSprinting) currentSpeed = sprintSpeed;
 
-        // 3. Tính toán trọng lực & Nhảy
         if (controller.isGrounded)
         {
-            // Luôn ép nhẹ xuống sàn để isGrounded không bị lỗi nhấp nháy
             verticalVelocity = -2f;
 
             if (Input.GetKeyDown(KeyCode.Space) && currentStamina >= jumpStaminaCost && !isCrouching)
@@ -202,13 +225,11 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // Trọng lực rơi tự do
             verticalVelocity += gravity * Time.deltaTime;
         }
 
-        // 4. Kết hợp vector và gọi lệnh Move DUY NHẤT 1 LẦN
         currentMovement = (transform.right * currentDir.x + transform.forward * currentDir.y) * currentSpeed;
-        currentMovement.y = verticalVelocity; // Gắn trục Y vào
+        currentMovement.y = verticalVelocity;
 
         controller.Move(currentMovement * Time.deltaTime);
     }
