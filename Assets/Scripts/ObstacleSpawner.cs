@@ -15,41 +15,83 @@ public class ObstacleSpawner : MonoBehaviour
     public GameObject brickPrefab;
     public GameObject trafficSignGatePrefab;
 
-    [Header("Cài đặt Sinh sản Vật cản")]
+    [Header("Kho Hung Thần (Xe Khách, Cấp Cứu)")]
+    public GameObject[] highSpeedVehicles;
+
+    [Header("Cài đặt Cổng Biển Báo (V.I.P)")]
+    public float gateInterval = 30f; // 30s đẻ 1 cổng
+    public float gapDuration = 3f;   // Quãng nghỉ 3s trước khi cổng ra
+    public float gateLifeTime = 15f; // Thời gian cổng cản đường
+
+    [Header("Cài đặt Xe Khách (RANDOM)")]
+    public float minVehicleInterval = 12f; // Xe bus ra ngẫu nhiên từ 12s...
+    public float maxVehicleInterval = 25f; // ...đến 25s
+    private float targetVehicleInterval;   // Con số random sẽ được lưu vào đây
+
+    [Header("Cài đặt Vật cản tĩnh & Gạch")]
     public Transform player;
-    public float spawnDistanceAhead = 150f; // BẮT BUỘC ĐẨY RA XA
+    public float spawnDistanceAhead = 150f;
     public float spawnInterval = 2f;
     public float brickInterval = 6f;
     [Range(0f, 1f)] public float buffChance = 0.2f;
 
-    [Header("Cài đặt Cổng Biển Báo (THỜI GIAN THỰC)")]
-    public float gateInterval = 15f; // Cứ đúng 15 giây đẻ 1 cổng
-    public float gapDuration = 3f;   // Dừng đẻ mọi thứ trước 3 giây để tạo quãng nghỉ
-
-    [Header("Cài đặt Radar Chống Trùng Lặp")]
+    [Header("Radar Chống Trùng Lặp")]
     public int maxSpawnAttempts = 3;
     public Vector3 clearanceBoxSize = new Vector3(1.5f, 1f, 20f);
 
+    // Đồng hồ bấm giờ
     private float obstacleTimer;
     private float brickTimer;
     private float gateTimer;
+    private float vehicleTimer;
+    private float gateActiveTimer; // Khóa không cho xe bus đẻ khi cổng đang tồn tại
+
+    void Start()
+    {
+        // Khởi tạo thời gian random cho chiếc xe bus đầu tiên
+        targetVehicleInterval = Random.Range(minVehicleInterval, maxVehicleInterval);
+    }
 
     void Update()
     {
-        // 1. ĐỒNG HỒ CỦA CỔNG BIỂN BÁO
+        // ==========================================
+        // 1. HỆ THỐNG CỔNG BIỂN BÁO (QUYỀN LỰC TỐI CAO)
+        // ==========================================
         gateTimer += Time.deltaTime;
+
+        // Trừ dần thời gian tồn tại của cổng (nếu đang có cổng)
+        if (gateActiveTimer > 0) gateActiveTimer -= Time.deltaTime;
+
         bool isGapTime = (gateInterval - gateTimer) <= gapDuration;
 
         if (gateTimer >= gateInterval)
         {
             SpawnGate();
             gateTimer = 0f;
+            gateActiveTimer = gateLifeTime; // KHÓA XE BUS TRONG 15 GIÂY TIẾP THEO!
         }
 
-        // 2. NẾU ĐANG TRONG QUÃNG NGHỈ -> CHẶN ĐỨNG MỌI SINH SẢN KHÁC
+        // NẾU SẮP ĐẺ CỔNG -> CHẶN ĐỨNG TẤT CẢ MỌI THỨ CÒN LẠI
         if (isGapTime) return;
 
-        // 3. ĐỒNG HỒ VẬT CẢN
+        // ==========================================
+        // 2. HỆ THỐNG XE BUS (CHỈ CHẠY KHI KHÔNG CÓ CỔNG)
+        // ==========================================
+        if (gateActiveTimer <= 0)
+        {
+            vehicleTimer += Time.deltaTime;
+            if (vehicleTimer >= targetVehicleInterval)
+            {
+                SpawnHighSpeedVehicle();
+                vehicleTimer = 0f;
+                // Bốc thăm lại thời gian ngẫu nhiên cho chuyến xe bus tiếp theo
+                targetVehicleInterval = Random.Range(minVehicleInterval, maxVehicleInterval);
+            }
+        }
+
+        // ==========================================
+        // 3. HỆ THỐNG VẬT CẢN TĨNH & GẠCH
+        // ==========================================
         obstacleTimer += Time.deltaTime;
         if (obstacleTimer >= spawnInterval)
         {
@@ -57,7 +99,6 @@ public class ObstacleSpawner : MonoBehaviour
             obstacleTimer = 0f;
         }
 
-        // 4. ĐỒNG HỒ GẠCH
         brickTimer += Time.deltaTime;
         if (brickTimer >= brickInterval)
         {
@@ -66,54 +107,50 @@ public class ObstacleSpawner : MonoBehaviour
         }
     }
 
+    // CÁC HÀM SPAWN (GIỮ NGUYÊN NHƯ CŨ)
+    void SpawnHighSpeedVehicle()
+    {
+        if (highSpeedVehicles == null || highSpeedVehicles.Length == 0) return;
+        Debug.Log("<color=orange>CẢNH BÁO: HUNG THẦN ĐƯỜNG PHỐ XUẤT HIỆN!</color>");
+        GameObject prefabToSpawn = highSpeedVehicles[Random.Range(0, highSpeedVehicles.Length)];
+        float randomLaneX = laneCenters[Random.Range(0, laneCenters.Length)];
+        Vector3 checkPos = new Vector3(randomLaneX, 1f, player.position.z + spawnDistanceAhead);
+
+        if (IsPathClear(checkPos))
+        {
+            float spawnY = prefabToSpawn.transform.position.y;
+            Vector3 spawnPos = new Vector3(randomLaneX, spawnY, player.position.z + spawnDistanceAhead);
+            GameObject obj = Instantiate(prefabToSpawn, spawnPos, prefabToSpawn.transform.rotation);
+            Destroy(obj, 20f);
+        }
+    }
+
     void SpawnGate()
     {
         if (trafficSignGatePrefab == null) return;
-
-        // RADAR KIỂM TRA 3 LÀN
         bool allClear = true;
         foreach (float xCenter in laneCenters)
         {
             Vector3 checkPos = new Vector3(xCenter, 1f, player.position.z + spawnDistanceAhead);
-            if (!IsPathClear(checkPos))
-            {
-                allClear = false;
-                Debug.Log("<color=yellow>HỦY ĐẺ CỔNG: Phía trước ở làn X=" + xCenter + " đang bị kẹt!</color>");
-                break;
-            }
+            if (!IsPathClear(checkPos)) { allClear = false; break; }
         }
 
-        // Nếu 3 làn đều trống -> Tiến hành đẻ cổng
         if (allClear)
         {
             Debug.Log("<color=red>ĐANG ĐẺ CỔNG SINH TỬ!</color>");
-
-            // Đẻ cái vỏ ở X = 0
             Vector3 spawnPos = new Vector3(0f, trafficSignGatePrefab.transform.position.y, player.position.z + spawnDistanceAhead);
             GameObject gateObj = Instantiate(trafficSignGatePrefab, spawnPos, trafficSignGatePrefab.transform.rotation);
-
-            // Bắt cái cổng phải dạt 3 tấm bảng ra tọa độ 0.45, 14, -14
             SignGateController gateScript = gateObj.GetComponent<SignGateController>();
-            if (gateScript != null)
-            {
-                gateScript.SetLanePositions(laneCenters);
-            }
-
-            Destroy(gateObj, 15f); // Tự hủy cổng sau 15 giây
+            if (gateScript != null) gateScript.SetLanePositions(laneCenters);
+            Destroy(gateObj, 15f);
         }
     }
 
     void SpawnRandomObstacle()
     {
         GameObject prefabToSpawn = null;
-        if (Random.value < buffChance && buffPrefabs.Length > 0)
-        {
-            prefabToSpawn = buffPrefabs[Random.Range(0, buffPrefabs.Length)];
-        }
-        else if (dangerPrefabs.Length > 0)
-        {
-            prefabToSpawn = dangerPrefabs[Random.Range(0, dangerPrefabs.Length)];
-        }
+        if (Random.value < buffChance && buffPrefabs.Length > 0) prefabToSpawn = buffPrefabs[Random.Range(0, buffPrefabs.Length)];
+        else if (dangerPrefabs.Length > 0) prefabToSpawn = dangerPrefabs[Random.Range(0, dangerPrefabs.Length)];
 
         if (prefabToSpawn != null)
         {
@@ -121,12 +158,7 @@ public class ObstacleSpawner : MonoBehaviour
             {
                 float randomX = Random.Range(roadMinX, roadMaxX);
                 Vector3 checkPos = new Vector3(randomX, 1f, player.position.z + spawnDistanceAhead);
-
-                if (IsPathClear(checkPos))
-                {
-                    Spawn(prefabToSpawn, randomX);
-                    break;
-                }
+                if (IsPathClear(checkPos)) { Spawn(prefabToSpawn, randomX); break; }
             }
         }
     }
@@ -134,17 +166,11 @@ public class ObstacleSpawner : MonoBehaviour
     void SpawnSingleBrick()
     {
         if (brickPrefab == null) return;
-
         for (int i = 0; i < maxSpawnAttempts; i++)
         {
             float randomX = Random.Range(roadMinX, roadMaxX);
             Vector3 checkPos = new Vector3(randomX, 1f, player.position.z + spawnDistanceAhead);
-
-            if (IsPathClear(checkPos))
-            {
-                Spawn(brickPrefab, randomX);
-                break;
-            }
+            if (IsPathClear(checkPos)) { Spawn(brickPrefab, randomX); break; }
         }
     }
 
@@ -153,10 +179,7 @@ public class ObstacleSpawner : MonoBehaviour
         Collider[] hits = Physics.OverlapBox(spawnPos, clearanceBoxSize, Quaternion.identity);
         foreach (Collider hit in hits)
         {
-            if (hit.CompareTag("Obstacle") || hit.CompareTag("Ramp") || hit.CompareTag("Buff") || hit.CompareTag("Brick"))
-            {
-                return false;
-            }
+            if (hit.CompareTag("Obstacle") || hit.CompareTag("Ramp") || hit.CompareTag("Buff") || hit.CompareTag("Brick")) return false;
         }
         return true;
     }
@@ -177,7 +200,6 @@ public class ObstacleSpawner : MonoBehaviour
         float spawnY = prefab.transform.position.y;
         Vector3 spawnPos = new Vector3(x, spawnY, player.position.z + spawnDistanceAhead);
         GameObject obj = Instantiate(prefab, spawnPos, prefab.transform.rotation);
-
         Destroy(obj, 15f);
     }
 }
