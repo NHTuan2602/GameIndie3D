@@ -19,14 +19,14 @@ public class ObstacleSpawner : MonoBehaviour
     public GameObject[] highSpeedVehicles;
 
     [Header("Cài đặt Cổng Biển Báo (V.I.P)")]
-    public float gateInterval = 30f; // 30s đẻ 1 cổng
-    public float gapDuration = 3f;   // Quãng nghỉ 3s trước khi cổng ra
-    public float gateLifeTime = 15f; // Thời gian cổng cản đường
+    public float gateInterval = 30f;
+    public float gapDuration = 3f;
+    public float gateLifeTime = 15f;
 
-    [Header("Cài đặt Xe Khách (RANDOM)")]
-    public float minVehicleInterval = 12f; // Xe bus ra ngẫu nhiên từ 12s...
-    public float maxVehicleInterval = 25f; // ...đến 25s
-    private float targetVehicleInterval;   // Con số random sẽ được lưu vào đây
+    [Header("Cài đặt Xe Khách (DỒN DẬP TỪ GIÂY 10)")]
+    public float startSpawnBusAfter = 10f;
+    public float busSpawnInterval = 2f;
+    private float globalTimer = 0f;
 
     [Header("Cài đặt Vật cản tĩnh & Gạch")]
     public Transform player;
@@ -39,27 +39,18 @@ public class ObstacleSpawner : MonoBehaviour
     public int maxSpawnAttempts = 3;
     public Vector3 clearanceBoxSize = new Vector3(1.5f, 1f, 20f);
 
-    // Đồng hồ bấm giờ
     private float obstacleTimer;
     private float brickTimer;
     private float gateTimer;
     private float vehicleTimer;
-    private float gateActiveTimer; // Khóa không cho xe bus đẻ khi cổng đang tồn tại
-
-    void Start()
-    {
-        // Khởi tạo thời gian random cho chiếc xe bus đầu tiên
-        targetVehicleInterval = Random.Range(minVehicleInterval, maxVehicleInterval);
-    }
+    private float gateActiveTimer;
 
     void Update()
     {
-        // ==========================================
-        // 1. HỆ THỐNG CỔNG BIỂN BÁO (QUYỀN LỰC TỐI CAO)
-        // ==========================================
-        gateTimer += Time.deltaTime;
+        globalTimer += Time.deltaTime;
 
-        // Trừ dần thời gian tồn tại của cổng (nếu đang có cổng)
+        // 1. HỆ THỐNG CỔNG BIỂN BÁO
+        gateTimer += Time.deltaTime;
         if (gateActiveTimer > 0) gateActiveTimer -= Time.deltaTime;
 
         bool isGapTime = (gateInterval - gateTimer) <= gapDuration;
@@ -68,30 +59,23 @@ public class ObstacleSpawner : MonoBehaviour
         {
             SpawnGate();
             gateTimer = 0f;
-            gateActiveTimer = gateLifeTime; // KHÓA XE BUS TRONG 15 GIÂY TIẾP THEO!
+            gateActiveTimer = gateLifeTime;
         }
 
-        // NẾU SẮP ĐẺ CỔNG -> CHẶN ĐỨNG TẤT CẢ MỌI THỨ CÒN LẠI
         if (isGapTime) return;
 
-        // ==========================================
-        // 2. HỆ THỐNG XE BUS (CHỈ CHẠY KHI KHÔNG CÓ CỔNG)
-        // ==========================================
-        if (gateActiveTimer <= 0)
+        // 2. HỆ THỐNG XE BUS 
+        if (globalTimer >= startSpawnBusAfter && gateActiveTimer <= 0)
         {
             vehicleTimer += Time.deltaTime;
-            if (vehicleTimer >= targetVehicleInterval)
+            if (vehicleTimer >= busSpawnInterval)
             {
                 SpawnHighSpeedVehicle();
                 vehicleTimer = 0f;
-                // Bốc thăm lại thời gian ngẫu nhiên cho chuyến xe bus tiếp theo
-                targetVehicleInterval = Random.Range(minVehicleInterval, maxVehicleInterval);
             }
         }
 
-        // ==========================================
         // 3. HỆ THỐNG VẬT CẢN TĨNH & GẠCH
-        // ==========================================
         obstacleTimer += Time.deltaTime;
         if (obstacleTimer >= spawnInterval)
         {
@@ -107,21 +91,40 @@ public class ObstacleSpawner : MonoBehaviour
         }
     }
 
-    // CÁC HÀM SPAWN (GIỮ NGUYÊN NHƯ CŨ)
+    // ĐÃ FIX: THÊM VÒNG LẶP ĐỂ XE BUS CỐ GẮNG TÌM LÀN TRỐNG
     void SpawnHighSpeedVehicle()
     {
-        if (highSpeedVehicles == null || highSpeedVehicles.Length == 0) return;
-        Debug.Log("<color=orange>CẢNH BÁO: HUNG THẦN ĐƯỜNG PHỐ XUẤT HIỆN!</color>");
-        GameObject prefabToSpawn = highSpeedVehicles[Random.Range(0, highSpeedVehicles.Length)];
-        float randomLaneX = laneCenters[Random.Range(0, laneCenters.Length)];
-        Vector3 checkPos = new Vector3(randomLaneX, 1f, player.position.z + spawnDistanceAhead);
-
-        if (IsPathClear(checkPos))
+        // Báo lỗi ra Console nếu quên kéo xe Bus vào Inspector
+        if (highSpeedVehicles == null || highSpeedVehicles.Length == 0)
         {
-            float spawnY = prefabToSpawn.transform.position.y;
-            Vector3 spawnPos = new Vector3(randomLaneX, spawnY, player.position.z + spawnDistanceAhead);
-            GameObject obj = Instantiate(prefabToSpawn, spawnPos, prefabToSpawn.transform.rotation);
-            Destroy(obj, 20f);
+            Debug.LogWarning("<color=yellow>LỖI: Bạn chưa kéo xe Bus vào mảng High Speed Vehicles trong GameManager!</color>");
+            return;
+        }
+
+        bool spawned = false;
+
+        // Thử tìm làn trống tối đa 3 lần
+        for (int i = 0; i < maxSpawnAttempts; i++)
+        {
+            GameObject prefabToSpawn = highSpeedVehicles[Random.Range(0, highSpeedVehicles.Length)];
+            float randomLaneX = laneCenters[Random.Range(0, laneCenters.Length)];
+            Vector3 checkPos = new Vector3(randomLaneX, 1f, player.position.z + spawnDistanceAhead);
+
+            if (IsPathClear(checkPos))
+            {
+                float spawnY = prefabToSpawn.transform.position.y;
+                Vector3 spawnPos = new Vector3(randomLaneX, spawnY, player.position.z + spawnDistanceAhead);
+                GameObject obj = Instantiate(prefabToSpawn, spawnPos, prefabToSpawn.transform.rotation);
+                Destroy(obj, 20f);
+                spawned = true;
+                break; // Đẻ thành công thì thoát vòng lặp
+            }
+        }
+
+        // Báo ra Console nếu đường quá đông không đẻ được xe
+        if (!spawned)
+        {
+            Debug.Log("<color=orange>Đường kẹt quá, xe Bus không có chỗ trống để xuất hiện!</color>");
         }
     }
 
