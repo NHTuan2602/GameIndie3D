@@ -246,20 +246,57 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &94335339
+--- !u!1 &43238841
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 43238842}
+  - component: {fileID: 43238843}
+  m_Layer: 8
+  m_Name: BanLeCua
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &43238842
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43238841}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.00554, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4079151337056745}
+  m_Father: {fileID: 4801923714972081}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &43238843
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1361175916725133}
+  m_GameObject: {fileID: 43238841}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 43238842}
+  axisToRotate: 2
   openAngle: 90
-  openSpeed: 3
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
 --- !u!1 &141952618
 GameObject:
   m_ObjectHideFlags: 0
@@ -411,6 +448,7 @@ GameObject:
   - component: {fileID: 162882914}
   - component: {fileID: 162882913}
   - component: {fileID: 162882919}
+  - component: {fileID: 162882920}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -446,10 +484,6 @@ MonoBehaviour:
   staminaRegenRate: 15
   jumpStaminaCost: 15
   staminaBar: {fileID: 528070908}
-  interactRange: 3
-  interactLayer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!143 &162882914
 CharacterController:
   m_ObjectHideFlags: 0
@@ -563,6 +597,19 @@ MonoBehaviour:
   interactRange: 3
   playerCamera: {fileID: 330585546}
   interactUI: {fileID: 141952620}
+--- !u!114 &162882920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162882912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 777ce066475628a4a9b6c27691313a50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHide
+  isHidden: 0
 --- !u!1001 &182762909
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -866,20 +913,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &213649540
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334660534804281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &228495133
 GameObject:
   m_ObjectHideFlags: 0
@@ -955,34 +988,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 228495133}
   m_CullTransparentMesh: 1
---- !u!114 &256681173
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1218919241665483}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &270692174
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1914172312085143}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!114 &291225551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1012,20 +1017,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &307634226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1669304100778971}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1306,10 +1297,16 @@ MonoBehaviour:
   waitTime: 2
   patrolSpeed: 3.5
   chaseSpeed: 7
-  viewRadius: 7
-  viewAngle: 43
+  viewRadius: 10.82
+  viewAngle: 64
   playerTarget: {fileID: 162882918}
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
   enemyFlashlight: {fileID: 1108413996}
+  pathUpdateDelay: 0.2
+  headHeightOffset: 1.6
+  loseSightDelay: 2
 --- !u!195 &333099149
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1351,10 +1348,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.31
+  m_Radius: 0.26
   m_Height: 1.59
   m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: -0.27, z: -0.00000008940697}
+  m_Center: {x: 0, y: -0.36, z: -0.00000008940697}
 --- !u!23 &333099151
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1431,34 +1428,6 @@ Transform:
   - {fileID: 1412751871}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &340316228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1492557138939869}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &359732484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1053550026389313}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &387923076
 GameObject:
   m_ObjectHideFlags: 0
@@ -1664,6 +1633,57 @@ MonoBehaviour:
   spinSpeed: 100
   bobSpeed: 3
   bobHeight: 0.5
+--- !u!1 &406650592
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 406650593}
+  - component: {fileID: 406650594}
+  m_Layer: 8
+  m_Name: BanLeCua
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &406650593
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406650592}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.00409, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4246655019196801}
+  m_Father: {fileID: 4492001895326759}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &406650594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406650592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 406650593}
+  axisToRotate: 2
+  openAngle: -90
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1791,20 +1811,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &454296592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1791251663890737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &462645863
 GameObject:
   m_ObjectHideFlags: 0
@@ -1836,20 +1842,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &517400889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1513021524032235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &528070906
 GameObject:
   m_ObjectHideFlags: 0
@@ -1976,20 +1968,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &543925784
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1396002388446067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1001 &544544104
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2071,20 +2049,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a640dae6100b53b4ca9bb92c46773972, type: 3}
---- !u!114 &566413356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1809492505286073}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &573662046
 GameObject:
   m_ObjectHideFlags: 0
@@ -2121,48 +2085,108 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &613850703
+--- !u!1 &597959719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 597959721}
+  - component: {fileID: 597959720}
+  m_Layer: 8
+  m_Name: BanLeCua (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &597959720
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1040916662512051}
+  m_GameObject: {fileID: 597959719}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 597959721}
+  axisToRotate: 2
   openAngle: 90
-  openSpeed: 3
---- !u!114 &641504440
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
+--- !u!4 &597959721
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597959719}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.00441, y: 0, z: -0.00224}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4071034628809615}
+  m_Father: {fileID: 4752163373491759}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &613117473
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 613117474}
+  - component: {fileID: 613117475}
+  m_Layer: 8
+  m_Name: BanLeCua
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &613117474
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613117473}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4087702370056669}
+  m_Father: {fileID: 4432102161287243}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &613117475
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1890296769432723}
+  m_GameObject: {fileID: 613117473}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &657807567
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1338853855792817}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 613117474}
+  axisToRotate: 2
+  openAngle: -90
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
 --- !u!1 &746411611
 GameObject:
   m_ObjectHideFlags: 0
@@ -2487,20 +2511,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1629925082}
   m_SourcePrefab: {fileID: 100100000, guid: 61a26a12c2224864896ca5de2c110a30, type: 3}
---- !u!114 &797868839
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1151796436124441}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &799969704
 GameObject:
   m_ObjectHideFlags: 0
@@ -2951,132 +2961,159 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 172.3}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &839417560
+--- !u!1 &861236263
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 861236264}
+  - component: {fileID: 861236265}
+  m_Layer: 8
+  m_Name: BanLeCua (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &861236264
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861236263}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.00414, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4881831074558309}
+  m_Father: {fileID: 4044790655615507}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &861236265
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1695745633372211}
+  m_GameObject: {fileID: 861236263}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 861236264}
+  axisToRotate: 2
   openAngle: 90
-  openSpeed: 3
---- !u!114 &860919782
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
+--- !u!1 &1009191619
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1009191620}
+  - component: {fileID: 1009191621}
+  m_Layer: 8
+  m_Name: BanLeCua
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1009191620
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1009191619}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.00465, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4815089123517895}
+  m_Father: {fileID: 4353974276255051}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1009191621
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1264597774077237}
+  m_GameObject: {fileID: 1009191619}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 1009191620}
+  axisToRotate: 2
   openAngle: 90
-  openSpeed: 3
---- !u!114 &865796930
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
+--- !u!1 &1056670000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1056670001}
+  - component: {fileID: 1056670002}
+  m_Layer: 8
+  m_Name: BanLeCua (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1056670001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1056670000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.00358, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4933335777292833}
+  m_Father: {fileID: 4159882694043343}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1056670002
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1193882884651173}
+  m_GameObject: {fileID: 1056670000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &883941856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1262724050941975}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1051273593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1938009364120837}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1061425337
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1272203480591377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1073976903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1190158434111183}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1079246473
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1547633396093465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1086492908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1317241239593659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 1056670001}
+  axisToRotate: 2
+  openAngle: -90
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
 --- !u!1001 &1102850146
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3737,34 +3774,57 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &1166929891
+--- !u!1 &1142686843
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1142686844}
+  - component: {fileID: 1142686845}
+  m_Layer: 8
+  m_Name: BanLeCua (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1142686844
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142686843}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.00584, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4189651717271161}
+  m_Father: {fileID: 4723436850169673}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1142686845
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1014166778035281}
+  m_GameObject: {fileID: 1142686843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 1142686844}
+  axisToRotate: 2
   openAngle: 90
-  openSpeed: 3
---- !u!114 &1168860643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1977259911085259}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
 --- !u!1 &1175984764
 GameObject:
   m_ObjectHideFlags: 0
@@ -3892,6 +3952,57 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &1184597443
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1184597444}
+  - component: {fileID: 1184597445}
+  m_Layer: 8
+  m_Name: BanLeCua
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1184597444
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184597443}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.00508, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4202354462619317}
+  m_Father: {fileID: 4050094860225421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1184597445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184597443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 1184597444}
+  axisToRotate: 2
+  openAngle: 90
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
 --- !u!1001 &1229486562
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4240,48 +4351,57 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7c35a2728509b024690e8a0529064480, type: 3}
   m_PrefabInstance: {fileID: 1102850146}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1241110321
+--- !u!1 &1248407748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1248407749}
+  - component: {fileID: 1248407750}
+  m_Layer: 8
+  m_Name: BanLeCua
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1248407749
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248407748}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.00387, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4611247328315121}
+  m_Father: {fileID: 4700480771910089}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1248407750
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1092786541977673}
+  m_GameObject: {fileID: 1248407748}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 80d1e0477275a5b45a2742d0f79a9a08, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
+  m_EditorClassIdentifier: Assembly-CSharp::AutoDoorController
+  doorHinge: {fileID: 1248407749}
+  axisToRotate: 2
   openAngle: 90
-  openSpeed: 3
---- !u!114 &1265511591
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1237809567303711}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1289349247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1871203022399295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
+  smoothSpeed: 5
+  autoCloseDelay: 3
+  isOpen: 0
 --- !u!1 &1311728582
 GameObject:
   m_ObjectHideFlags: 0
@@ -4497,62 +4617,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1353167018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1415984915546355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1364519192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1426848792386407}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1364883311
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1867828338240829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1375051612
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1463486842258991}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &1379282745
 GameObject:
   m_ObjectHideFlags: 0
@@ -5034,7 +5098,6 @@ Transform:
   - {fileID: 4398636407084867}
   - {fileID: 4402504725096819}
   - {fileID: 4406976311535465}
-  - {fileID: 4223324076003721}
   - {fileID: 4494360858393201}
   - {fileID: 4390313567905785}
   - {fileID: 4648037190378523}
@@ -5081,20 +5144,6 @@ Transform:
   - {fileID: 4755096337918553}
   m_Father: {fileID: 4007291068911823}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1496350896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1914939070101381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &1526600829
 GameObject:
   m_ObjectHideFlags: 0
@@ -5395,76 +5444,6 @@ MonoBehaviour:
   spinSpeed: 100
   bobSpeed: 3
   bobHeight: 0.5
---- !u!114 &1634393167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1354005395949641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1636421716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1622984390654171}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1643434361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1538580701654329}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1702245411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1648743615363611}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1717069646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1834104239254961}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &1765698195
 GameObject:
   m_ObjectHideFlags: 0
@@ -5496,48 +5475,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1799521794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1793389862378035}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1808973551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1398043655389331}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1841671220
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1060639012864147}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1001 &1852156884
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5652,76 +5589,6 @@ Transform:
   - {fileID: 754207038}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1925493370
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129119301669201}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1945727173
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1662685816788409}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &1983600563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1197924850390477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &2000142959
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1056712539679927}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
---- !u!114 &2031437524
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1379060834876447}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!1 &2048335817
 GameObject:
   m_ObjectHideFlags: 0
@@ -5766,10 +5633,16 @@ MonoBehaviour:
   waitTime: 2
   patrolSpeed: 3.5
   chaseSpeed: 7
-  viewRadius: 7
-  viewAngle: 43
+  viewRadius: 10.82
+  viewAngle: 64
   playerTarget: {fileID: 162882918}
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
   enemyFlashlight: {fileID: 834514331}
+  pathUpdateDelay: 0.2
+  headHeightOffset: 1.6
+  loseSightDelay: 2
 --- !u!195 &2048335819
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5811,7 +5684,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.18
+  m_Radius: 0.32
   m_Height: 1.08
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: -0.26, z: -0.00000008940697}
@@ -6184,7 +6057,6 @@ GameObject:
   - component: {fileID: 4723436850169673}
   - component: {fileID: 33847422374910823}
   - component: {fileID: 23836271254161147}
-  - component: {fileID: 1166929891}
   - component: {fileID: 33847422374910824}
   m_Layer: 8
   m_Name: Door.006 (31)
@@ -6366,7 +6238,6 @@ GameObject:
   - component: {fileID: 4567584031118011}
   - component: {fileID: 33090175101825575}
   - component: {fileID: 23746912518100645}
-  - component: {fileID: 613850703}
   - component: {fileID: 33090175101825576}
   m_Layer: 8
   m_Name: Door.006 (5)
@@ -6502,7 +6373,6 @@ GameObject:
   - component: {fileID: 4740565710261357}
   - component: {fileID: 33613711446767495}
   - component: {fileID: 23610108304885413}
-  - component: {fileID: 359732484}
   - component: {fileID: 33613711446767496}
   m_Layer: 8
   m_Name: Door.006 (16)
@@ -6522,7 +6392,6 @@ GameObject:
   - component: {fileID: 4611247328315121}
   - component: {fileID: 33948653849208465}
   - component: {fileID: 23650527210174673}
-  - component: {fileID: 114564284147819103}
   - component: {fileID: 64385289216785653}
   m_Layer: 8
   m_Name: Door.009
@@ -6561,7 +6430,6 @@ GameObject:
   - component: {fileID: 4398636407084867}
   - component: {fileID: 33063834398303633}
   - component: {fileID: 23801773800671719}
-  - component: {fileID: 2000142959}
   - component: {fileID: 33063834398303634}
   m_Layer: 8
   m_Name: Door.005
@@ -6600,7 +6468,6 @@ GameObject:
   - component: {fileID: 4755096337918553}
   - component: {fileID: 33543850523630561}
   - component: {fileID: 23570480391397117}
-  - component: {fileID: 1841671220}
   - component: {fileID: 33543850523630562}
   m_Layer: 8
   m_Name: Door.006 (35)
@@ -6786,7 +6653,6 @@ GameObject:
   - component: {fileID: 4050094860225421}
   - component: {fileID: 33439031605426697}
   - component: {fileID: 23447393510257343}
-  - component: {fileID: 1241110321}
   - component: {fileID: 33439031605426698}
   m_Layer: 8
   m_Name: Door.006 (30)
@@ -7025,7 +6891,6 @@ GameObject:
   - component: {fileID: 4402504725096819}
   - component: {fileID: 33719500745756877}
   - component: {fileID: 23578352823619893}
-  - component: {fileID: 1925493370}
   - component: {fileID: 33719500745756878}
   m_Layer: 8
   m_Name: Door.006
@@ -7322,7 +7187,6 @@ GameObject:
   - component: {fileID: 4282276817654901}
   - component: {fileID: 33518603673893911}
   - component: {fileID: 23582376028526465}
-  - component: {fileID: 797868839}
   - component: {fileID: 33518603673893912}
   m_Layer: 8
   m_Name: Door.006 (23)
@@ -7543,7 +7407,6 @@ GameObject:
   - component: {fileID: 4757583022790321}
   - component: {fileID: 33699391118773201}
   - component: {fileID: 23599289823596001}
-  - component: {fileID: 1073976903}
   - component: {fileID: 33699391118773202}
   m_Layer: 8
   m_Name: Door.006 (24)
@@ -7597,7 +7460,6 @@ GameObject:
   - component: {fileID: 4620380423418779}
   - component: {fileID: 33391294242219855}
   - component: {fileID: 23934377890395681}
-  - component: {fileID: 865796930}
   - component: {fileID: 33391294242219856}
   m_Layer: 8
   m_Name: Door.006 (7)
@@ -7656,7 +7518,6 @@ GameObject:
   - component: {fileID: 4044790655615507}
   - component: {fileID: 33245884699767875}
   - component: {fileID: 23789037267729167}
-  - component: {fileID: 1983600563}
   - component: {fileID: 33245884699767876}
   m_Layer: 8
   m_Name: Door.006 (32)
@@ -7883,7 +7744,6 @@ GameObject:
   - component: {fileID: 4341296301550739}
   - component: {fileID: 33141703543072005}
   - component: {fileID: 23406307111674025}
-  - component: {fileID: 256681173}
   - component: {fileID: 33141703543072006}
   m_Layer: 8
   m_Name: Door.006 (21)
@@ -7973,7 +7833,6 @@ GameObject:
   - component: {fileID: 4700480771910089}
   - component: {fileID: 33824769315819415}
   - component: {fileID: 23911271253382265}
-  - component: {fileID: 1265511591}
   - component: {fileID: 33824769315819416}
   m_Layer: 8
   m_Name: Door.006 (25)
@@ -8181,7 +8040,6 @@ GameObject:
   - component: {fileID: 4691210383399845}
   - component: {fileID: 33622338844434337}
   - component: {fileID: 23834752011851517}
-  - component: {fileID: 883941856}
   - component: {fileID: 33622338844434338}
   m_Layer: 8
   m_Name: Door.006 (15)
@@ -8238,7 +8096,6 @@ GameObject:
   - component: {fileID: 4277670056538059}
   - component: {fileID: 33576557785044905}
   - component: {fileID: 23623775949854957}
-  - component: {fileID: 860919782}
   - component: {fileID: 33576557785044906}
   m_Layer: 8
   m_Name: Door Roof.001 (1)
@@ -8354,7 +8211,6 @@ GameObject:
   - component: {fileID: 4752163373491759}
   - component: {fileID: 33191975831564053}
   - component: {fileID: 23355998914374891}
-  - component: {fileID: 1061425337}
   - component: {fileID: 33191975831564054}
   m_Layer: 8
   m_Name: Door Roof.001
@@ -8667,7 +8523,6 @@ GameObject:
   - component: {fileID: 4648037190378523}
   - component: {fileID: 33817055835961091}
   - component: {fileID: 23378987413139613}
-  - component: {fileID: 33817055835961092}
   m_Layer: 8
   m_Name: Glass.001
   m_TagString: Untagged
@@ -8743,7 +8598,6 @@ GameObject:
   - component: {fileID: 4534483041509881}
   - component: {fileID: 33999012959254911}
   - component: {fileID: 23780923927853649}
-  - component: {fileID: 1086492908}
   - component: {fileID: 33999012959254912}
   m_Layer: 8
   m_Name: Door.006 (18)
@@ -8930,7 +8784,6 @@ GameObject:
   - component: {fileID: 4596070758777083}
   - component: {fileID: 33098824560775519}
   - component: {fileID: 23863093330060391}
-  - component: {fileID: 213649540}
   - component: {fileID: 33098824560775520}
   m_Layer: 8
   m_Name: Door.006 (20)
@@ -8968,7 +8821,6 @@ GameObject:
   - component: {fileID: 4492001895326759}
   - component: {fileID: 33208923983219705}
   - component: {fileID: 23139249916751961}
-  - component: {fileID: 657807567}
   - component: {fileID: 33208923983219706}
   m_Layer: 8
   m_Name: Door.006 (27)
@@ -9059,7 +8911,6 @@ GameObject:
   - component: {fileID: 4953807346299839}
   - component: {fileID: 33477800482988015}
   - component: {fileID: 23803852751898927}
-  - component: {fileID: 1634393167}
   - component: {fileID: 33477800482988016}
   m_Layer: 8
   m_Name: Door.002
@@ -9230,7 +9081,6 @@ GameObject:
   - component: {fileID: 4979080323886723}
   - component: {fileID: 33547487102314625}
   - component: {fileID: 23820424796346869}
-  - component: {fileID: 94335339}
   - component: {fileID: 33547487102314626}
   m_Layer: 8
   m_Name: Door.006 (4)
@@ -9417,7 +9267,6 @@ GameObject:
   - component: {fileID: 4432102161287243}
   - component: {fileID: 33797070546650695}
   - component: {fileID: 23716618035657351}
-  - component: {fileID: 2031437524}
   - component: {fileID: 33797070546650696}
   m_Layer: 8
   m_Name: Door.006 (29)
@@ -9621,7 +9470,6 @@ GameObject:
   - component: {fileID: 4966776458158185}
   - component: {fileID: 33215617233371749}
   - component: {fileID: 23672353227484501}
-  - component: {fileID: 543925784}
   - component: {fileID: 33215617233371750}
   m_Layer: 8
   m_Name: Door.006 (8)
@@ -9660,7 +9508,6 @@ GameObject:
   - component: {fileID: 4801923714972081}
   - component: {fileID: 33369687084320581}
   - component: {fileID: 23962310832311755}
-  - component: {fileID: 1808973551}
   - component: {fileID: 33369687084320582}
   m_Layer: 8
   m_Name: Door.006 (26)
@@ -9791,7 +9638,6 @@ GameObject:
   - component: {fileID: 4704541891951355}
   - component: {fileID: 33847100890860033}
   - component: {fileID: 23047438623762559}
-  - component: {fileID: 1353167018}
   - component: {fileID: 33847100890860034}
   m_Layer: 8
   m_Name: Door.006 (10)
@@ -9904,7 +9750,6 @@ GameObject:
   - component: {fileID: 33160402007039203}
   - component: {fileID: 23368290332631455}
   - component: {fileID: 114317970351477199}
-  - component: {fileID: 1364519192}
   - component: {fileID: 114317970351477200}
   m_Layer: 8
   m_Name: Glass door
@@ -10396,7 +10241,6 @@ GameObject:
   - component: {fileID: 4661533818549869}
   - component: {fileID: 33691489875224043}
   - component: {fileID: 23317146916500721}
-  - component: {fileID: 1375051612}
   - component: {fileID: 33691489875224044}
   m_Layer: 8
   m_Name: Door.006 (17)
@@ -10674,7 +10518,6 @@ GameObject:
   - component: {fileID: 4670053205659147}
   - component: {fileID: 33544459894745903}
   - component: {fileID: 23655808230787429}
-  - component: {fileID: 340316228}
   - component: {fileID: 33544459894745904}
   m_Layer: 8
   m_Name: Door.006 (14)
@@ -10846,26 +10689,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!1 &1513021524032235
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4223324076003721}
-  - component: {fileID: 33328753698947963}
-  - component: {fileID: 23131101688785829}
-  - component: {fileID: 517400889}
-  - component: {fileID: 33328753698947964}
-  m_Layer: 8
-  m_Name: Enery room door
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1515143167931707
 GameObject:
   m_ObjectHideFlags: 0
@@ -11054,26 +10877,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1535478359106177
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4935099247216007}
-  - component: {fileID: 33081787813607483}
-  - component: {fileID: 23498841933057023}
-  - component: {fileID: 64465378972598755}
-  - component: {fileID: 114918032621514843}
-  m_Layer: 8
-  m_Name: Enery room door.001
-  m_TagString: door
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1536294226321957
 GameObject:
   m_ObjectHideFlags: 0
@@ -11103,7 +10906,6 @@ GameObject:
   - component: {fileID: 4627306086103411}
   - component: {fileID: 33083405562217827}
   - component: {fileID: 23031923271282977}
-  - component: {fileID: 1643434361}
   - component: {fileID: 33083405562217828}
   m_Layer: 8
   m_Name: Door.006 (12)
@@ -11216,7 +11018,6 @@ GameObject:
   - component: {fileID: 4937270092495151}
   - component: {fileID: 33043153338477021}
   - component: {fileID: 23295200576017725}
-  - component: {fileID: 1079246473}
   - component: {fileID: 33043153338477022}
   m_Layer: 8
   m_Name: Door.006 (6)
@@ -11726,7 +11527,6 @@ GameObject:
   - component: {fileID: 4218932603654909}
   - component: {fileID: 33510678166609381}
   - component: {fileID: 23982490728235079}
-  - component: {fileID: 1636421716}
   - component: {fileID: 33510678166609382}
   m_Layer: 8
   m_Name: Door.006 (19)
@@ -11974,7 +11774,6 @@ GameObject:
   - component: {fileID: 33538900788392657}
   - component: {fileID: 23789119836714973}
   - component: {fileID: 64463707174451505}
-  - component: {fileID: 1702245411}
   - component: {fileID: 64463707174451506}
   m_Layer: 8
   m_Name: Door.006 (9)
@@ -12106,7 +11905,6 @@ GameObject:
   - component: {fileID: 4159882694043343}
   - component: {fileID: 33118608474602813}
   - component: {fileID: 23160802054743657}
-  - component: {fileID: 1945727173}
   - component: {fileID: 33118608474602814}
   m_Layer: 8
   m_Name: Door.006 (33)
@@ -12144,7 +11942,6 @@ GameObject:
   - component: {fileID: 4111188986009335}
   - component: {fileID: 33110968180947603}
   - component: {fileID: 23153864789015499}
-  - component: {fileID: 307634226}
   - component: {fileID: 33110968180947604}
   m_Layer: 8
   m_Name: Door.006 (3)
@@ -12255,7 +12052,6 @@ GameObject:
   - component: {fileID: 4110335526998211}
   - component: {fileID: 33230984662484173}
   - component: {fileID: 23002059742852413}
-  - component: {fileID: 33230984662484174}
   m_Layer: 8
   m_Name: Glass.002
   m_TagString: Untagged
@@ -12274,8 +12070,6 @@ GameObject:
   - component: {fileID: 4353974276255051}
   - component: {fileID: 33419151823199487}
   - component: {fileID: 23972808668689045}
-  - component: {fileID: 839417560}
-  - component: {fileID: 33419151823199488}
   m_Layer: 8
   m_Name: Door.006 (28)
   m_TagString: Untagged
@@ -12519,7 +12313,6 @@ GameObject:
   - component: {fileID: 4460668954899823}
   - component: {fileID: 33526927543620733}
   - component: {fileID: 23660583592110845}
-  - component: {fileID: 33526927543620734}
   m_Layer: 8
   m_Name: Glass.006
   m_TagString: Untagged
@@ -12980,7 +12773,6 @@ GameObject:
   - component: {fileID: 33192781412955201}
   - component: {fileID: 23783891825549207}
   - component: {fileID: 114572543419504809}
-  - component: {fileID: 454296592}
   - component: {fileID: 114572543419504810}
   m_Layer: 8
   m_Name: Glass door (1)
@@ -13000,7 +12792,6 @@ GameObject:
   - component: {fileID: 4786806632850289}
   - component: {fileID: 33813981193064181}
   - component: {fileID: 23414391758971481}
-  - component: {fileID: 1799521794}
   - component: {fileID: 33813981193064182}
   m_Layer: 8
   m_Name: Door.003
@@ -13112,7 +12903,6 @@ GameObject:
   - component: {fileID: 4494360858393201}
   - component: {fileID: 33451679565144319}
   - component: {fileID: 23552895455663707}
-  - component: {fileID: 566413356}
   - component: {fileID: 33451679565144320}
   m_Layer: 8
   m_Name: Entry door 1
@@ -13359,7 +13149,6 @@ GameObject:
   - component: {fileID: 4586041613003163}
   - component: {fileID: 33941318457250065}
   - component: {fileID: 23823415784160543}
-  - component: {fileID: 1717069646}
   - component: {fileID: 33941318457250066}
   m_Layer: 8
   m_Name: Door.006 (1)
@@ -13397,7 +13186,6 @@ GameObject:
   - component: {fileID: 4762658028053569}
   - component: {fileID: 33540404403954305}
   - component: {fileID: 23565477591760005}
-  - component: {fileID: 33540404403954306}
   m_Layer: 8
   m_Name: Glass.004
   m_TagString: Untagged
@@ -13602,7 +13390,6 @@ GameObject:
   - component: {fileID: 4406976311535465}
   - component: {fileID: 33899231466597527}
   - component: {fileID: 23060516659164361}
-  - component: {fileID: 1364883311}
   - component: {fileID: 33899231466597528}
   m_Layer: 8
   m_Name: Door.007
@@ -13640,7 +13427,6 @@ GameObject:
   - component: {fileID: 4644430414078879}
   - component: {fileID: 33769086096277817}
   - component: {fileID: 23728675859256739}
-  - component: {fileID: 1289349247}
   - component: {fileID: 33769086096277818}
   m_Layer: 8
   m_Name: Door.006 (13)
@@ -13750,7 +13536,6 @@ GameObject:
   - component: {fileID: 4623869575528095}
   - component: {fileID: 33335969147363731}
   - component: {fileID: 23806157088428161}
-  - component: {fileID: 641504440}
   - component: {fileID: 33335969147363732}
   m_Layer: 8
   m_Name: Door.006 (22)
@@ -13915,7 +13700,6 @@ GameObject:
   - component: {fileID: 4085377981270609}
   - component: {fileID: 33459911723925691}
   - component: {fileID: 23733503409155417}
-  - component: {fileID: 270692174}
   - component: {fileID: 33459911723925692}
   m_Layer: 8
   m_Name: Door.006 (2)
@@ -13935,7 +13719,6 @@ GameObject:
   - component: {fileID: 4810291566347437}
   - component: {fileID: 33617295060428781}
   - component: {fileID: 23739600290951411}
-  - component: {fileID: 1496350896}
   - component: {fileID: 33617295060428782}
   m_Layer: 8
   m_Name: Door.006 (11)
@@ -14090,7 +13873,7 @@ GameObject:
   - component: {fileID: 64395586604671061}
   m_Layer: 0
   m_Name: Railing
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -14162,7 +13945,6 @@ GameObject:
   - component: {fileID: 4802639246043119}
   - component: {fileID: 33654040685945919}
   - component: {fileID: 23218574538115111}
-  - component: {fileID: 1051273593}
   - component: {fileID: 33654040685945920}
   m_Layer: 8
   m_Name: Door.002 (1)
@@ -14397,7 +14179,6 @@ GameObject:
   - component: {fileID: 4404223950768223}
   - component: {fileID: 33193647555653831}
   - component: {fileID: 23732658606519157}
-  - component: {fileID: 1168860643}
   - component: {fileID: 33193647555653832}
   m_Layer: 8
   m_Name: Door.006 (34)
@@ -15109,7 +14890,7 @@ Transform:
   m_LocalScale: {x: 100.0003, y: 100.00007, z: 100.00007}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4881831074558309}
+  - {fileID: 861236264}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: -180.00002}
 --- !u!4 &4046489636686717
@@ -15140,7 +14921,7 @@ Transform:
   m_LocalScale: {x: 100.00016, y: 99.999954, z: 99.999954}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4202354462619317}
+  - {fileID: 1184597444}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: -270}
 --- !u!4 &4050693879631603
@@ -15256,13 +15037,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1317969630790663}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00000011202278, y: 1.3314246e-24, z: 0.000000017338758, w: 1}
-  m_LocalPosition: {x: -0.005290637, y: 0.0017765998, z: -0.014472389}
-  m_LocalScale: {x: 0.9999999, y: 1.0000002, z: 1}
+  m_LocalRotation: {x: -0.000000059604645, y: 8.881784e-16, z: 0.000000017338758, w: 1}
+  m_LocalPosition: {x: -0.0008806414, y: 0.0017766011, z: -0.012232387}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4148790168381389}
-  m_Father: {fileID: 4752163373491759}
+  m_Father: {fileID: 597959721}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4071331233175975
 Transform:
@@ -15332,13 +15113,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1241926809276159}
   serializedVersion: 2
-  m_LocalRotation: {x: -3.081488e-33, y: -0.0000000018626451, z: -0.000000014901161, w: 1}
-  m_LocalPosition: {x: 0.0008630371, y: -0.0045741424, z: 0.010477845}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.00086304685, y: 0.00096586626, z: 0.010477852}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4623172690770547}
-  m_Father: {fileID: 4801923714972081}
+  m_Father: {fileID: 43238842}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4080908143873723
 Transform:
@@ -15379,13 +15160,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1163502539386035}
   serializedVersion: 2
-  m_LocalRotation: {x: -3.081488e-33, y: -0.0000000018626451, z: -0.000000014901161, w: 1}
-  m_LocalPosition: {x: 0.0008630371, y: -0.0045741424, z: 0.010477845}
+  m_LocalRotation: {x: -0, y: -0.0000000018625881, z: -0.000000014901216, w: 1}
+  m_LocalPosition: {x: 0.0008630446, y: -0.0045741443, z: 0.010477841}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4166535162382263}
-  m_Father: {fileID: 4432102161287243}
+  m_Father: {fileID: 613117474}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4095114311554823
 Transform:
@@ -15839,7 +15620,7 @@ Transform:
   m_LocalScale: {x: 100.00016, y: 100.00017, z: 100.00017}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4933335777292833}
+  - {fileID: 1056670001}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: 0}
 --- !u!4 &4162553322426503
@@ -16001,13 +15782,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1264622290370657}
   serializedVersion: 2
-  m_LocalRotation: {x: -3.081488e-33, y: -0.0000000018626451, z: -0.000000014901161, w: 1}
-  m_LocalPosition: {x: 0.0008630371, y: -0.0045741424, z: 0.010477845}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.00086304673, y: 0.0012658662, z: 0.010477843}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4889515119772281}
-  m_Father: {fileID: 4723436850169673}
+  m_Father: {fileID: 1142686844}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4200343668659277
 Transform:
@@ -16047,13 +15828,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1826563396682415}
   serializedVersion: 2
-  m_LocalRotation: {x: -3.081488e-33, y: -0.0000000018626451, z: -0.000000014901161, w: 1}
-  m_LocalPosition: {x: 0.0008630371, y: -0.0045741424, z: 0.010477845}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.00086304673, y: 0.000505866, z: 0.010477853}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4304497890181993}
-  m_Father: {fileID: 4050094860225421}
+  m_Father: {fileID: 1184597444}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4202703640627725
 Transform:
@@ -16164,22 +15945,6 @@ Transform:
   - {fileID: 4498703311278655}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: -90}
---- !u!4 &4223324076003721
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1513021524032235}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0.78297806, y: 29.646461, z: 0.42357063}
-  m_LocalScale: {x: -100, y: -100, z: -100}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 4935099247216007}
-  m_Father: {fileID: 1476071097}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4225751073232209
 Transform:
   m_ObjectHideFlags: 0
@@ -16406,13 +16171,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1172965270307501}
   serializedVersion: 2
-  m_LocalRotation: {x: -3.081488e-33, y: -0.0000000018626451, z: -0.000000014901161, w: 1}
-  m_LocalPosition: {x: 0.0008630371, y: -0.0045741424, z: 0.010477845}
+  m_LocalRotation: {x: -0, y: -0.0000000018625881, z: -0.000000014901216, w: 1}
+  m_LocalPosition: {x: 0.0008630446, y: -0.00048414897, z: 0.010477852}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4181927512888383}
-  m_Father: {fileID: 4492001895326759}
+  m_Father: {fileID: 406650593}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4248197125777207
 Transform:
@@ -17270,7 +17035,7 @@ Transform:
   m_LocalScale: {x: 100.00016, y: 99.99997, z: 99.99997}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4815089123517895}
+  - {fileID: 1009191620}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: -180.00002}
 --- !u!4 &4356240046030977
@@ -17769,7 +17534,7 @@ Transform:
   m_LocalScale: {x: 100.00016, y: 100.00007, z: 100.00007}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4087702370056669}
+  - {fileID: 613117474}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: 0}
 --- !u!4 &4432186028103087
@@ -18200,7 +17965,7 @@ Transform:
   m_LocalScale: {x: 100.00016, y: 99.99996, z: 99.99996}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4246655019196801}
+  - {fileID: 406650593}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: 0}
 --- !u!4 &4492624290014191
@@ -18904,13 +18669,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1054418687080239}
   serializedVersion: 2
-  m_LocalRotation: {x: -3.081488e-33, y: -0.0000000018626451, z: -0.000000014901161, w: 1}
-  m_LocalPosition: {x: 0.0008630371, y: -0.0045741424, z: 0.010477845}
+  m_LocalRotation: {x: -2.6690885e-15, y: -0.0000000018626449, z: -0.000000014901159, w: 1}
+  m_LocalPosition: {x: 0.00086302415, y: -0.0007041383, z: 0.010477846}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4770410176117153}
-  m_Father: {fileID: 4700480771910089}
+  m_Father: {fileID: 1248407749}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4616383957380813
 Transform:
@@ -19524,7 +19289,7 @@ Transform:
   m_LocalScale: {x: 100, y: 99.99986, z: 99.99986}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4611247328315121}
+  - {fileID: 1248407749}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: -180.00002}
 --- !u!4 &4702721945210595
@@ -19664,7 +19429,7 @@ Transform:
   m_LocalScale: {x: 100.00016, y: 99.999954, z: 99.999954}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4189651717271161}
+  - {fileID: 1142686844}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: -270}
 --- !u!4 &4725612964574483
@@ -19906,7 +19671,7 @@ Transform:
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4071034628809615}
+  - {fileID: 597959721}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4755096337918553
@@ -20244,7 +20009,7 @@ Transform:
   m_LocalScale: {x: 100.00015, y: 99.99996, z: 99.99996}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4079151337056745}
+  - {fileID: 43238842}
   m_Father: {fileID: 1476071097}
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: -270}
 --- !u!4 &4802507239806461
@@ -20381,13 +20146,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1453450407760089}
   serializedVersion: 2
-  m_LocalRotation: {x: -3.081488e-33, y: -0.0000000018626451, z: -0.000000014901161, w: 1}
-  m_LocalPosition: {x: 0.0008630371, y: -0.0045741424, z: 0.010477845}
+  m_LocalRotation: {x: -2.6690885e-15, y: -0.0000000018626449, z: -0.000000014901159, w: 1}
+  m_LocalPosition: {x: 0.00086302275, y: 0.00007586647, z: 0.010477854}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4494240168518251}
-  m_Father: {fileID: 4353974276255051}
+  m_Father: {fileID: 1009191620}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4820503119596051
 Transform:
@@ -20842,13 +20607,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1195517832996583}
   serializedVersion: 2
-  m_LocalRotation: {x: -3.081488e-33, y: -0.0000000018626451, z: -0.000000014901161, w: 1}
-  m_LocalPosition: {x: 0.0008630371, y: -0.0045741424, z: 0.010477845}
+  m_LocalRotation: {x: -2.6690885e-15, y: -0.0000000018626449, z: -0.000000014901159, w: 1}
+  m_LocalPosition: {x: 0.00086302153, y: -0.00043414813, z: 0.010477844}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4637500943534223}
-  m_Father: {fileID: 4044790655615507}
+  m_Father: {fileID: 861236264}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4882164387538085
 Transform:
@@ -21234,28 +20999,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1089229899244157}
   serializedVersion: 2
-  m_LocalRotation: {x: -3.081488e-33, y: -0.0000000018626451, z: -0.000000014901161, w: 1}
-  m_LocalPosition: {x: 0.0008630371, y: -0.0045741424, z: 0.010477845}
+  m_LocalRotation: {x: -0, y: -0.0000000018625881, z: -0.000000014901216, w: 1}
+  m_LocalPosition: {x: 0.0008630446, y: -0.0009941396, z: 0.010477849}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4178679998160849}
-  m_Father: {fileID: 4159882694043343}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4935099247216007
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1535478359106177}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0006940937, y: -0.004528141, z: -0.010451069}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4223324076003721}
+  m_Father: {fileID: 1056670001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4937135674904661
 Transform:
@@ -23785,55 +23535,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: e822722b9afb7f94cbf04f23ce16c856, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!23 &23131101688785829
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1513021524032235}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 4294967295
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 13269f783f1cb9042ac11a5cd3603e74, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29923,55 +29624,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: e822722b9afb7f94cbf04f23ce16c856, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!23 &23498841933057023
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1535478359106177}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 4294967295
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 13269f783f1cb9042ac11a5cd3603e74, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -40330,6 +39982,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33045172039545571
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40416,6 +40071,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33064804874600285
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40480,14 +40138,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1579034983599991}
   m_Mesh: {fileID: 4300050, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
---- !u!33 &33081787813607483
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1535478359106177}
-  m_Mesh: {fileID: 4300244, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
 --- !u!33 &33081861122842223
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40526,6 +40176,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33084599123724899
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40556,6 +40209,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33090434882167985
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40594,6 +40250,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33099503447790411
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40656,6 +40315,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33117509404691663
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40694,6 +40356,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33122652836683375
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40772,6 +40437,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33143998040099805
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40866,6 +40534,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33192774823989541
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40904,6 +40575,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33194903825350209
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -40966,6 +40640,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33214002857710237
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41004,6 +40681,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33215708229036479
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41020,20 +40700,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1694371953899779}
   m_Mesh: {fileID: 4300044, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
---- !u!114 &33230984662484174
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1694371953899779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!33 &33235283093502487
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41104,6 +40770,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33246549398372751
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41392,28 +41061,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1050493616434143}
   m_Mesh: {fileID: 4300050, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
---- !u!33 &33328753698947963
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1513021524032235}
-  m_Mesh: {fileID: 4300008, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
---- !u!114 &33328753698947964
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1513021524032235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!33 &33334082793958637
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41452,6 +41099,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33336382926843779
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41610,6 +41260,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33374253996938185
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41664,6 +41317,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33393470717606273
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41744,20 +41400,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1695745633372211}
   m_Mesh: {fileID: 4300042, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
---- !u!114 &33419151823199488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1695745633372211}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!33 &33425043466314067
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41804,6 +41446,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33441578991565543
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41882,6 +41527,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33457055349782907
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41928,6 +41576,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33462835433209371
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41990,6 +41641,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33478903502224239
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42100,6 +41754,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33510821855767571
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42162,6 +41819,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33518964266146353
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42178,20 +41838,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1725845412156985}
   m_Mesh: {fileID: 4300072, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
---- !u!114 &33526927543620734
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1725845412156985}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!33 &33528193797530123
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42248,20 +41894,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1835286726415455}
   m_Mesh: {fileID: 4300038, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
---- !u!114 &33540404403954306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1835286726415455}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!33 &33541406626283045
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42300,6 +41932,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33544459894745903
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42322,6 +41957,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33547487102314625
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42344,6 +41982,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33548764593550771
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42478,6 +42119,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33582675790725751
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42620,6 +42264,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33615995393987113
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42658,6 +42305,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33622080255975745
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42688,6 +42338,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33622466465583213
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42782,6 +42435,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33655423106640485
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42924,6 +42580,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33692340222519431
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42970,6 +42629,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33700432645471937
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43048,6 +42710,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33724555504316969
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43174,6 +42839,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33770744019359145
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43252,6 +42920,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33799628496046359
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43322,6 +42993,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33814496902342775
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43338,20 +43012,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1311779965874883}
   m_Mesh: {fileID: 4300076, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
---- !u!114 &33817055835961092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1311779965874883}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
 --- !u!33 &33817636684478951
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43392,20 +43052,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1237809567303711}
   m_Mesh: {fileID: 4300042, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
---- !u!114 &33824769315819416
-MonoBehaviour:
+--- !u!65 &33824769315819416
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1237809567303711}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eaaf0f97e8ce5f48b800bdca2e836c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  openAngle: 90
-  openSpeed: 3
+  serializedVersion: 3
+  m_Size: {x: -0.02, y: 0.010000009, z: 0.02000001}
+  m_Center: {x: -0.00074580224, y: -0.0000002897033, z: -0.00071677024}
 --- !u!33 &33828801374654187
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43468,6 +43135,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33847422374910823
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43490,6 +43160,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33848829927800911
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43648,6 +43321,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33903985651244567
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43750,6 +43426,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!33 &33945923035849885
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43916,6 +43595,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!54 &54078160662591949
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -46744,28 +46426,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
---- !u!64 &64465378972598755
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1535478359106177}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300244, guid: 18cd780e6948a554a850b2d047ebf8fb, type: 3}
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!64 &64471911965337219
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -50430,6 +50093,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &114320983983973161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51050,25 +50716,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MyParent: {fileID: 1354353106920817}
---- !u!114 &114564284147819103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1054418687080239}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e7954b3afdba044799272ef7bf5c206, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseDoors:
-  - Door: {fileID: 1054418687080239}
-    CloseValue: 0
-    OpenValue: -88
-    isDoorOpen: 0
-    RotationOrigin: {fileID: 1054418687080239}
-  door_in_use: 0
 --- !u!114 &114569025215501809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51126,6 +50773,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   openSpeed: 3
+  isOpen: 0
+  defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &114573681655589381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51609,25 +51259,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MyParent: {fileID: 1344784375683695}
---- !u!114 &114918032621514843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1535478359106177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e7954b3afdba044799272ef7bf5c206, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseDoors:
-  - Door: {fileID: 1535478359106177}
-    CloseValue: 0
-    OpenValue: 88
-    isDoorOpen: 0
-    RotationOrigin: {fileID: 1535478359106177}
-  door_in_use: 0
 --- !u!114 &114918234165612181
 MonoBehaviour:
   m_ObjectHideFlags: 0

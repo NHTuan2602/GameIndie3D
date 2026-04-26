@@ -32,9 +32,7 @@ public class PlayerController : MonoBehaviour
     public float jumpStaminaCost = 15f;
     public Slider staminaBar;
 
-    [Header("Cài đặt Tương tác (MỞ CỬA, NHẶT ĐỒ)")]
-    public float interactRange = 3f; // Tầm với tay của nhân vật
-    public LayerMask interactLayer;  // Lọc chỉ chạm vào Layer "Interactable" để đỡ nặng máy
+    // ĐÃ XÓA BIẾN TƯƠNG TÁC (Chuyển sang PlayerInteraction lo)
 
     private CharacterController controller;
     private Vector3 currentMovement;
@@ -79,34 +77,7 @@ public class PlayerController : MonoBehaviour
         SmoothCrouchTransition();
         CalculateAndApplyMovement();
 
-        // HÀM MỚI: Xử lý bấm nút tương tác
-        HandleInteraction();
-    }
-
-    // =====================================
-    // HÀM MỚI: BẮN TIA RAYCAST ĐỂ MỞ CỬA
-    // =====================================
-    void HandleInteraction()
-    {
-        // Bấm phím E để tương tác
-        if (Input.GetKeyDown(KeyCode.E) && playerCamera != null)
-        {
-            RaycastHit hit;
-            // Bắn 1 tia từ camera thẳng tới trước mặt
-            if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, interactRange, interactLayer))
-            {
-                // Kiểm tra xem tia đó có đâm trúng cái Cửa không
-                DoorController door = hit.collider.GetComponentInParent<DoorController>();
-                if (door != null)
-                {
-                    door.ToggleDoor(); // Ra lệnh mở/đóng cửa
-                }
-                else
-                {
-                    Debug.Log("Nhìn thấy: " + hit.collider.name + " nhưng không phải cửa!");
-                }
-            }
-        }
+        // ĐÃ XÓA HÀM HandleInteraction() VÌ NÓ KHÔNG CÒN THUỘC VỀ ĐÂY NỮA
     }
 
     void HandleStamina()

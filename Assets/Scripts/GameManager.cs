@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     // ==========================================
     [Header("Chế độ Dev (Dành cho Test)")]
     public bool enableDevMode = false;
-    public int testStartDay = 2;
+    public int testStartDay = 1;
     public bool testHasNotebook = false;
 
     [Header("Thông định Nhân vật")]
@@ -34,14 +34,13 @@ public class GameManager : MonoBehaviour
     [Header("Chỉ số Tiến trình & Đạo đức")]
     public float money = 0f;
     public int karma = 100;
-    public int gamblingAddictionLevel = 0;
 
-    [Header("Hệ thống Lương & KPI (ĐỘNG)")]
+    // QUAN TRỌNG ĐÃ ĐƯỢC PHỤC HỒI: HỆ THỐNG LƯỜNG & KPI BAN NGÀY
+    [Header("Hệ thống Lương & KPI")]
     public int currentDay = 1;
     public int maxDays = 5;
     public int attemptedScamsToday = 0;
     public int successfulScamsToday = 0;
-
     public int targetKPI = 3;
     public int maxAttemptsPerDay = 5;
     public float currentCommissionRate = 0.1f;
@@ -49,12 +48,13 @@ public class GameManager : MonoBehaviour
     public int exchangeRateVND = 25000;
     public int consecutiveScamFails = 0;
 
-    [Header("Vật phẩm Vượt ngục (Góp nhặt ban đêm)")]
+    [Header("Vật phẩm Vượt ngục")]
     public bool hasNotebook = false;
     public bool hasWrench = false;
     public bool hasMap = false;
     public bool hasCalledPolice = false;
     public bool hasRope = false;
+    public bool hasMemento = false; // Kỷ vật
     public int collectedQuestItems = 0;
     public int requiredItemsToEscape = 3;
 
@@ -62,18 +62,21 @@ public class GameManager : MonoBehaviour
     public int caughtCountThisNight = 0;
     public int maxCaughtBeforeReset = 3;
 
+    // QUAN TRỌNG ĐÃ ĐƯỢC PHỤC HỒI: BIẾN GIAO TIẾP NPC
     [Header("--- HỆ THỐNG VÒNG LẶP ---")]
     public GamePhase currentPhase = GamePhase.Morning;
     public bool hasTalkedToNPC = false;
     public bool unlockedScouting = false;
-    public int gambleCountTonight = 0;
 
-    // ==========================================
-    // SỰ KIỆN ĐÊM 5 (VƯỢT NGỤC)
-    // ==========================================
+    [Header("--- HỆ THỐNG SÒNG BẠC & TÍN DỤNG ĐEN ---")]
+    public int totalGambleCount = 0;
+    public bool isCasinoLocked = false;
+    public bool isBlackCreditActive = false;
+
+    // QUAN TRỌNG ĐÃ ĐƯỢC PHỤC HỒI: SỰ KIỆN ĐÊM 5
     [Header("Sự kiện Đêm 5")]
     public bool isEscapeStart = false;
-    public int escapeProgress = 0; // 0: Đu dây, 1: Cắt rào, 2: Đua xe
+    public int escapeProgress = 0;
     public bool isRedAlert = false;
 
     void Awake()
@@ -83,14 +86,9 @@ public class GameManager : MonoBehaviour
 
         if (enableDevMode)
         {
-            Debug.Log("<color=cyan>--- ĐANG CHẠY CHẾ ĐỘ DEV MODE ---</color>");
             currentDay = testStartDay;
             hasNotebook = testHasNotebook;
-
-            if (SceneManager.GetActiveScene().name.Contains("Night"))
-            {
-                currentPhase = GamePhase.Night;
-            }
+            if (SceneManager.GetActiveScene().name.Contains("Night")) currentPhase = GamePhase.Night;
         }
     }
 
@@ -98,47 +96,13 @@ public class GameManager : MonoBehaviour
     {
         isEscapeStart = true;
         isRedAlert = true;
-        // Kích hoạt còi hú, đèn đỏ toàn khu trại
         RenderSettings.ambientLight = Color.red;
         Debug.Log("<color=red>BÁO ĐỘNG ĐỎ! CHẾ ĐỘ VƯỢT NGỤC KÍCH HOẠT!</color>");
-
-        // Bạn có thể dùng lệnh SceneManager.LoadScene() ở đây để load thẳng vào màn đua xe
-        // SceneManager.LoadScene("EscapeBikeScene");
     }
 
-    public bool OnPlayerCaught()
-    {
-        caughtCountThisNight++;
-
-        if (caughtCountThisNight >= maxCaughtBeforeReset)
-        {
-            Debug.Log("<color=red>BỊ BẮT QUÁ 3 LẦN! CHÍCH ĐIỆN VỀ PHÒNG NGỦ.</color>");
-            CaughtByNightGuard();
-            return true;
-        }
-        else
-        {
-            int livesLeft = maxCaughtBeforeReset - caughtCountThisNight;
-            Debug.Log($"<color=orange>VÙNG VẪY THÀNH CÔNG! Lính canh bị choáng. Còn {livesLeft} mạng.</color>");
-            TakeShockDamage(20);
-            return false;
-        }
-    }
-
-    public bool CanCollectItems()
-    {
-        if (currentDay >= 2 && !hasNotebook) return false;
-        return true;
-    }
-
-    public void TakeShockDamage(int damageAmount)
-    {
-        hp -= damageAmount;
-        if (hp < 0) hp = 0;
-        Debug.Log($"<color=red>BỊ CHÍCH ĐIỆN MẤT {damageAmount} MÁU! HP CÒN: {hp}</color>");
-        CheckDeath();
-    }
-
+    // ==========================================
+    // HỆ THỐNG LÀM VIỆC BAN NGÀY (ĐÃ PHỤC HỒI)
+    // ==========================================
     public bool StartScammingVictim(int staminaCost)
     {
         if (hp <= 0) return false;
@@ -213,69 +177,63 @@ public class GameManager : MonoBehaviour
     public void EndDaySummary()
     {
         Debug.Log("=== TỔNG KẾT CUỐI CA CHIỀU ===");
-
         if (successfulScamsToday >= targetKPI)
         {
             Debug.Log($"<color=green>ĐẠT KPI ({successfulScamsToday}/{targetKPI}).</color>");
-
             if (successfulScamsToday > targetKPI || targetKPI == 5)
             {
-                if (targetKPI == 3)
-                {
-                    targetKPI = 4;
-                    currentCommissionRate = 0.2f;
-                    Debug.Log("THĂNG CHỨC! Ngày mai KPI: 4, Hoa hồng: 20%");
-                }
-                else if (targetKPI == 4)
-                {
-                    targetKPI = 5;
-                    currentCommissionRate = 0.3f;
-                    Debug.Log("THĂNG CHỨC! Ngày mai KPI: 5, Hoa hồng: 30%");
-                }
+                if (targetKPI == 3) { targetKPI = 4; currentCommissionRate = 0.2f; }
+                else if (targetKPI == 4) { targetKPI = 5; currentCommissionRate = 0.3f; }
                 else if (targetKPI == 5 && successfulScamsToday == 5)
                 {
                     typingDifficultyMultiplier -= 0.15f;
                     if (typingDifficultyMultiplier < 0.5f) typingDifficultyMultiplier = 0.5f;
-                    Debug.Log("ĐẠT ĐỈNH! Tổ chức ép bạn gõ phím nhanh hơn vào ngày mai!");
                 }
-            }
-            else
-            {
-                Debug.Log("Vừa đủ KPI, giữ nguyên chức vụ!");
             }
         }
         else
         {
             int shortfall = targetKPI - successfulScamsToday;
             int shockDamage = shortfall * 30;
-
-            Debug.Log($"<color=red>TRƯỢT KPI! Thiếu {shortfall} người. BỊ CHÍCH ĐIỆN VÀ GIÁNG CHỨC!</color>");
+            Debug.Log($"<color=red>TRƯỢT KPI! Thiếu {shortfall} người. BỊ CHÍCH ĐIỆN!</color>");
             TakeShockDamage(shockDamage);
-
             targetKPI = 3;
             currentCommissionRate = 0.1f;
             typingDifficultyMultiplier = 1.0f;
         }
     }
 
-    public void GoOut(float moneyCost)
+    // ==========================================
+    // HỆ THỐNG ĐÊM THÁM THÍNH & VẬT PHẨM (ĐÃ PHỤC HỒI)
+    // ==========================================
+    public bool CanCollectItems()
     {
-        if (gambleCountTonight >= 5) return;
+        if (currentDay >= 2 && !hasNotebook) return false;
+        return true;
+    }
 
-        if (money >= moneyCost)
+    public void TakeShockDamage(int damageAmount)
+    {
+        hp -= damageAmount;
+        if (hp < 0) hp = 0;
+        Debug.Log($"<color=red>BỊ CHÍCH ĐIỆN MẤT {damageAmount} MÁU! HP CÒN: {hp}</color>");
+        CheckDeath();
+    }
+
+    public bool OnPlayerCaught()
+    {
+        caughtCountThisNight++;
+        if (caughtCountThisNight >= maxCaughtBeforeReset)
         {
-            money -= moneyCost;
-            stamina -= 20;
-            if (stamina < 0) stamina = 0;
-
-            gamblingAddictionLevel++;
-            gambleCountTonight++;
-
-            if (gambleCountTonight >= 5)
-            {
-                Debug.Log("Chơi đủ 5 lần! Bảo vệ sới bạc đuổi về. Chuyển sang ngày hôm sau!");
-                AdvanceToNextDay();
-            }
+            Debug.Log("<color=red>HẾT LƯỢT: Đã bị bắt 3 lần trong đêm nay!</color>");
+            CaughtByNightGuard();
+            return true;
+        }
+        else
+        {
+            int remainingLives = maxCaughtBeforeReset - caughtCountThisNight;
+            Debug.Log($"<color=orange>CẢNH BÁO: Còn {remainingLives} lượt dự phòng đêm nay.</color>");
+            return false;
         }
     }
 
@@ -286,7 +244,7 @@ public class GameManager : MonoBehaviour
         if (maxStamina < 20) maxStamina = 20;
         stamina = maxStamina;
 
-        Debug.Log("Bị bảo vệ tóm cổ! Đuổi thẳng về phòng ngủ (NightScreen).");
+        Debug.Log("Bị bảo vệ tóm cổ! Đuổi thẳng về phòng ngủ.");
         currentPhase = GamePhase.Night;
         SceneManager.LoadScene("NightScreen");
     }
@@ -305,6 +263,59 @@ public class GameManager : MonoBehaviour
         AdvanceToNextDay();
     }
 
+    // ==========================================
+    // CƠ CHẾ SÒNG BẠC DỰA THEO GDD 
+    // ==========================================
+    public void ProcessGambling(float betAmount, bool isWin)
+    {
+        if (isCasinoLocked) return;
+
+        totalGambleCount++;
+
+        if (totalGambleCount == 10)
+        {
+            money = 0;
+            Debug.Log("<color=red>SỰ KIỆN LẦN 10: Mất trắng tài sản!</color>");
+            return;
+        }
+
+        if (isBlackCreditActive)
+        {
+            if (totalGambleCount == 15) { TriggerSuddenDeathCasino(); return; }
+        }
+
+        if (!isWin) money -= betAmount;
+        else money += (betAmount * 1.5f);
+
+        stamina -= 20;
+        if (stamina < 0) stamina = 0;
+    }
+
+    public void AcceptBlackCredit()
+    {
+        isBlackCreditActive = true;
+        money += 500000;
+        AdvanceToNextDay();
+    }
+
+    public void RefuseBlackCredit()
+    {
+        isBlackCreditActive = false;
+        isCasinoLocked = true;
+        hp /= 2;
+        maxStamina -= 30;
+        stamina = maxStamina;
+        AdvanceToNextDay();
+    }
+
+    private void TriggerSuddenDeathCasino()
+    {
+        Debug.Log("<size=150%><color=red><b>SUDDEN DEATH:</b> Bị siết nợ và đem đi bán nội tạng!</color></size>");
+    }
+
+    // ==========================================
+    // VÒNG LẶP THỜI GIAN
+    // ==========================================
     public void AdvanceToNextDay()
     {
         if (currentDay == 5)
@@ -314,58 +325,46 @@ public class GameManager : MonoBehaviour
         }
 
         currentDay++;
-        currentPhase = GamePhase.Morning;
         attemptedScamsToday = 0;
         successfulScamsToday = 0;
-        gambleCountTonight = 0;
         consecutiveScamFails = 0;
-        hasAskedToContinue = false;
-
         caughtCountThisNight = 0;
+        hasTalkedToNPC = false; // Reset biến giao tiếp NPC
 
-        TransitionToPhase(GamePhase.Morning);
+        if (isBlackCreditActive)
+        {
+            currentPhase = GamePhase.Night;
+            TransitionToPhase(GamePhase.Night);
+        }
+        else
+        {
+            currentPhase = GamePhase.Morning;
+            TransitionToPhase(GamePhase.Morning);
+        }
     }
 
+    // ==========================================
+    // ĐÁNH GIÁ ENDING 
+    // ==========================================
     private void EvaluateEndings()
     {
         int itemCount = (hasWrench ? 1 : 0) + (hasMap ? 1 : 0) + (hasRope ? 1 : 0);
-        bool canEscapeNight5 = (itemCount == 3 && karma > 20 && gamblingAddictionLevel < 10);
+        bool canEscapeNight5 = (itemCount == 3 && karma > 20 && totalGambleCount < 10);
 
         if (canEscapeNight5)
         {
-            if (hasCalledPolice)
-            {
-                Debug.Log("<size=120%><color=#00FFFF><b>TRUE ENDING (Bình Minh Tự Do):</b> Đã gọi Cảnh sát! Dùng cờ lê cắt xích, đu dây qua tường. Vừa lết tới biên giới, Cảnh sát VN đã đợi sẵn. Bạn được giải cứu an toàn.</color></size>");
-            }
+            if (hasCalledPolice && hasMemento)
+                Debug.Log("<size=120%><color=#00FFFF><b>TRUE ENDING:</b> Đã gọi Cảnh sát và trả Kỷ vật! Bạn được giải cứu an toàn.</color></size>");
             else
-            {
-                Debug.Log("<size=120%><color=#00FF00><b>NEUTRAL ENDING (Kẻ Sống Sót):</b> Không gọi Cảnh sát. Bạn tẩu thoát thành công, nhưng phải lẩn trốn trong rừng thiêng nước độc 3 ngày, đói khát kiệt quệ mới lết về cửa khẩu.</color></size>");
-            }
+                Debug.Log("<size=120%><color=#00FF00><b>NEUTRAL ENDING:</b> Tẩu thoát thành công nhưng lẩn trốn trong rừng.</color></size>");
         }
         else
         {
             currentDay = 6;
-
-            if (hp < 30)
-            {
-                Debug.Log("<size=120%><color=#888888><b>DEATH ENDING (Chết Trong Hỗn Loạn):</b> Cơ thể kiệt quệ (HP < 30). Bạn không còn sức để chạy, bị đám đông dẫm đạp và bảo vệ chích điện tới tắt thở.</color></size>");
-            }
-            else if (karma <= 0)
-            {
-                Debug.Log("<size=120%><color=#FF00FF><b>ENDING A (Lưới Trời Lồng Lộng):</b> Nghiệp cực thấp. Bạn đứng nhìn bạo loạn. Được thăng chức Quản lý. 1 năm sau gom tiền về quê ăn Tết thì bị Cảnh sát hình sự phục kích tại sân bay.</color></size>");
-            }
-            else if (gamblingAddictionLevel >= 10)
-            {
-                Debug.Log("<size=120%><color=#FFA500><b>ENDING B (Con Bạc Khát Nước):</b> Nghiện cờ bạc chạm đỉnh. Giữa lúc cháy nổ, bạn lao thẳng vào Sới Bạc. Gánh nợ khổng lồ, vĩnh viễn làm cỗ máy lừa đảo vô hồn để trả nợ.</color></size>");
-            }
-            else if (itemCount >= 2)
-            {
-                Debug.Log("<size=120%><color=#FFFF00><b>RIOT SURVIVOR (Thoát Xác Trong Máu):</b> Nhặt được " + itemCount + " món đồ. Lợi dụng bạo loạn, bạn đập kính cửa sổ, lao xuống sông và bơi thoát thân trong tàn tạ.</color></size>");
-            }
-            else
-            {
-                Debug.Log("<size=120%><color=#FF0000><b>TRAPPED ENDING (Tận Cùng Bi Kịch):</b> Không có đồ, núp gầm bàn. Khi bạo loạn bị dập, bạn bị lôi ra, trùm bao bố và quăng lên xe chuyển đến hầm mỏ khai thác nội tạng.</color></size>");
-            }
+            if (karma <= 20) Debug.Log("<size=120%><color=#FF00FF><b>ENDING A (Lưới Trời):</b> 1 năm sau bị Công an VN bắt tại sân bay.</color></size>");
+            else if (hp < 30) Debug.Log("<size=120%><color=#888888><b>DEATH ENDING:</b> Tử vong do dẫm đạp trong bạo loạn.</color></size>");
+            else if (itemCount >= 2) Debug.Log("<size=120%><color=#FFFF00><b>RIOT SURVIVOR:</b> Lợi dụng bạo loạn, nhảy sông bơi thoát thân.</color></size>");
+            else Debug.Log("<size=120%><color=#FF0000><b>TRAPPED ENDING:</b> Bị bắt lại bán xuống hầm mỏ.</color></size>");
         }
     }
 
@@ -374,7 +373,7 @@ public class GameManager : MonoBehaviour
         if (hp <= 0)
         {
             hp = 0;
-            Debug.Log("<size=150%><color=grey><b>GAME OVER:</b> BẠN ĐÃ KIỆT SỨC VÀ GỤC NGÃ NGAY TẠI BÀN LÀM VIỆC!</color></size>");
+            Debug.Log("<size=150%><color=grey><b>GAME OVER:</b> BẠN ĐÃ KIỆT SỨC VÀ GỤC NGÃ!</color></size>");
         }
     }
 
@@ -391,18 +390,9 @@ public class GameManager : MonoBehaviour
             case GamePhase.Night: sceneName = "NightScreen"; break;
         }
 
-        if (currentPhase == GamePhase.Morning)
+        if (currentPhase == GamePhase.Morning && DayTransitionManager.instance != null)
         {
-            if (DayTransitionManager.instance != null)
-            {
-                Debug.Log("<color=cyan>ĐÃ TÌM THẤY MÀN ĐEN! Đang kéo rèm chuyển ngày sang: " + sceneName + "</color>");
-                DayTransitionManager.instance.StartTransition(sceneName);
-            }
-            else
-            {
-                Debug.LogError("<color=red>LỖI CHÍ MẠNG: Không tìm thấy DayTransitionManager! Đã có lỗi xảy ra với FadePanel. Game sẽ bỏ qua màn đen và nhảy thẳng!</color>");
-                SceneManager.LoadScene(sceneName);
-            }
+            DayTransitionManager.instance.StartTransition(sceneName);
         }
         else
         {
