@@ -19,6 +19,7 @@ TagManager:
   - button f2
   - button f1
   - button f6
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -29,7 +30,7 @@ TagManager:
   - Player
   - Item
   - Interactable
-  - 
+  - EnemyLayer
   - 
   - 
   - 

@@ -8,7 +8,7 @@ public class PlayerHide : MonoBehaviour
     void Update()
     {
         // Nhấn E để Núp / Bỏ núp (Sau này bạn có thể ghép vào Cánh cửa tủ)
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             isHidden = !isHidden;
 

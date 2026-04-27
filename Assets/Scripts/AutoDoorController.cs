@@ -47,12 +47,32 @@ public class AutoDoorController : MonoBehaviour
         closeRoutine = StartCoroutine(AutoCloseRoutine());
     }
 
+    // ==========================================
+    // CẢM BIẾN VA CHẠM (CHO CẢ PLAYER VÀ ENEMY)
+    // ==========================================
+    private void OnTriggerEnter(Collider other)
+    {
+        // Mở cửa nếu là Người chơi HOẶC Kẻ địch
+        if (other.CompareTag("Player") || other.CompareTag("Enemy"))
+        {
+            OpenDoor();
+        }
+    }
+
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("Enemy"))
         {
-            // Nếu người chơi đứng trong vùng cửa, liên tục gọi Open để reset đồng hồ
-            OpenDoor();
+            OpenDoor(); // Liên tục reset đồng hồ nếu có người đứng chắn
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") || other.CompareTag("Enemy"))
+        {
+            if (closeRoutine != null) StopCoroutine(closeRoutine);
+            closeRoutine = StartCoroutine(AutoCloseRoutine());
         }
     }
 
@@ -60,6 +80,6 @@ public class AutoDoorController : MonoBehaviour
     {
         yield return new WaitForSeconds(autoCloseDelay);
         isOpen = false;
-        Debug.Log("<color=yellow>Cửa: Đã hết thời gian chờ, đang đóng...</color>");
+        // Debug.Log("<color=yellow>Cửa: Đã hết thời gian chờ, đang đóng...</color>");
     }
 }
