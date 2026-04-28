@@ -11,7 +11,7 @@ public class EnemyPatrol : MonoBehaviour
     [Header("Cài đặt Tốc độ")]
     public float patrolSpeed = 3.5f;
     public float chaseSpeed = 7f;
-    public float slowSpeed = 1.5f; // Tốc độ rùa bò sau khi chộp hụt người chơi
+    public float slowSpeed = 1.5f;
 
     [Header("Cài đặt Tầm nhìn")]
     public float viewRadius = 10f;
@@ -30,22 +30,23 @@ public class EnemyPatrol : MonoBehaviour
     [Header("Tối ưu Tầm nhìn")]
     public float headHeightOffset = 1.6f;
 
-    // ==========================================
-    // MỚI: CƠ CHẾ WALLHACK 10 GIÂY
-    // ==========================================
     [Header("Cơ chế Chó Săn (Wallhack)")]
-    public float wallhackChaseTime = 10f; // Bám đuôi xuyên tường 10 giây
-    private float currentChaseTimer = 0f; // Đồng hồ đếm ngược
+    public float wallhackChaseTime = 10f;
+    private float currentChaseTimer = 0f;
 
     private NavMeshAgent agent;
     private Animator anim;
     private PlayerHide playerHideState;
     private int currentWaypointIndex = 0;
+
     private bool isWaiting = false;
     private float waitTimer = 0f;
-
     private bool isChasing = false;
-    private bool isSlowed = false; // Thay thế isStunned bằng isSlowed
+    private bool isSlowed = false;
+
+    // MỚI: TRẠNG THÁI KIỂM TRA TIẾNG ỒN
+    private bool isInvestigating = false;
+    private Coroutine investigateRoutine;
 
     void Start()
     {
@@ -55,10 +56,7 @@ public class EnemyPatrol : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         if (anim == null) anim = GetComponentInParent<Animator>();
 
-        if (playerTarget != null)
-        {
-            playerHideState = playerTarget.GetComponent<PlayerHide>();
-        }
+        if (playerTarget != null) playerHideState = playerTarget.GetComponent<PlayerHide>();
 
         if (agent != null)
         {
@@ -81,21 +79,18 @@ public class EnemyPatrol : MonoBehaviour
         if (anim != null)
         {
             bool isMoving = agent.velocity.magnitude > 0.1f;
+            // Animation đi bộ kích hoạt cả lúc tuần tra VÀ lúc đi kiểm tra tiếng ồn
             anim.SetBool("isWalking", isMoving && !isChasing && !isSlowed);
             anim.SetBool("isRunning", isMoving && isChasing && !isSlowed);
-            // Nếu muốn bạn có thể thêm anim.SetBool("isLimping", isSlowed) sau này
         }
 
         CheckPlayerInSight();
 
         if (isChasing)
         {
-            // GIẢM ĐỒNG HỒ ĐẾM NGƯỢC 10 GIÂY
             currentChaseTimer -= Time.deltaTime;
-
             if (currentChaseTimer > 0)
             {
-                // CÒN THỜI GIAN -> TRUY CÙNG ĐUỔI TẬN (XUYÊN TƯỜNG)
                 pathUpdateTimer += Time.deltaTime;
                 if (pathUpdateTimer >= pathUpdateDelay)
                 {
@@ -105,11 +100,10 @@ public class EnemyPatrol : MonoBehaviour
             }
             else
             {
-                // HẾT 10 GIÂY -> BỎ CUỘC
                 GiveUpChase();
             }
         }
-        else
+        else if (!isInvestigating) // Không rượt, không tìm tiếng ồn thì mới đi tuần
         {
             PatrolRoutine();
         }
@@ -119,13 +113,7 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (playerHideState != null && playerHideState.isHidden)
-            {
-                if (!isChasing) return;
-                else Debug.Log("<color=red>AI: Tưởng chui tủ mà thoát à? Ra đây!</color>");
-            }
-
-            // Tránh việc AI bị gọi hàm bắt nhiều lần liên tục
+            if (playerHideState != null && playerHideState.isHidden && !isChasing) return;
             if (!isSlowed) HandleCatchingPlayer();
         }
     }
@@ -135,56 +123,26 @@ public class EnemyPatrol : MonoBehaviour
         if (GameManager.instance != null)
         {
             bool isOutForTonight = GameManager.instance.OnPlayerCaught();
-            if (!isOutForTonight)
-            {
-                // Người chơi vùng vẫy thành công -> Bảo vệ bị chậm 5 giây
-                StartCoroutine(ApplySlowPenalty(5f));
-            }
+            if (!isOutForTonight) StartCoroutine(ApplySlowPenalty(5f));
         }
-        else
-        {
-            StartCoroutine(ApplySlowPenalty(5f));
-        }
+        else StartCoroutine(ApplySlowPenalty(5f));
     }
 
-    // ==========================================
-    // MỚI: BẢO VỆ BỊ GIẢM TỐC ĐỘ 5 GIÂY (Không đứng im)
-    // ==========================================
     IEnumerator ApplySlowPenalty(float duration)
     {
         isSlowed = true;
-
-        if (agent != null)
-        {
-            agent.speed = slowSpeed; // Ép xuống tốc độ đi bộ chậm
-        }
-
-        if (enemyFlashlight != null) enemyFlashlight.color = Color.yellow; // Đèn vàng báo hiệu đang yếu
-
-        Debug.Log("<color=orange>BẢO VỆ: Áu, nó đá mình! Đi chậm lại 5 giây...</color>");
+        if (agent != null) agent.speed = slowSpeed;
+        if (enemyFlashlight != null) enemyFlashlight.color = Color.yellow;
 
         yield return new WaitForSeconds(duration);
 
-        // HẾT 5 GIÂY -> HỒI PHỤC THỂ LỰC
         isSlowed = false;
-
-        if (agent != null)
-        {
-            // Nếu vẫn đang trong 10s rượt đuổi thì phi nhanh tiếp, không thì đi tuần
-            agent.speed = isChasing ? chaseSpeed : patrolSpeed;
-        }
-
-        if (enemyFlashlight != null)
-        {
-            enemyFlashlight.color = isChasing ? Color.red : Color.white;
-        }
-
-        Debug.Log("<color=green>BẢO VỆ: Đã hồi phục! Rượt tiếp!</color>");
+        if (agent != null) agent.speed = isChasing ? chaseSpeed : patrolSpeed;
+        if (enemyFlashlight != null) enemyFlashlight.color = isChasing ? Color.red : Color.white;
     }
 
     void CheckPlayerInSight()
     {
-        // Núp rồi thì không phát hiện MỚI được, nhưng nếu đang rượt thì vẫn bị Rada quét
         if (playerHideState != null && playerHideState.isHidden && !isChasing) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, playerTarget.position);
@@ -199,13 +157,20 @@ public class EnemyPatrol : MonoBehaviour
             {
                 if (!Physics.Raycast(headPosition, directionToPlayer, distanceToPlayer, obstacleMask))
                 {
-                    // QUAN TRỌNG: MỖI KHI NHÌN THẤY, RADA ĐƯỢC SẠC ĐẦY LẠI 10 GIÂY
                     currentChaseTimer = wallhackChaseTime;
 
                     if (!isChasing)
                     {
                         isChasing = true;
-                        if (!isSlowed) agent.speed = chaseSpeed; // Chỉ tăng tốc nếu không bị thọt
+
+                        // NẾU ĐANG TÌM TIẾNG ỒN MÀ THẤY MẶT -> HỦY TÌM, CHUYỂN SANG RƯỢT!
+                        if (isInvestigating && investigateRoutine != null)
+                        {
+                            StopCoroutine(investigateRoutine);
+                            isInvestigating = false;
+                        }
+
+                        if (!isSlowed) agent.speed = chaseSpeed;
                         if (enemyFlashlight != null && !isSlowed) enemyFlashlight.color = Color.red;
                     }
                 }
@@ -216,15 +181,12 @@ public class EnemyPatrol : MonoBehaviour
     void GiveUpChase()
     {
         isChasing = false;
-
         if (!isSlowed)
         {
             agent.speed = patrolSpeed;
             if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
         }
-
         if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
-        Debug.Log("AI: Cắt đuôi thành công! Quay về đi tuần.");
     }
 
     void PatrolRoutine()
@@ -250,5 +212,51 @@ public class EnemyPatrol : MonoBehaviour
                 }
             }
         }
+    }
+
+    // ==========================================
+    // MỚI: HÀM NGHE VÀ TÌM KIẾM TIẾNG ỒN
+    // ==========================================
+    public void InvestigateNoise(Vector3 noisePosition)
+    {
+        // 1. Phớt lờ tiếng ồn nếu đang rượt trối chết hoặc đang bị choáng chân
+        if (isChasing || isSlowed) return;
+
+        // 2. Chuyển sang trạng thái tìm kiếm
+        isInvestigating = true;
+        isWaiting = false; // Xóa trạng thái đứng yên tuần tra
+
+        if (enemyFlashlight != null) enemyFlashlight.color = new Color(1f, 0.5f, 0f); // Đèn chuyển màu Cam cam (Nghi ngờ)
+
+        Debug.Log("<color=orange>AI: Tiếng gì đấy? Để ra xem thử...</color>");
+
+        // 3. Hủy lệnh tìm kiếm cũ (nếu có tiếng ồn mới) và chạy lệnh mới
+        if (investigateRoutine != null) StopCoroutine(investigateRoutine);
+        investigateRoutine = StartCoroutine(InvestigateRoutine(noisePosition));
+    }
+
+    IEnumerator InvestigateRoutine(Vector3 targetPos)
+    {
+        // Ra lệnh đi tới chỗ phát ra tiếng động
+        agent.SetDestination(targetPos);
+
+        // Chờ AI đi tới nơi (Chừa lại khoảng 1.5m để không đâm đầu vào bàn ghế)
+        while (agent.pathPending || agent.remainingDistance > 1.5f)
+        {
+            yield return null;
+        }
+
+        // Tới nơi rồi -> Đứng ngó nghiêng 4 giây
+        if (anim != null) anim.SetBool("isWalking", false);
+        Debug.Log("<color=yellow>AI: Đứng tìm... Không có ai à?</color>");
+
+        yield return new WaitForSeconds(4f);
+
+        // Không thấy gì -> Quay lại đi tuần
+        Debug.Log("<color=green>AI: Chắc chuột chạy. Quay lại đi tuần thôi.</color>");
+        isInvestigating = false;
+
+        if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
+        if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
     }
 }

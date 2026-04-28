@@ -12,6 +12,10 @@ public class AutoDoorController : MonoBehaviour
     public float smoothSpeed = 5f;
     public float autoCloseDelay = 3f;
 
+    [Header("Cài đặt Khóa Cửa")]
+    public bool isLocked = false;
+    public string requiredKeyID = "key";
+
     [Header("Trạng thái (Chỉ xem)")]
     public bool isOpen = false;
 
@@ -23,56 +27,122 @@ public class AutoDoorController : MonoBehaviour
     {
         if (doorHinge == null) doorHinge = transform;
         closedRotation = doorHinge.localRotation;
-
-        Vector3 rotationVector = Vector3.zero;
-        if (axisToRotate == RotationAxis.X) rotationVector = new Vector3(openAngle, 0, 0);
-        else if (axisToRotate == RotationAxis.Y) rotationVector = new Vector3(0, openAngle, 0);
-        else if (axisToRotate == RotationAxis.Z) rotationVector = new Vector3(0, 0, openAngle);
-
-        openRotation = closedRotation * Quaternion.Euler(rotationVector);
     }
 
     void Update()
     {
+        if (isLocked && isOpen)
+        {
+            isOpen = false;
+        }
+
         Quaternion targetRotation = isOpen ? openRotation : closedRotation;
         doorHinge.localRotation = Quaternion.Slerp(doorHinge.localRotation, targetRotation, Time.deltaTime * smoothSpeed);
     }
 
-    // Hàm này dùng để gọi từ phím E hoặc Trigger
-    public void OpenDoor()
+    // ==========================================
+    // MỞ CỬA THÔNG MINH (CÓ GẮN MÁY QUÉT DEBUG)
+    // ==========================================
+    public void OpenDoor(Vector3 interactorPosition)
     {
+        if (isLocked) return;
+
+        // Tính toán hướng
+        Vector3 directionToInteractor = (interactorPosition - transform.position).normalized;
+        float dotProduct = Vector3.Dot(transform.forward, directionToInteractor);
+
+        // IN RA CONSOLE ĐỂ BẮT LỖI
+        if (dotProduct > 0)
+        {
+            Debug.Log($"<color=cyan>HỆ THỐNG BÁO: Bạn đang đứng TRƯỚC mặt cửa (Dot: {dotProduct}). Cửa sẽ mở góc Dương!</color>");
+        }
+        else
+        {
+            Debug.Log($"<color=orange>HỆ THỐNG BÁO: Bạn đang đứng SAU lưng cửa (Dot: {dotProduct}). Cửa sẽ mở góc Âm!</color>");
+        }
+
+        float actualOpenAngle = (dotProduct > 0) ? openAngle : -openAngle;
+
+        Vector3 rotationVector = Vector3.zero;
+        if (axisToRotate == RotationAxis.X) rotationVector = new Vector3(actualOpenAngle, 0, 0);
+        else if (axisToRotate == RotationAxis.Y) rotationVector = new Vector3(0, actualOpenAngle, 0);
+        else if (axisToRotate == RotationAxis.Z) rotationVector = new Vector3(0, 0, actualOpenAngle);
+
+        openRotation = closedRotation * Quaternion.Euler(rotationVector);
+
         isOpen = true;
-        // Mỗi khi hàm này được gọi, đồng hồ sẽ bị Reset lại từ đầu
         if (closeRoutine != null) StopCoroutine(closeRoutine);
         closeRoutine = StartCoroutine(AutoCloseRoutine());
     }
 
-    // ==========================================
-    // CẢM BIẾN VA CHẠM (CHO CẢ PLAYER VÀ ENEMY)
-    // ==========================================
+    public void OpenDoor()
+    {
+        OpenDoor(transform.position + transform.forward);
+    }
+
+    private void TryToInteract(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (isLocked)
+            {
+                bool hasKey = CheckInventoryForKey();
+
+                if (hasKey)
+                {
+                    Debug.Log("<color=green>ĐÃ DÙNG CHÌA KHÓA MỞ CỬA! Lối tắt đã được thông.</color>");
+                    isLocked = false;
+                    OpenDoor(other.transform.position);
+                }
+                else
+                {
+                    Debug.Log($"<color=red>CỬA KHÓA! Bạn cần tìm vật phẩm có ID: {requiredKeyID}</color>");
+                }
+            }
+            else
+            {
+                OpenDoor(other.transform.position);
+            }
+        }
+        else if (other.CompareTag("Enemy"))
+        {
+            if (!isLocked)
+            {
+                OpenDoor(other.transform.position);
+            }
+        }
+    }
+
+    private bool CheckInventoryForKey()
+    {
+        if (InventoryManager.Instance != null)
+        {
+            return InventoryManager.Instance.HasItem(requiredKeyID);
+        }
+
+        Debug.LogError("LỖI: Không tìm thấy InventoryManager trong Scene!");
+        return false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        // Mở cửa nếu là Người chơi HOẶC Kẻ địch
-        if (other.CompareTag("Player") || other.CompareTag("Enemy"))
-        {
-            OpenDoor();
-        }
+        TryToInteract(other);
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Enemy"))
-        {
-            OpenDoor(); // Liên tục reset đồng hồ nếu có người đứng chắn
-        }
+        TryToInteract(other);
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player") || other.CompareTag("Enemy"))
         {
-            if (closeRoutine != null) StopCoroutine(closeRoutine);
-            closeRoutine = StartCoroutine(AutoCloseRoutine());
+            if (!isLocked)
+            {
+                if (closeRoutine != null) StopCoroutine(closeRoutine);
+                closeRoutine = StartCoroutine(AutoCloseRoutine());
+            }
         }
     }
 
@@ -80,6 +150,5 @@ public class AutoDoorController : MonoBehaviour
     {
         yield return new WaitForSeconds(autoCloseDelay);
         isOpen = false;
-        // Debug.Log("<color=yellow>Cửa: Đã hết thời gian chờ, đang đóng...</color>");
     }
 }

@@ -99,4 +99,21 @@ public class InventoryManager : MonoBehaviour
             itemCounterText.text = (currentIndex + 1) + " / " + collectedItems.Count;
         }
     }
+
+    // ==========================================
+    // MỚI: HÀM LỤC TÚI ĐỒ TÌM CHÌA KHÓA
+    // ==========================================
+    public bool HasItem(string searchItemID)
+    {
+        foreach (ItemData item in collectedItems)
+        {
+            // LƯU Ý: Đảm bảo biến itemID trong file ItemData.cs của bạn viết đúng chữ hoa/thường như này
+            // Nếu bên đó bạn viết là 'id' hoặc 'ItemID', hãy đổi chữ 'itemID' ở dưới cho khớp nhé!
+            if (item.itemID == searchItemID)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
