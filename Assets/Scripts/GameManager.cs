@@ -1,21 +1,13 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
-public enum GamePhase
-{
-    Morning,
-    Noon,
-    Afternoon,
-    Night
-}
+public enum GamePhase { Morning, Noon, Afternoon, Night }
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    // ==========================================
-    // BỔ SUNG: CHẾ ĐỘ DÀNH CHO NHÀ PHÁT TRIỂN
-    // ==========================================
     [Header("Chế độ Dev (Dành cho Test)")]
     public bool enableDevMode = false;
     public int testStartDay = 1;
@@ -35,7 +27,6 @@ public class GameManager : MonoBehaviour
     public float money = 0f;
     public int karma = 100;
 
-    // QUAN TRỌNG ĐÃ ĐƯỢC PHỤC HỒI: HỆ THỐNG LƯỜNG & KPI BAN NGÀY
     [Header("Hệ thống Lương & KPI")]
     public int currentDay = 1;
     public int maxDays = 5;
@@ -54,7 +45,7 @@ public class GameManager : MonoBehaviour
     public bool hasMap = false;
     public bool hasCalledPolice = false;
     public bool hasRope = false;
-    public bool hasMemento = false; // Kỷ vật
+    public bool hasMemento = false;
     public int collectedQuestItems = 0;
     public int requiredItemsToEscape = 3;
 
@@ -62,7 +53,16 @@ public class GameManager : MonoBehaviour
     public int caughtCountThisNight = 0;
     public int maxCaughtBeforeReset = 3;
 
-    // QUAN TRỌNG ĐÃ ĐƯỢC PHỤC HỒI: BIẾN GIAO TIẾP NPC
+    [Header("Giao Diện Bị Bắt (Jumpscare)")]
+    public GameObject caughtPanel;
+    public GameObject txtBiBat;
+    public GameObject btnNextDay;
+
+    [Header("--- KẾT NỐI CAMERA & ÂM THANH ---")]
+    public Transform playerCamera;
+    public AudioSource sfxSource;
+    public AudioClip shockSound;
+
     [Header("--- HỆ THỐNG VÒNG LẶP ---")]
     public GamePhase currentPhase = GamePhase.Morning;
     public bool hasTalkedToNPC = false;
@@ -73,7 +73,6 @@ public class GameManager : MonoBehaviour
     public bool isCasinoLocked = false;
     public bool isBlackCreditActive = false;
 
-    // QUAN TRỌNG ĐÃ ĐƯỢC PHỤC HỒI: SỰ KIỆN ĐÊM 5
     [Header("Sự kiện Đêm 5")]
     public bool isEscapeStart = false;
     public int escapeProgress = 0;
@@ -100,9 +99,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("<color=red>BÁO ĐỘNG ĐỎ! CHẾ ĐỘ VƯỢT NGỤC KÍCH HOẠT!</color>");
     }
 
-    // ==========================================
-    // HỆ THỐNG LÀM VIỆC BAN NGÀY (ĐÃ PHỤC HỒI)
-    // ==========================================
     public bool StartScammingVictim(int staminaCost)
     {
         if (hp <= 0) return false;
@@ -138,13 +134,11 @@ public class GameManager : MonoBehaviour
 
         if (consecutiveScamFails >= 2)
         {
-            Debug.Log("<color=red>QUẢN LÝ ĐIÊN LÊN: Lừa hụt 2 đứa liên tiếp! CHÍCH ĐIỆN PHẠT TẠI CHỖ!</color>");
             TakeShockDamage(50);
             consecutiveScamFails = 0;
         }
         else
         {
-            Debug.Log("<color=yellow>QUẢN LÝ CHỬI: Mất tập trung à! Trừ 20 Thể Lực.</color>");
             int penalty = 20;
             if (stamina >= penalty) stamina -= penalty;
             else
@@ -176,10 +170,8 @@ public class GameManager : MonoBehaviour
 
     public void EndDaySummary()
     {
-        Debug.Log("=== TỔNG KẾT CUỐI CA CHIỀU ===");
         if (successfulScamsToday >= targetKPI)
         {
-            Debug.Log($"<color=green>ĐẠT KPI ({successfulScamsToday}/{targetKPI}).</color>");
             if (successfulScamsToday > targetKPI || targetKPI == 5)
             {
                 if (targetKPI == 3) { targetKPI = 4; currentCommissionRate = 0.2f; }
@@ -195,7 +187,6 @@ public class GameManager : MonoBehaviour
         {
             int shortfall = targetKPI - successfulScamsToday;
             int shockDamage = shortfall * 30;
-            Debug.Log($"<color=red>TRƯỢT KPI! Thiếu {shortfall} người. BỊ CHÍCH ĐIỆN!</color>");
             TakeShockDamage(shockDamage);
             targetKPI = 3;
             currentCommissionRate = 0.1f;
@@ -203,9 +194,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // HỆ THỐNG ĐÊM THÁM THÍNH & VẬT PHẨM (ĐÃ PHỤC HỒI)
-    // ==========================================
     public bool CanCollectItems()
     {
         if (currentDay >= 2 && !hasNotebook) return false;
@@ -216,7 +204,6 @@ public class GameManager : MonoBehaviour
     {
         hp -= damageAmount;
         if (hp < 0) hp = 0;
-        Debug.Log($"<color=red>BỊ CHÍCH ĐIỆN MẤT {damageAmount} MÁU! HP CÒN: {hp}</color>");
         CheckDeath();
     }
 
@@ -225,47 +212,111 @@ public class GameManager : MonoBehaviour
         caughtCountThisNight++;
         if (caughtCountThisNight >= maxCaughtBeforeReset)
         {
-            Debug.Log("<color=red>HẾT LƯỢT: Đã bị bắt 3 lần trong đêm nay!</color>");
             CaughtByNightGuard();
             return true;
         }
-        else
-        {
-            int remainingLives = maxCaughtBeforeReset - caughtCountThisNight;
-            Debug.Log($"<color=orange>CẢNH BÁO: Còn {remainingLives} lượt dự phòng đêm nay.</color>");
-            return false;
-        }
+        return false;
     }
 
     public void CaughtByNightGuard()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        StartCoroutine(ShockSequenceRoutine());
+    }
+
+    IEnumerator ShockSequenceRoutine()
+    {
+        Debug.Log("<color=yellow>BẮT ĐẦU CHÍCH ĐIỆN BẰNG CODE...</color>");
+
+        if (sfxSource != null && shockSound != null)
+        {
+            sfxSource.PlayOneShot(shockSound);
+        }
+
+        if (playerCamera != null)
+        {
+            Vector3 originalPos = playerCamera.localPosition;
+            Quaternion originalRot = playerCamera.localRotation;
+            float elapsed = 0f;
+
+            while (elapsed < 2f)
+            {
+                float x = Random.Range(-0.2f, 0.2f);
+                float y = Random.Range(-0.2f, 0.2f);
+                float tilt = Random.Range(-15f, 15f);
+
+                playerCamera.localPosition = new Vector3(originalPos.x + x, originalPos.y + y, originalPos.z);
+                playerCamera.localRotation = originalRot * Quaternion.Euler(0, 0, tilt);
+
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            playerCamera.localPosition = originalPos;
+            playerCamera.localRotation = originalRot;
+        }
+        else
+        {
+            yield return new WaitForSeconds(2.0f);
+        }
+
+        Time.timeScale = 0f;
+
+        if (caughtPanel != null) caughtPanel.SetActive(true);
+        if (txtBiBat != null) txtBiBat.SetActive(false);
+        if (btnNextDay != null) btnNextDay.SetActive(false);
+
+        yield return new WaitForSecondsRealtime(2f);
+
+        if (txtBiBat != null) txtBiBat.SetActive(true);
+        if (btnNextDay != null) btnNextDay.SetActive(true);
+    }
+
+    // ==========================================
+    // ĐÃ FIX: CHUYỂN QUYỀN VỀ CHO HỆ THỐNG VÒNG LẶP THỜI GIAN
+    // ==========================================
+    public void ClickSangNgayHomSau()
+    {
+        // 1. Trả lại thời gian và khóa chuột
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        // 2. Trừ chỉ số
         hp = maxHp;
         maxStamina -= 20;
         if (maxStamina < 20) maxStamina = 20;
         stamina = maxStamina;
 
-        Debug.Log("Bị bảo vệ tóm cổ! Đuổi thẳng về phòng ngủ.");
-        currentPhase = GamePhase.Night;
-        SceneManager.LoadScene("NightScreen");
+        // 3. FIX GÓC KHUẤT DỌN RÁC: Phải tắt sạch sành sanh cả 3 UI!
+        if (caughtPanel != null) caughtPanel.SetActive(false);
+        if (txtBiBat != null) txtBiBat.SetActive(false);
+        if (btnNextDay != null) btnNextDay.SetActive(false);
+
+        
+        // 4. KÍCH HOẠT CHUYỂN NGÀY VÀ MỜ MÀN HÌNH
+        AdvanceToNextDay();
     }
 
     public void FinishScoutingNight()
     {
-        Debug.Log("Kết thúc thám thính đêm! Chuyển ngày...");
         AdvanceToNextDay();
     }
 
     public void SleepThroughNight()
     {
+        Debug.Log("<color=cyan>GameManager: Đang chuẩn bị đi ngủ, chuẩn bị chuyển ngày...</color>");
+
         stamina = maxStamina;
         hp += 10;
         if (hp > maxHp) hp = maxHp;
+
+        // CỰC KỲ QUAN TRỌNG: Phải gọi hàm này để nó cộng số ngày và gọi DayTransitionManager
         AdvanceToNextDay();
     }
 
-    // ==========================================
-    // CƠ CHẾ SÒNG BẠC DỰA THEO GDD 
-    // ==========================================
     public void ProcessGambling(float betAmount, bool isWin)
     {
         if (isCasinoLocked) return;
@@ -275,7 +326,6 @@ public class GameManager : MonoBehaviour
         if (totalGambleCount == 10)
         {
             money = 0;
-            Debug.Log("<color=red>SỰ KIỆN LẦN 10: Mất trắng tài sản!</color>");
             return;
         }
 
@@ -313,9 +363,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("<size=150%><color=red><b>SUDDEN DEATH:</b> Bị siết nợ và đem đi bán nội tạng!</color></size>");
     }
 
-    // ==========================================
-    // VÒNG LẶP THỜI GIAN
-    // ==========================================
     public void AdvanceToNextDay()
     {
         if (currentDay == 5)
@@ -329,7 +376,7 @@ public class GameManager : MonoBehaviour
         successfulScamsToday = 0;
         consecutiveScamFails = 0;
         caughtCountThisNight = 0;
-        hasTalkedToNPC = false; // Reset biến giao tiếp NPC
+        hasTalkedToNPC = false;
 
         if (isBlackCreditActive)
         {
@@ -343,9 +390,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // ĐÁNH GIÁ ENDING 
-    // ==========================================
     private void EvaluateEndings()
     {
         int itemCount = (hasWrench ? 1 : 0) + (hasMap ? 1 : 0) + (hasRope ? 1 : 0);
@@ -390,12 +434,17 @@ public class GameManager : MonoBehaviour
             case GamePhase.Night: sceneName = "NightScreen"; break;
         }
 
-        if (currentPhase == GamePhase.Morning && DayTransitionManager.instance != null)
+        Debug.Log("Đang chuyển sang màn hình: " + sceneName);
+
+        // Kiểm tra xem DayTransitionManager có sống không?
+        if (DayTransitionManager.instance != null)
         {
             DayTransitionManager.instance.StartTransition(sceneName);
         }
         else
         {
+            // Nếu không có hiệu ứng chuyển màn, thì load thẳng luôn để chống cháy
+            Debug.LogWarning("Không tìm thấy DayTransitionManager! Load thẳng scene.");
             SceneManager.LoadScene(sceneName);
         }
     }

@@ -63,6 +63,6 @@ public class NightMenuManager : MonoBehaviour
     private void ChonThamThinh()
     {
         CloseNightMenu();
-        // SceneManager.LoadScene("StealthScene"); 
+        SceneManager.LoadScene("NightStealthScene");
     }
 }

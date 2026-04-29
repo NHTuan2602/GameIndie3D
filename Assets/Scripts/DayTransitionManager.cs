@@ -15,17 +15,27 @@ public class DayTransitionManager : MonoBehaviour
     public float fadeDuration = 1.5f;
     public float blackScreenDuration = 2f;
 
-    private bool isTransitioning = false;
-
     void Awake()
     {
-        // Singleton để GameManager có thể gọi từ bất cứ đâu
-        if (instance == null) instance = this;
+        // 1. CƠ CHẾ SINH TỒN: Tự động tiêu diệt bản sao nếu bị trùng
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
     {
-        // Khởi đầu phải trong suốt và không chặn chuột
+        // 2. ÉP BUỘC HIỂN THỊ: Đẩy Canvas này lên lớp cao nhất (999) để che mọi thứ!
+        Canvas myCanvas = GetComponentInChildren<Canvas>();
+        if (myCanvas != null)
+        {
+            myCanvas.sortingOrder = 999;
+        }
+
         if (fadeCanvasGroup != null)
         {
             fadeCanvasGroup.alpha = 0f;
@@ -34,58 +44,68 @@ public class DayTransitionManager : MonoBehaviour
         if (dayText != null) dayText.text = "";
     }
 
-    // Hàm chủ đạo để gọi từ GameManager
     public void StartTransition(string nextSceneName)
     {
-        if (!isTransitioning)
-        {
-            StopAllCoroutines(); // Tránh việc gọi chồng chéo
-            StartCoroutine(TransitionRoutine(nextSceneName));
-        }
+        StopAllCoroutines();
+        StartCoroutine(TransitionRoutine(nextSceneName));
     }
 
     IEnumerator TransitionRoutine(string nextSceneName)
     {
-        isTransitioning = true;
-        fadeCanvasGroup.blocksRaycasts = true; // Chặn bấm nút bậy bạ
+        if (fadeCanvasGroup != null) fadeCanvasGroup.blocksRaycasts = true;
 
-        // 1. Mờ dần sang đen (0 -> 1)
+        // BƯỚC 1: Mờ dần sang đen
         float timer = 0f;
         while (timer < fadeDuration)
         {
-            timer += Time.deltaTime;
-            fadeCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / fadeDuration);
+            timer += Time.unscaledDeltaTime;
+            if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / fadeDuration);
             yield return null;
         }
-        fadeCanvasGroup.alpha = 1f;
+        if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 1f;
 
-        // 2. Cập nhật chữ Ngày và LOAD SCENE NGẦM
-        if (GameManager.instance != null)
+        // BƯỚC 2: Hiện chữ Ngày
+        if (GameManager.instance != null && dayText != null)
         {
-            dayText.text = "NGÀY " + GameManager.instance.currentDay;
+            dayText.text = "NGÀY THỨ " + GameManager.instance.currentDay;
         }
 
-        // Đợi 1 nhịp để đảm bảo chữ đã hiện lên rồi mới Load màn mới
-        yield return new WaitForSeconds(0.5f);
-        SceneManager.LoadScene(nextSceneName);
+        yield return new WaitForSecondsRealtime(0.5f);
 
-        // 3. Đứng chờ ở màn hình đen cho người chơi nghỉ ngơi
-        yield return new WaitForSeconds(blackScreenDuration);
+        // BƯỚC 3: Load Màn Mới (Dùng try-catch để chặn lỗi nếu quên add Scene)
+        AsyncOperation asyncLoad = null;
+        try
+        {
+            asyncLoad = SceneManager.LoadSceneAsync(nextSceneName);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("<color=red>LỖI CHÍ MẠNG: Bạn chưa Add Scene '" + nextSceneName + "' vào Build Settings!</color>\n" + e.Message);
+        }
 
-        // Xóa chữ trước khi sáng lại
-        dayText.text = "";
+        if (asyncLoad != null)
+        {
+            while (!asyncLoad.isDone) yield return null;
+        }
 
-        // 4. Màn hình từ từ sáng lại (1 -> 0)
+        // BƯỚC 4: Đứng chờ tĩnh lặng ở màn hình đen
+        yield return new WaitForSecondsRealtime(blackScreenDuration);
+
+        if (dayText != null) dayText.text = "";
+
+        // BƯỚC 5: Sáng dần lên trả lại game
         timer = 0f;
         while (timer < fadeDuration)
         {
-            timer += Time.deltaTime;
-            fadeCanvasGroup.alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+            timer += Time.unscaledDeltaTime;
+            if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration);
             yield return null;
         }
-        fadeCanvasGroup.alpha = 0f;
 
-        fadeCanvasGroup.blocksRaycasts = false;
-        isTransitioning = false;
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.alpha = 0f;
+            fadeCanvasGroup.blocksRaycasts = false;
+        }
     }
 }
