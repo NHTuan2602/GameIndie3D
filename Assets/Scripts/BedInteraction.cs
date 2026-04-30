@@ -1,25 +1,21 @@
 using UnityEngine;
-using TMPro; // BẮT BUỘC CÓ DÒNG NÀY ĐỂ DÙNG UI TEXT
+using TMPro;
 
 public class BedInteraction : MonoBehaviour
 {
     private bool isPlayerNear = false;
+    private bool isSleeping = false; // Chặn spam phím E
 
-    [Header("Cài đặt Vật phẩm")]
-    [Tooltip("Gõ chính xác Item ID của cuốn sổ vào đây")]
+    [Header("Cài đặt")]
     public string notebookItemID = "notebook";
-
-    [Header("Cài đặt Giao Diện (UI)")]
-    [Tooltip("Kéo chữ hiển thị trên màn hình vào đây")]
     public TextMeshProUGUI interactPromptText;
 
     private void OnTriggerEnter(Collider other)
     {
+        // Kiểm tra xem có đúng là Player chạm vào không
         if (other.CompareTag("Player"))
         {
             isPlayerNear = true;
-
-            // 1. Hiển thị chữ lên màn hình khi lại gần giường
             if (interactPromptText != null)
             {
                 interactPromptText.text = "Bấm [E] để ngủ qua đêm";
@@ -33,32 +29,22 @@ public class BedInteraction : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerNear = false;
-
-            // 2. Giấu chữ đi khi bỏ đi xa khỏi giường
-            if (interactPromptText != null)
-            {
-                interactPromptText.gameObject.SetActive(false);
-            }
+            if (interactPromptText != null) interactPromptText.gameObject.SetActive(false);
         }
     }
 
     void Update()
     {
-        if (isPlayerNear && Input.GetKeyDown(KeyCode.E))
+        if (isPlayerNear && Input.GetKeyDown(KeyCode.E) && !isSleeping)
         {
-            bool hasNotebookInBag = false;
+            bool hasNotebook = false;
             if (InventoryManager.Instance != null)
-            {
-                hasNotebookInBag = InventoryManager.Instance.HasItem(notebookItemID);
-            }
+                hasNotebook = InventoryManager.Instance.HasItem(notebookItemID);
 
-            if (hasNotebookInBag)
+            if (hasNotebook)
             {
-                // Tắt dòng chữ thông báo đi trước khi chuyển màn hình đen
-                if (interactPromptText != null)
-                {
-                    interactPromptText.gameObject.SetActive(false);
-                }
+                isSleeping = true; // Khóa phím
+                if (interactPromptText != null) interactPromptText.gameObject.SetActive(false);
 
                 if (GameManager.instance != null)
                 {
@@ -68,11 +54,8 @@ public class BedInteraction : MonoBehaviour
             }
             else
             {
-                // 3. Nếu chưa có sổ, đổi chữ trên màn hình thành màu ĐỎ để cảnh báo!
                 if (interactPromptText != null)
-                {
-                    interactPromptText.text = "<color=red>Chưa có sổ! Không thể ngủ!</color>";
-                }
+                    interactPromptText.text = "<color=red>Cần có Sổ tay để ghi chép trước khi ngủ!</color>";
             }
         }
     }
