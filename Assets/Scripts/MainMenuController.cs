@@ -7,7 +7,7 @@ using System.Collections;
 public class MainMenuController : MonoBehaviour
 {
     [Header("Cài đặt Chuyển Cảnh")]
-    public string cinematicSceneName = "CinematicIntro";
+    public string cinematicSceneName = "";
     public GameObject blackScreenFade;
 
     [Header("Giao diện Nút bấm (Menu Mới)")]
@@ -67,10 +67,9 @@ public class MainMenuController : MonoBehaviour
 
         string enteredName = playerNameInput.text.Trim();
 
-        // Phòng thủ: Nếu bỏ trống, tự đặt tên là "Kẻ Khách"
         if (string.IsNullOrEmpty(enteredName))
         {
-            enteredName = "Kẻ Khách";
+            enteredName = "Bạn";
         }
 
         // Lưu tên vào bộ nhớ

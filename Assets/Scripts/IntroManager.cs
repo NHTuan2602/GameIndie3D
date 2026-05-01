@@ -13,29 +13,29 @@ public class IntroManager : MonoBehaviour
     public CrosshairController crosshairController;
 
     [Header("Cài đặt Hiệu ứng")]
-    public float fadeDuration = 1.5f; // Thời gian mờ dần (1.5 giây là đẹp nhất)
+    public float fadeDuration = 1.5f;
+
+    [Header("--- KỊCH BẢN TỰ GIỚI THIỆU ---")]
+    public DialogueLine[] introLines; // ĐÃ THÊM: Trả kịch bản về đây để tự quản lý
 
     void Start()
     {
         namePanel.SetActive(true);
 
-        // Đảm bảo màn hình rõ nét và cho phép click chuột lúc mới vào
         if (namePanelCanvasGroup != null)
         {
             namePanelCanvasGroup.alpha = 1f;
             namePanelCanvasGroup.blocksRaycasts = true;
         }
 
-        // 1. Mở khóa chuột để người chơi gõ tên
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // 2. Trói chân và Khóa cổ nhân vật (MỚI SỬA CẬP NHẬT THEO PLAYERMOVEMENT MỚI)
         PlayerMovement player = FindObjectOfType<PlayerMovement>();
         if (player != null)
         {
-            player.canWalk = false; // Không cho đi lại
-            player.canLook = false; // Không cho xoay đầu nhìn lung tung lúc nhập tên
+            player.canWalk = false;
+            player.canLook = false;
         }
 
         submitButton.onClick.AddListener(OnSubmitName);
@@ -46,14 +46,12 @@ public class IntroManager : MonoBehaviour
         string rawInput = nameInputField.text;
         string playerName = rawInput.Replace("\u200B", "").Trim();
 
-        // Chặn không cho qua nếu để trống
         if (string.IsNullOrEmpty(playerName))
         {
             Debug.LogWarning("Chưa nhập tên! Vui lòng nhập để tiếp tục.");
             return;
         }
 
-        // LƯU TÊN VÀO Ổ CỨNG VÀ GAMEMANAGER
         PlayerPrefs.SetString("SavedPlayerName", playerName);
         PlayerPrefs.Save();
 
@@ -63,8 +61,6 @@ public class IntroManager : MonoBehaviour
         }
 
         Debug.Log("Đã lưu hồ sơ nhân viên: " + playerName);
-
-        // KHỞI ĐỘNG HIỆU ỨNG MỜ DẦN THAY VÌ TẮT CÁI RỤP
         StartCoroutine(FadeOutAndStartGame());
     }
 
@@ -87,15 +83,14 @@ public class IntroManager : MonoBehaviour
 
         namePanel.SetActive(false);
 
-        // ==============================================================
-        // MỚI SỬA: Thay vì thả cho đi lại, GỌI ĐOẠN TỰ GIỚI THIỆU DẬY
-        // ==============================================================
-        // Nghỉ 1 giây cho người chơi ngắm cảnh siêu thị
         yield return new WaitForSeconds(1.0f);
 
+        // ==============================================================
+        // ĐÃ FIX: Gọi hàm vạn năng mới của DialogueManager
+        // ==============================================================
         if (DialogueManager.instance != null)
         {
-            DialogueManager.instance.StartIntroDialogue();
+            DialogueManager.instance.StartDialogue(introLines, null);
         }
         else
         {

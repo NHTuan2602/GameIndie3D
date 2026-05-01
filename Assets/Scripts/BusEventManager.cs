@@ -18,6 +18,9 @@ public class BusEventManager : MonoBehaviour
     [Header("Góc nhìn (Đã chốt cứng tọa độ chuẩn)")]
     public Camera playerCamera;
 
+    [Header("--- KỊCH BẢN HỘI THOẠI TRÊN XE ---")]
+    public DialogueLine[] introLines; // ĐÃ THÊM: Biến này để chứa kịch bản nói chuyện trên xe
+
     private bool hasReachedSeat = false;
 
     void Start()
@@ -30,7 +33,7 @@ public class BusEventManager : MonoBehaviour
             blackScreenFade.color = new Color(0, 0, 0, 0);
         }
 
-        PlayerMovement player = FindObjectOfType<PlayerMovement>();
+        PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
         if (player != null) player.canWalk = false;
     }
 
@@ -54,14 +57,18 @@ public class BusEventManager : MonoBehaviour
 
         if (DialogueManager.instance != null)
         {
-            DialogueManager.instance.StartIntroDialogue();
+            // =========================================================
+            // ĐÃ FIX: Đút kịch bản vào Tivi vạn năng để nó chạy
+            // =========================================================
+            DialogueManager.instance.StartDialogue(introLines, null);
+
             while (DialogueManager.instance.dialoguePanel.activeSelf)
             {
                 yield return null;
             }
         }
 
-        PlayerMovement player = FindObjectOfType<PlayerMovement>();
+        PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
         if (player != null) player.canWalk = false;
 
         // =========================================================
