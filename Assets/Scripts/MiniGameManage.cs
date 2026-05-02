@@ -26,9 +26,13 @@ public class MiniGameManager : MonoBehaviour
     public GameObject endingPanel;
     public TextMeshProUGUI endingText;
 
+    // ĐÃ THÊM: Biến lưu trữ đồng hồ đếm ngược tắt game
+    private Coroutine quitCoroutine;
+
     void Start()
     {
-        DragAndSnap[] allItems = FindObjectsOfType<DragAndSnap>();
+        // Khắc phục lỗi báo Warning Obsolete ở Unity 6
+        DragAndSnap[] allItems = FindObjectsByType<DragAndSnap>(FindObjectsSortMode.None);
         totalItemsToSort = allItems.Length;
         Debug.Log("Tổng số lượng hàng: " + totalItemsToSort);
 
@@ -77,7 +81,6 @@ public class MiniGameManager : MonoBehaviour
         // ========================================================
         if (DialogueManager.instance != null)
         {
-            // Truyền kịch bản vào, và ra lệnh: "Nói xong thì bật cái bảng ChoicePanel lên nhé!"
             DialogueManager.instance.StartDialogue(outroLines, () =>
             {
                 if (choicePanel != null) choicePanel.SetActive(true);
@@ -110,7 +113,9 @@ public class MiniGameManager : MonoBehaviour
             if (endingText != null)
                 endingText.text = "Bạn đã từ chối lời đề nghị. Cuộc sống sinh viên nghèo vẫn tiếp diễn, nhưng ít ra bạn được bình yên.\n\n<color=#FF0000>ENDING 1: BẠN SỢ RỒI!</color>";
         }
-        StartCoroutine(EndGameSequence());
+
+        // Ghi nhớ đồng hồ đếm ngược vào biến quitCoroutine
+        quitCoroutine = StartCoroutine(EndGameSequence());
     }
 
     IEnumerator EndGameSequence()
@@ -119,7 +124,44 @@ public class MiniGameManager : MonoBehaviour
         Application.Quit();
     }
 
-    // Hàm dự phòng của bạn
+    // ==========================================
+    // NÚT 1: CHƠI LẠI (QUAY LẠI ĐOẠN LỰA CHỌN)
+    // ==========================================
+    public void QuayLaiLuaChon()
+    {
+        // 1. GỠ MÌN: Hủy đếm ngược tắt game ngay lập tức!
+        if (quitCoroutine != null)
+        {
+            StopCoroutine(quitCoroutine);
+            quitCoroutine = null;
+        }
+
+        // 2. Tắt màn hình Ending đi
+        if (endingPanel != null) endingPanel.SetActive(false);
+
+        // 3. Bật lại bảng lựa chọn (Đồng ý / Từ chối)
+        if (choicePanel != null) choicePanel.SetActive(true);
+
+        // 4. Đảm bảo hiện chuột để chọn lại
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        Debug.Log("Người chơi muốn chọn lại... Cơ hội thứ 2!");
+    }
+
+    // ==========================================
+    // NÚT 2: VỀ MENU CHÍNH
+    // ==========================================
+    public void VeMenuChinh()
+    {
+        // Reset thời gian về bình thường (đề phòng bạn có dùng Pause)
+        Time.timeScale = 1f;
+
+        // Load lại scene Menu (Hãy đảm bảo tên scene trong ngoặc đúng với tên bạn đặt)
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    // Hàm dự phòng
     public void AcceptJobAndGoToCampuchia()
     {
         SceneManager.LoadScene("SampleScene");

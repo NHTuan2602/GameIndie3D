@@ -154,6 +154,7 @@ MonoBehaviour:
   submitButton: {fileID: 1557406212}
   crosshairController: {fileID: 0}
   fadeDuration: 1.5
+  introLines: []
 --- !u!4 &51976490
 Transform:
   m_ObjectHideFlags: 0
@@ -602,11 +603,11 @@ Transform:
   m_GameObject: {fileID: 308015781}
   serializedVersion: 2
   m_LocalRotation: {x: 0.48343995, y: 0.007626851, z: -0.0041556004, w: 0.8753345}
-  m_LocalPosition: {x: -134.25647, y: 27.923225, z: 144.56563}
+  m_LocalPosition: {x: -1094.2565, y: -512.0768, z: 144.56563}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 323419534}
   m_LocalEulerAnglesHint: {x: 30, y: 1.855, z: 0.008}
 --- !u!114 &308015785
 MonoBehaviour:
@@ -766,10 +767,11 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 963854302}
   - {fileID: 72053559}
   - {fileID: 1243621310}
   - {fileID: 1086080564}
+  - {fileID: 308015784}
+  - {fileID: 963854302}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -795,7 +797,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &350636351
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1160,8 +1162,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.0000038146973, y: -52.449997}
-  m_SizeDelta: {x: 355.2, y: 105.11}
+  m_AnchoredPosition: {x: 0, y: -131}
+  m_SizeDelta: {x: 1088.6, y: 288.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &963854303
 MonoBehaviour:
@@ -1210,8 +1212,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 116.9
+  m_fontSizeBase: 116.9
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2381,7 +2383,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.4, y: 55.26}
+  m_AnchoredPosition: {x: -0.4, y: 67.1}
   m_SizeDelta: {x: 525, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1660562131
@@ -2933,7 +2935,6 @@ CanvasRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 308015784}
   - {fileID: 323419534}
   - {fileID: 1083335374}
   - {fileID: 1135840699}
