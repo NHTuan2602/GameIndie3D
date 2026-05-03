@@ -32,7 +32,12 @@ public class PlayerController : MonoBehaviour
     public float jumpStaminaCost = 15f;
     public Slider staminaBar;
 
-    // ĐÃ XÓA BIẾN TƯƠNG TÁC (Chuyển sang PlayerInteraction lo)
+    [Header("Cài đặt Âm thanh Bước chân (MỚI)")]
+    public AudioSource footstepSource;
+    public float walkStepInterval = 0.5f;
+    public float sprintStepInterval = 0.3f;
+    public float crouchStepInterval = 0.8f;
+    private float stepTimer = 0f;
 
     private CharacterController controller;
     private Vector3 currentMovement;
@@ -68,6 +73,8 @@ public class PlayerController : MonoBehaviour
             crouchCameraY = defaultCameraY - (standingHeight - crouchHeight);
             targetCameraY = defaultCameraY;
         }
+
+        if (footstepSource == null) footstepSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -76,8 +83,7 @@ public class PlayerController : MonoBehaviour
         HandleCrouch();
         SmoothCrouchTransition();
         CalculateAndApplyMovement();
-
-        // ĐÃ XÓA HÀM HandleInteraction() VÌ NÓ KHÔNG CÒN THUỘC VỀ ĐÂY NỮA
+        HandleFootsteps(); // Gọi hàm phát âm thanh
     }
 
     void HandleStamina()
@@ -203,5 +209,36 @@ public class PlayerController : MonoBehaviour
         currentMovement.y = verticalVelocity;
 
         controller.Move(currentMovement * Time.deltaTime);
+    }
+
+    // ==========================================
+    // MỚI: XỬ LÝ NHỊP BƯỚC CHÂN
+    // ==========================================
+    void HandleFootsteps()
+    {
+        bool isMoving = (currentDir.magnitude > 0.1f) && controller.isGrounded;
+
+        if (isMoving)
+        {
+            stepTimer += Time.deltaTime;
+
+            // Xác định xem đang đi bộ, chạy hay ngồi xổm để chọn nhịp
+            float currentInterval = walkStepInterval;
+            if (isSprinting) currentInterval = sprintStepInterval;
+            else if (isCrouching) currentInterval = crouchStepInterval;
+
+            if (stepTimer >= currentInterval)
+            {
+                if (AudioManager.instance != null && footstepSource != null)
+                {
+                    AudioManager.instance.PlayFootstep(footstepSource);
+                }
+                stepTimer = 0f;
+            }
+        }
+        else
+        {
+            stepTimer = 0f; // Đứng im thì reset nhịp
+        }
     }
 }

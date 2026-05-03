@@ -68,10 +68,11 @@ public class PursuitManager : MonoBehaviour
         }
 
         // COMBO BƯỚC 1 & 2: Vừa phát tiếng TING (Nhặt đồ) vừa phát tiếng VÚT (Ném luôn)
-        if (AudioManager.instance != null)
+        // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
+        if (BikeAudioManager.instance != null)
         {
-            AudioManager.instance.PlayPickup();
-            AudioManager.instance.PlayThrow();
+            BikeAudioManager.instance.PlayPickup();
+            BikeAudioManager.instance.PlayThrow();
         }
 
         // Chờ 0.8 giây cho viên gạch bay trên không trung rồi mới tính sát thương
@@ -80,7 +81,7 @@ public class PursuitManager : MonoBehaviour
 
     IEnumerator HandleDamageAndNotification()
     {
-        yield return new WaitForSeconds(0.8f); // Đã giảm từ 1s xuống 0.8s cho cảm giác dứt khoát hơn
+        yield return new WaitForSeconds(0.8f);
         EnemyTakeDamage();
     }
 
@@ -88,8 +89,9 @@ public class PursuitManager : MonoBehaviour
     {
         enemiesRemaining--;
 
-        // COMBO BƯỚC 3: Đổi thành tiếng KÍNH VỠ / ĐỊCH LA LÊN (Chứ không gọi tiếng rầm tông xe nữa)
-        if (AudioManager.instance != null) AudioManager.instance.PlayEnemyHurt();
+        // COMBO BƯỚC 3: Đổi thành tiếng KÍNH VỠ / ĐỊCH LA LÊN
+        // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
+        if (BikeAudioManager.instance != null) BikeAudioManager.instance.PlayEnemyHurt();
 
         string pName = "BẠN";
         if (GameManager.instance != null) pName = GameManager.instance.playerName;
@@ -123,10 +125,11 @@ public class PursuitManager : MonoBehaviour
         if (isGameOver) return;
         isGameOver = true;
 
-        if (AudioManager.instance != null && AudioManager.instance.bgmSource != null)
+        // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
+        if (BikeAudioManager.instance != null && BikeAudioManager.instance.bgmSource != null)
         {
-            AudioManager.instance.bgmSource.Stop();
-            AudioManager.instance.PlayHit(); // Đây mới là lúc dùng tiếng RẦM (Tông xe)
+            BikeAudioManager.instance.bgmSource.Stop();
+            BikeAudioManager.instance.PlayHit(); // Tiếng RẦM (Tông xe)
         }
 
         StartCoroutine(ShowGameOverDelayed());

@@ -18,13 +18,15 @@ public class Obstacle : MonoBehaviour
             {
                 // 1. TÔNG XE ĐỊCH
                 case ObstacleType.InstantDeath:
-                    if (AudioManager.instance != null) AudioManager.instance.PlayHit();
+                    // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
+                    if (BikeAudioManager.instance != null) BikeAudioManager.instance.PlayHit();
                     PursuitManager.instance.GameOver("TỬ VONG DO VA CHẠM MẠNH!");
                     break;
 
                 // 2. VẤP Ổ GÀ
                 case ObstacleType.Pothole:
-                    if (AudioManager.instance != null) AudioManager.instance.PlayPothole();
+                    // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
+                    if (BikeAudioManager.instance != null) BikeAudioManager.instance.PlayPothole();
                     bike.forwardSpeed -= speedChange; // Trừ tốc độ
 
                     // CHỐT CHẶN: Nếu trừ xong mà tốc độ tụt xuống 15 thì bắt luôn
@@ -41,14 +43,14 @@ public class Obstacle : MonoBehaviour
 
                 // 3. BAY LÊN DỐC
                 case ObstacleType.Ramp:
-                    if (AudioManager.instance != null) AudioManager.instance.PlayJump();
-                    bike.forwardSpeed += speedChange; // Cộng tốc độ (Hàm Update bên kia sẽ tự hãm lại dần)
-                    // Không Destroy dốc để người chơi thấy mình đang bay trên không
+                    // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
+                    if (BikeAudioManager.instance != null) BikeAudioManager.instance.PlayJump();
+                    bike.forwardSpeed += speedChange; // Cộng tốc độ
                     break;
 
                 // 4. NHẶT GẠCH / VẬT PHẨM
                 case ObstacleType.ItemPickup:
-                    // Đã tách biệt hoàn toàn, không bao giờ phát tiếng tông xe ở đây nữa
+                    // Đã tách biệt hoàn toàn trong PursuitManager
                     PursuitManager.instance.UseItemImmediately();
                     Destroy(gameObject);
                     break;

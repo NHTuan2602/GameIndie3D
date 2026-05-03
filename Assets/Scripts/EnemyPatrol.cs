@@ -34,6 +34,13 @@ public class EnemyPatrol : MonoBehaviour
     public float wallhackChaseTime = 10f;
     private float currentChaseTimer = 0f;
 
+    [Header("Cài đặt Âm thanh Bước chân (MỚI)")]
+    public AudioSource footstepSource;
+    public float patrolStepInterval = 0.6f;
+    public float chaseStepInterval = 0.3f;
+    public float slowStepInterval = 0.9f;
+    private float stepTimer = 0f;
+
     private NavMeshAgent agent;
     private Animator anim;
     private PlayerHide playerHideState;
@@ -43,8 +50,6 @@ public class EnemyPatrol : MonoBehaviour
     private float waitTimer = 0f;
     private bool isChasing = false;
     private bool isSlowed = false;
-
-    // MỚI: TRẠNG THÁI KIỂM TRA TIẾNG ỒN
     private bool isInvestigating = false;
     private Coroutine investigateRoutine;
 
@@ -70,21 +75,24 @@ public class EnemyPatrol : MonoBehaviour
             enemyFlashlight.spotAngle = viewAngle;
             enemyFlashlight.range = viewRadius;
         }
+
+        if (footstepSource == null) footstepSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
         if (agent == null || playerTarget == null) return;
 
+        bool isMoving = agent.velocity.magnitude > 0.1f;
+
         if (anim != null)
         {
-            bool isMoving = agent.velocity.magnitude > 0.1f;
-            // Animation đi bộ kích hoạt cả lúc tuần tra VÀ lúc đi kiểm tra tiếng ồn
             anim.SetBool("isWalking", isMoving && !isChasing && !isSlowed);
             anim.SetBool("isRunning", isMoving && isChasing && !isSlowed);
         }
 
         CheckPlayerInSight();
+        HandleFootsteps(isMoving); // Gọi hàm phát âm thanh
 
         if (isChasing)
         {
@@ -103,9 +111,37 @@ public class EnemyPatrol : MonoBehaviour
                 GiveUpChase();
             }
         }
-        else if (!isInvestigating) // Không rượt, không tìm tiếng ồn thì mới đi tuần
+        else if (!isInvestigating)
         {
             PatrolRoutine();
+        }
+    }
+
+    // ==========================================
+    // MỚI: XỬ LÝ NHỊP BƯỚC CHÂN CỦA KẺ ĐỊCH
+    // ==========================================
+    void HandleFootsteps(bool isMoving)
+    {
+        if (isMoving)
+        {
+            stepTimer += Time.deltaTime;
+
+            float currentInterval = patrolStepInterval;
+            if (isChasing) currentInterval = chaseStepInterval;
+            else if (isSlowed) currentInterval = slowStepInterval;
+
+            if (stepTimer >= currentInterval)
+            {
+                if (AudioManager.instance != null && footstepSource != null)
+                {
+                    AudioManager.instance.PlayFootstep(footstepSource);
+                }
+                stepTimer = 0f;
+            }
+        }
+        else
+        {
+            stepTimer = 0f;
         }
     }
 
@@ -163,7 +199,6 @@ public class EnemyPatrol : MonoBehaviour
                     {
                         isChasing = true;
 
-                        // NẾU ĐANG TÌM TIẾNG ỒN MÀ THẤY MẶT -> HỦY TÌM, CHUYỂN SANG RƯỢT!
                         if (isInvestigating && investigateRoutine != null)
                         {
                             StopCoroutine(investigateRoutine);
@@ -172,6 +207,9 @@ public class EnemyPatrol : MonoBehaviour
 
                         if (!isSlowed) agent.speed = chaseSpeed;
                         if (enemyFlashlight != null && !isSlowed) enemyFlashlight.color = Color.red;
+
+                        // Kích hoạt còi báo động
+                        if (AudioManager.instance != null) AudioManager.instance.PlayAlarm(transform.position);
                     }
                 }
             }
@@ -214,48 +252,28 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // MỚI: HÀM NGHE VÀ TÌM KIẾM TIẾNG ỒN
-    // ==========================================
     public void InvestigateNoise(Vector3 noisePosition)
     {
-        // 1. Phớt lờ tiếng ồn nếu đang rượt trối chết hoặc đang bị choáng chân
         if (isChasing || isSlowed) return;
 
-        // 2. Chuyển sang trạng thái tìm kiếm
         isInvestigating = true;
-        isWaiting = false; // Xóa trạng thái đứng yên tuần tra
+        isWaiting = false;
 
-        if (enemyFlashlight != null) enemyFlashlight.color = new Color(1f, 0.5f, 0f); // Đèn chuyển màu Cam cam (Nghi ngờ)
+        if (enemyFlashlight != null) enemyFlashlight.color = new Color(1f, 0.5f, 0f);
 
-        Debug.Log("<color=orange>AI: Tiếng gì đấy? Để ra xem thử...</color>");
-
-        // 3. Hủy lệnh tìm kiếm cũ (nếu có tiếng ồn mới) và chạy lệnh mới
         if (investigateRoutine != null) StopCoroutine(investigateRoutine);
         investigateRoutine = StartCoroutine(InvestigateRoutine(noisePosition));
     }
 
     IEnumerator InvestigateRoutine(Vector3 targetPos)
     {
-        // Ra lệnh đi tới chỗ phát ra tiếng động
         agent.SetDestination(targetPos);
+        while (agent.pathPending || agent.remainingDistance > 1.5f) yield return null;
 
-        // Chờ AI đi tới nơi (Chừa lại khoảng 1.5m để không đâm đầu vào bàn ghế)
-        while (agent.pathPending || agent.remainingDistance > 1.5f)
-        {
-            yield return null;
-        }
-
-        // Tới nơi rồi -> Đứng ngó nghiêng 4 giây
         if (anim != null) anim.SetBool("isWalking", false);
-        Debug.Log("<color=yellow>AI: Đứng tìm... Không có ai à?</color>");
-
         yield return new WaitForSeconds(4f);
 
-        // Không thấy gì -> Quay lại đi tuần
-        Debug.Log("<color=green>AI: Chắc chuột chạy. Quay lại đi tuần thôi.</color>");
         isInvestigating = false;
-
         if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
         if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
     }

@@ -16,6 +16,13 @@ public class AutoDoorController : MonoBehaviour
     public bool isLocked = false;
     public string requiredKeyID = "key";
 
+    [Header("Cài đặt Âm Thanh")]
+    public AudioSource audioSource;
+    public AudioClip openSound;    // Tiếng két/xịt mở cửa
+    public AudioClip closeSound;   // Tiếng cạch đóng cửa
+    public AudioClip lockedSound;  // Tiếng tít tít (Từ chối)
+    public AudioClip unlockSound;  // Tiếng tít rào (Chấp nhận)
+
     [Header("Trạng thái (Chỉ xem)")]
     public bool isOpen = false;
 
@@ -23,14 +30,21 @@ public class AutoDoorController : MonoBehaviour
     private Quaternion openRotation;
     private Coroutine closeRoutine;
 
+    // Biến kiểm tra người chơi đứng gần
+    private bool isPlayerNear = false;
+    private Collider playerCollider;
+
     void Start()
     {
         if (doorHinge == null) doorHinge = transform;
         closedRotation = doorHinge.localRotation;
+
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
+        // 1. Xử lý hoạt ảnh xoay cửa
         if (isLocked && isOpen)
         {
             isOpen = false;
@@ -38,28 +52,34 @@ public class AutoDoorController : MonoBehaviour
 
         Quaternion targetRotation = isOpen ? openRotation : closedRotation;
         doorHinge.localRotation = Quaternion.Slerp(doorHinge.localRotation, targetRotation, Time.deltaTime * smoothSpeed);
+
+        // 2. CHỜ NGƯỜI CHƠI BẤM PHÍM E VÀ PHẢI NHÌN VỀ PHÍA CỬA MỚI TƯƠNG TÁC
+        if (isPlayerNear && Input.GetKeyDown(KeyCode.E) && playerCollider != null)
+        {
+            // Tính hướng từ người chơi đến cánh cửa
+            Vector3 directionToDoor = (transform.position - playerCollider.transform.position).normalized;
+
+            // Kiểm tra xem mặt người chơi (forward) có đang hướng về phía cửa không
+            float lookAngle = Vector3.Dot(playerCollider.transform.forward, directionToDoor);
+
+            // Nếu góc nhìn hướng về phía cửa (lookAngle > 0) thì mới cho tương tác
+            if (lookAngle > 0f)
+            {
+                TryToInteract(playerCollider);
+            }
+            else
+            {
+                Debug.Log("<color=yellow>Đang quay lưng với cửa, bấm E vào không khí sẽ không có tác dụng!</color>");
+            }
+        }
     }
 
-    // ==========================================
-    // MỞ CỬA THÔNG MINH (CÓ GẮN MÁY QUÉT DEBUG)
-    // ==========================================
     public void OpenDoor(Vector3 interactorPosition)
     {
         if (isLocked) return;
 
-        // Tính toán hướng
         Vector3 directionToInteractor = (interactorPosition - transform.position).normalized;
         float dotProduct = Vector3.Dot(transform.forward, directionToInteractor);
-
-        // IN RA CONSOLE ĐỂ BẮT LỖI
-        if (dotProduct > 0)
-        {
-            Debug.Log($"<color=cyan>HỆ THỐNG BÁO: Bạn đang đứng TRƯỚC mặt cửa (Dot: {dotProduct}). Cửa sẽ mở góc Dương!</color>");
-        }
-        else
-        {
-            Debug.Log($"<color=orange>HỆ THỐNG BÁO: Bạn đang đứng SAU lưng cửa (Dot: {dotProduct}). Cửa sẽ mở góc Âm!</color>");
-        }
 
         float actualOpenAngle = (dotProduct > 0) ? openAngle : -openAngle;
 
@@ -69,6 +89,10 @@ public class AutoDoorController : MonoBehaviour
         else if (axisToRotate == RotationAxis.Z) rotationVector = new Vector3(0, 0, actualOpenAngle);
 
         openRotation = closedRotation * Quaternion.Euler(rotationVector);
+
+        // Phát tiếng mở cửa (Chỉ phát nếu cửa đang đóng)
+        if (!isOpen && audioSource != null && openSound != null)
+            audioSource.PlayOneShot(openSound);
 
         isOpen = true;
         if (closeRoutine != null) StopCoroutine(closeRoutine);
@@ -82,63 +106,64 @@ public class AutoDoorController : MonoBehaviour
 
     private void TryToInteract(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (isLocked)
         {
-            if (isLocked)
-            {
-                bool hasKey = CheckInventoryForKey();
+            bool hasKey = CheckInventoryForKey();
 
-                if (hasKey)
-                {
-                    Debug.Log("<color=green>ĐÃ DÙNG CHÌA KHÓA MỞ CỬA! Lối tắt đã được thông.</color>");
-                    isLocked = false;
-                    OpenDoor(other.transform.position);
-                }
-                else
-                {
-                    Debug.Log($"<color=red>CỬA KHÓA! Bạn cần tìm vật phẩm có ID: {requiredKeyID}</color>");
-                }
+            if (hasKey)
+            {
+                if (audioSource != null && unlockSound != null) audioSource.PlayOneShot(unlockSound);
+                isLocked = false;
+                OpenDoor(other.transform.position);
             }
             else
             {
-                OpenDoor(other.transform.position);
+                // Phát tiếng cảnh báo lỗi
+                if (audioSource != null && lockedSound != null && !audioSource.isPlaying)
+                    audioSource.PlayOneShot(lockedSound);
+
+                Debug.Log($"<color=red>CỬA KHÓA! Bạn cần tìm vật phẩm có ID: {requiredKeyID}</color>");
             }
         }
-        else if (other.CompareTag("Enemy"))
+        else
         {
-            if (!isLocked)
-            {
-                OpenDoor(other.transform.position);
-            }
+            OpenDoor(other.transform.position);
         }
     }
 
     private bool CheckInventoryForKey()
     {
-        if (InventoryManager.Instance != null)
-        {
-            return InventoryManager.Instance.HasItem(requiredKeyID);
-        }
-
-        Debug.LogError("LỖI: Không tìm thấy InventoryManager trong Scene!");
+        if (InventoryManager.Instance != null) return InventoryManager.Instance.HasItem(requiredKeyID);
         return false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        TryToInteract(other);
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        TryToInteract(other);
+        // Lấy thông tin người chơi khi lại gần để chờ bấm E
+        if (other.CompareTag("Player"))
+        {
+            isPlayerNear = true;
+            playerCollider = other;
+        }
+        else if (other.CompareTag("Enemy"))
+        {
+            // Kẻ địch thì vẫn cho mở tự động không cần bấm E
+            if (!isLocked) OpenDoor(other.transform.position);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (other.CompareTag("Player"))
+        {
+            isPlayerNear = false;
+            playerCollider = null;
+        }
+
+        // Đi ra xa thì tự động đóng cửa lại
         if (other.CompareTag("Player") || other.CompareTag("Enemy"))
         {
-            if (!isLocked)
+            if (!isLocked && isOpen)
             {
                 if (closeRoutine != null) StopCoroutine(closeRoutine);
                 closeRoutine = StartCoroutine(AutoCloseRoutine());
@@ -149,6 +174,11 @@ public class AutoDoorController : MonoBehaviour
     IEnumerator AutoCloseRoutine()
     {
         yield return new WaitForSeconds(autoCloseDelay);
+
+        // Phát tiếng đóng cửa
+        if (isOpen && audioSource != null && closeSound != null)
+            audioSource.PlayOneShot(closeSound);
+
         isOpen = false;
     }
 }

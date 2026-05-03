@@ -1,58 +1,89 @@
 using UnityEngine;
-using System.Collections;
 
 public class AudioManager : MonoBehaviour
 {
+    // Bùa chú Singleton để gọi từ mọi nơi
     public static AudioManager instance;
 
-    [Header("Cấu trúc Nhạc Động")]
+    [Header("--- Nguồn Phát Âm Thanh ---")]
+    [Tooltip("Dành cho nhạc nền (phát liên tục)")]
     public AudioSource bgmSource;
-    public AudioClip introClip;
-    public AudioClip loopClip;
-
-    [Header("Hiệu ứng SFX (Loa phát)")]
+    [Tooltip("Dành cho hiệu ứng âm thanh 2D (UI, hệ thống)")]
     public AudioSource sfxSource;
 
-    [Header("Cuộn băng SFX (Kéo file MP3/WAV vào đây)")]
-    public AudioClip throwBrick;    // Tiếng Vút ném đi
-    public AudioClip hitSound;      // Tiếng RẦM tông xe (Game Over)
-    public AudioClip potholeHit;    // Tiếng Xóc ổ gà
-    public AudioClip rampJump;      // Tiếng Bay lên dốc
+    [Header("--- Kho Âm Thanh ---")]
+    public AudioClip bgmMusic;
+    public AudioClip uiClickSound;
+    public AudioClip sirenAlarmSound;
 
-    // 2 CUỘN BĂNG MỚI DÀNH RIÊNG CHO COMBO NÉM GẠCH:
-    public AudioClip pickupItem;    // Tiếng Ting/Cắc nhặt đồ
-    public AudioClip enemyHurt;     // Tiếng Choảng (kính vỡ) / Á (địch kêu)
+    [Tooltip("Bỏ nhiều tiếng bước chân vào đây để phát ngẫu nhiên, nghe sẽ thật hơn")]
+    public AudioClip[] stealthFootsteps;
 
-    void Awake() { instance = this; }
-
-    void Start()
+    void Awake()
     {
-        if (introClip != null && bgmSource != null)
+        // Đảm bảo chỉ có 1 AudioManager tồn tại qua các màn chơi
+        if (instance == null)
         {
-            StartCoroutine(PlayDynamicMusic());
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
-    IEnumerator PlayDynamicMusic()
+    void Start()
     {
-        bgmSource.clip = introClip;
-        bgmSource.loop = false;
-        bgmSource.Play();
-
-        yield return new WaitForSeconds(introClip.length - 0.1f);
-
-        bgmSource.clip = loopClip;
-        bgmSource.loop = true;
-        bgmSource.Play();
+        // Tự động bật nhạc nền khi vào game
+        if (bgmMusic != null) PlayBGM(bgmMusic);
     }
 
-    // Các kênh gọi âm thanh
-    public void PlayThrow() { sfxSource.PlayOneShot(throwBrick); }
-    public void PlayHit() { sfxSource.PlayOneShot(hitSound); }
-    public void PlayPothole() { sfxSource.PlayOneShot(potholeHit); }
-    public void PlayJump() { sfxSource.PlayOneShot(rampJump); }
+    // ==========================================
+    // CÁC HÀM PHÁT ÂM THANH SẴN SÀNG ĐỂ GỌI
+    // ==========================================
 
-    // KÊNH MỚI:
-    public void PlayPickup() { sfxSource.PlayOneShot(pickupItem); }
-    public void PlayEnemyHurt() { sfxSource.PlayOneShot(enemyHurt); }
+    // 1. Nhạc Nền (BGM)
+    public void PlayBGM(AudioClip clip)
+    {
+        if (bgmSource != null && clip != null)
+        {
+            bgmSource.clip = clip;
+            bgmSource.loop = true;
+            bgmSource.Play();
+        }
+    }
+
+    // 2. Tiếng UI (Bấm nút)
+    public void PlayUI()
+    {
+        if (sfxSource != null && uiClickSound != null)
+        {
+            sfxSource.PlayOneShot(uiClickSound);
+        }
+    }
+
+    // 3. Tiếng Báo Động (Phát ra dạng 3D từ vị trí kẻ địch)
+    public void PlayAlarm(Vector3 enemyPosition)
+    {
+        if (sirenAlarmSound != null)
+        {
+            // AudioSource.PlayClipAtPoint giúp tạo âm thanh 3D, càng xa nghe càng nhỏ
+            AudioSource.PlayClipAtPoint(sirenAlarmSound, enemyPosition, 1f);
+        }
+    }
+
+    // 4. Tiếng Bước Chân Lén Lút
+    public void PlayFootstep(AudioSource playerAudioSource)
+    {
+        if (stealthFootsteps.Length > 0 && playerAudioSource != null)
+        {
+            // Chọn ngẫu nhiên 1 tiếng bước chân
+            int randIndex = Random.Range(0, stealthFootsteps.Length);
+
+            // Đổi tông âm thanh (Pitch) một chút để các bước chân không bị lặp lại y hệt nhau
+            playerAudioSource.pitch = Random.Range(0.8f, 1.1f);
+            playerAudioSource.PlayOneShot(stealthFootsteps[randIndex]);
+        }
+    }
 }
