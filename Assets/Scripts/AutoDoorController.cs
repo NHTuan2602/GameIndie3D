@@ -133,7 +133,23 @@ public class AutoDoorController : MonoBehaviour
 
     private bool CheckInventoryForKey()
     {
-        if (InventoryManager.Instance != null) return InventoryManager.Instance.HasItem(requiredKeyID);
+        // 1. Dành cho người chơi bình thường: Kiểm tra túi đồ thật
+        if (InventoryManager.Instance != null && InventoryManager.Instance.HasItem(requiredKeyID))
+        {
+            return true;
+        }
+
+        // 2. Dành cho DEV MODE (Thượng đế): Kiểm tra cờ hack trong GameManager
+        if (GameManager.instance != null)
+        {
+            // Nếu cửa yêu cầu "key" và Thượng đế đã tick chọn có Key
+            if (requiredKeyID == "key" && GameManager.instance.hasKey)
+            {
+                Debug.Log("<color=magenta>Mở cửa bằng quyền lực DEV MODE!</color>");
+                return true;
+            }
+        }
+
         return false;
     }
 
