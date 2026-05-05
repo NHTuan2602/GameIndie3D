@@ -20,6 +20,10 @@ TagManager:
   - button f1
   - button f6
   - Enemy
+  - NPC_Gambler
+  - AC_NhaCai
+  - AC_PheThang
+  - AC_PheThua
   layers:
   - Default
   - TransparentFX

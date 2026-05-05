@@ -69,6 +69,9 @@ public class TaiXiuManager : MonoBehaviour
     private int playerChoice = 0;
     private int totalDiceValue = 0;
 
+    // TỐI ƯU HIỆU NĂNG: Lưu danh sách NPC từ đầu để tránh lag khi mở bát
+    private List<Animator> casinoCrowd = new List<Animator>();
+
     void Start()
     {
         if (bowlObject != null) bowlObject.manager = this;
@@ -89,13 +92,19 @@ public class TaiXiuManager : MonoBehaviour
             if (diceImages[i] != null) originalDicePos[i] = diceImages[i].rectTransform.anchoredPosition;
         }
 
-        // ĐÃ XÓA TỰ ĐỘNG CHẠY Ở ĐÂY (Sửa Góc khuất 1)
+        // TỐI ƯU: Điểm danh khán giả ngay từ lúc game bắt đầu
+        Animator[] allAnimators = FindObjectsOfType<Animator>();
+        foreach (Animator anim in allAnimators)
+        {
+            if (anim.CompareTag("NPC_Gambler"))
+            {
+                casinoCrowd.Add(anim);
+            }
+        }
     }
 
-    // ================== HÀM MỚI: ĐÁNH THỨC SỚI BẠC ==================
     public void OpenCasino()
     {
-        // 1. Bật nhạc nền
         if (bgmSource != null && bgmClip != null)
         {
             bgmSource.clip = bgmClip;
@@ -103,7 +112,6 @@ public class TaiXiuManager : MonoBehaviour
             bgmSource.Play();
         }
 
-        // 2. Bắt đầu đếm ngược ván mới
         StartNewRound();
     }
 
@@ -241,20 +249,14 @@ public class TaiXiuManager : MonoBehaviour
         spawnedChips.Clear();
     }
 
-    // ================== HÀM ĐƯỢC NÂNG CẤP: ĐỨNG LÊN ==================
     public void CloseCasino()
     {
-        // 1. Tiêu diệt toàn bộ "Bóng ma xúc xắc" đang chạy ngầm
         StopAllCoroutines();
         isBettingPhase = false;
-
-        // 2. Trả lại tiền rác đang vứt trên bàn
         ClearBetCore();
 
-        // 3. Tắt nhạc sòng bạc
         if (bgmSource != null) bgmSource.Stop();
 
-        // 4. Mở khóa nhân vật
         if (interactPoint != null)
         {
             interactPoint.ExitMinigame();
@@ -319,7 +321,6 @@ public class TaiXiuManager : MonoBehaviour
         }
     }
 
-    // ================== HÀM NÂNG CẤP: NHẬN DIỆN KHÁN GIẢ ==================
     void SetButtonsState(bool state)
     {
         if (btnTai != null) btnTai.interactable = state;
@@ -331,19 +332,10 @@ public class TaiXiuManager : MonoBehaviour
         if (btnClearBet != null) btnClearBet.interactable = state;
         if (btnAllIn != null) btnAllIn.interactable = state;
 
-        // Xử lý góc khuất Nút Thoát
         if (btnCloseCasino != null)
         {
-            if (playerChoice == 0)
-            {
-                // Nếu là khán giả (chưa chốt cược), cho phép bấm nút Thoát bất cứ lúc nào!
-                btnCloseCasino.interactable = true;
-            }
-            else
-            {
-                // Nếu đã lỡ cược rồi thì bị khóa lại, chịu trận xem hết ván.
-                btnCloseCasino.interactable = state;
-            }
+            if (playerChoice == 0) btnCloseCasino.interactable = true;
+            else btnCloseCasino.interactable = state;
         }
     }
 
@@ -480,6 +472,10 @@ public class TaiXiuManager : MonoBehaviour
         if (playerChoice == 0)
         {
             statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#FFFFFF>BẠN CHỈ XEM, KHÔNG THẮNG THUA!</color>";
+
+            // Khán giả xem thì random cho đám đông phản ứng ngẫu nhiên cho có không khí
+            bool randomReaction = (Random.Range(0, 2) == 0);
+            UpdateCrowdReaction(randomReaction);
         }
         else if (playerChoice == winningChoice)
         {
@@ -487,11 +483,17 @@ public class TaiXiuManager : MonoBehaviour
             GameManager.instance.money += winAmount;
             statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>CHUC MUNG THANG LON {betAmount:N0} VNĐ</color>";
             PlaySound(winSound);
+
+            // Đám đông hò reo ăn mừng
+            UpdateCrowdReaction(true);
         }
         else
         {
             statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#FF0000>THUA SẠCH TIỀN!</color>";
             PlaySound(loseSound);
+
+            // Đám đông thở dài thất vọng
+            UpdateCrowdReaction(false);
         }
 
         UpdateMoneyUI();
@@ -528,5 +530,21 @@ public class TaiXiuManager : MonoBehaviour
             }
         }
         StartNewRound();
+    }
+
+    // ================== HÀM QUẢN LÝ ĐÁM ĐÔNG ĐÃ ĐƯỢC TỐI ƯU ==================
+    public void UpdateCrowdReaction(bool playerWon)
+    {
+        // Duyệt qua danh sách đã được điểm danh từ hàm Start
+        foreach (Animator anim in casinoCrowd)
+        {
+            if (anim != null)
+            {
+                if (playerWon)
+                    anim.SetTrigger("onWin");
+                else
+                    anim.SetTrigger("onLose");
+            }
+        }
     }
 }

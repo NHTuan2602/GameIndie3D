@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.AI;
+using TMPro;
 using System.Collections;
 
 public class RooftopEscapeManager : MonoBehaviour
@@ -15,6 +16,9 @@ public class RooftopEscapeManager : MonoBehaviour
     public GameObject bikeChainVisual;
     public GameObject bikeVisual;
     public Image blackScreenFade;
+
+    [Header("--- UI Tương tác (QTE) ---")]
+    public TextMeshProUGUI interactPromptText;
 
     [Header("--- Diễn Viên Phản Diện ---")]
     public GameObject[] cinematicEnemies;
@@ -35,12 +39,14 @@ public class RooftopEscapeManager : MonoBehaviour
     public AudioClip cutSound;
     public AudioClip alarmSound;
     public AudioClip bikeRideSound;
+    public AudioClip caughtJumpscareSound; // MỚI: Tiếng tèng téng teng khi bị bắt
 
     [Header("Chuyển Scene")]
     public string nextSceneName = "EscapeBikeScene";
 
     private bool hasRope = false;
     private bool sequenceStarted = false;
+    private Transform mainCameraTransform;
 
     void Awake() { instance = this; }
 
@@ -51,6 +57,7 @@ public class RooftopEscapeManager : MonoBehaviour
             cinematicAudio = GetComponent<AudioSource>();
             if (cinematicAudio == null) cinematicAudio = gameObject.AddComponent<AudioSource>();
         }
+        if (Camera.main != null) mainCameraTransform = Camera.main.transform;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -70,11 +77,23 @@ public class RooftopEscapeManager : MonoBehaviour
         if (player != null && player.GetComponent<PlayerController>() != null)
             player.GetComponent<PlayerController>().enabled = false;
 
-        // ĐOẠN 1: TRÈO XUỐNG
+        // ==========================================
+        // PHẦN 1: TRÈO TỪ SÂN THƯỢNG XUỐNG (Chỉ chiếu 1 lần)
+        // ==========================================
         if (climbDownStart != null) player.transform.position = climbDownStart.position;
+        if (interactPromptText != null)
+        {
+            interactPromptText.text = "Nhấn [E] để buộc dây thừng trèo xuống";
+            interactPromptText.gameObject.SetActive(true);
+        }
+
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.E));
+        if (interactPromptText != null) interactPromptText.gameObject.SetActive(false);
+
         if (coiledRopeRooftop != null) coiledRopeRooftop.SetActive(true);
         if (cinematicAudio != null && ropeThrowSound != null) cinematicAudio.PlayOneShot(ropeThrowSound);
         yield return new WaitForSeconds(1f);
+
         yield return StartCoroutine(FadeScreen(1f, 0.5f));
         if (cinematicAudio != null && climbingSound != null) { cinematicAudio.clip = climbingSound; cinematicAudio.loop = true; cinematicAudio.Play(); }
         if (climbDownEnd != null) player.transform.position = climbDownEnd.position;
@@ -82,51 +101,142 @@ public class RooftopEscapeManager : MonoBehaviour
         if (cinematicAudio != null) { cinematicAudio.loop = false; cinematicAudio.Stop(); }
         yield return StartCoroutine(FadeScreen(0f, 0.5f));
 
-        // ĐOẠN 2: QUA TƯỜNG
-        yield return StartCoroutine(FadeScreen(1f, 0.3f));
-        if (coiledRopeWall != null) coiledRopeWall.SetActive(true);
-        if (wallClimbEnd != null) player.transform.position = wallClimbEnd.position;
-        yield return new WaitForSeconds(1.5f);
-        yield return StartCoroutine(FadeScreen(0f, 0.3f));
-        if (wallDropEnd != null)
+        // ==========================================
+        // VÒNG LẶP CHECKPOINT: NẾU THẤT BẠI SẼ QUAY LẠI ĐÂY
+        // ==========================================
+        bool escaped = false;
+        while (!escaped)
         {
-            float dropTime = 0.5f; float timer = 0f; Vector3 startPos = player.transform.position;
-            while (timer < dropTime) { timer += Time.deltaTime; player.transform.position = Vector3.Lerp(startPos, wallDropEnd.position, timer / dropTime); yield return null; }
-        }
+            // Reset vị trí xe đạp và xích (nếu chơi lại)
+            if (bikeVisual != null) bikeVisual.SetActive(true);
+            if (bikeChainVisual != null) bikeChainVisual.SetActive(true);
 
-        // BÁO ĐỘNG & KẺ ĐỊCH XUẤT HIỆN
-        if (cinematicAudio != null && alarmSound != null) { cinematicAudio.clip = alarmSound; cinematicAudio.loop = true; cinematicAudio.Play(); }
-        foreach (GameObject enemyObj in cinematicEnemies)
-        {
-            if (enemyObj != null)
+            // QUA BỨC TƯỜNG CAO
+            yield return StartCoroutine(FadeScreen(1f, 0.3f));
+            if (coiledRopeWall != null) coiledRopeWall.SetActive(true);
+            if (wallClimbEnd != null) player.transform.position = wallClimbEnd.position;
+            yield return new WaitForSeconds(1f);
+            yield return StartCoroutine(FadeScreen(0f, 0.3f));
+
+            // FIX LỖI ĐI XUYÊN TƯỜNG BẰNG ĐƯỜNG CONG PARABOL
+            if (wallDropEnd != null)
             {
-                EnemyPatrol patrol = enemyObj.GetComponent<EnemyPatrol>();
-                if (patrol != null) patrol.enabled = false;
-                NavMeshAgent agent = enemyObj.GetComponent<NavMeshAgent>();
-                if (agent != null && enemyGateStartPos != null)
+                float dropTime = 0.6f;
+                float timer = 0f;
+                Vector3 startPos = player.transform.position;
+                Vector3 targetPos = wallDropEnd.position;
+
+                while (timer < dropTime)
                 {
-                    agent.Warp(enemyGateStartPos.position);
-                    agent.speed = 12f; // Chạy nhanh hơn nữa để kịp lọt vào camera
-                    agent.SetDestination(player.transform.position);
+                    timer += Time.deltaTime;
+                    float progress = timer / dropTime;
+
+                    // Đi ngang
+                    Vector3 currentPos = Vector3.Lerp(startPos, targetPos, progress);
+                    // Nhảy vòng cung (Cộng thêm chiều cao)
+                    currentPos.y += Mathf.Sin(progress * Mathf.PI) * 1.5f;
+
+                    player.transform.position = currentPos;
+                    yield return null;
                 }
-                Animator anim = enemyObj.GetComponentInChildren<Animator>();
-                if (anim != null) { anim.SetBool("isWalking", false); anim.SetBool("isRunning", true); }
+            }
+
+            // BÁO ĐỘNG & KẺ ĐỊCH XUẤT HIỆN
+            if (cinematicAudio != null && alarmSound != null) { cinematicAudio.clip = alarmSound; cinematicAudio.loop = true; cinematicAudio.Play(); }
+            foreach (GameObject enemyObj in cinematicEnemies)
+            {
+                if (enemyObj != null)
+                {
+                    EnemyPatrol patrol = enemyObj.GetComponent<EnemyPatrol>();
+                    if (patrol != null) patrol.enabled = false;
+                    NavMeshAgent agent = enemyObj.GetComponent<NavMeshAgent>();
+                    if (agent != null && enemyGateStartPos != null)
+                    {
+                        agent.Warp(enemyGateStartPos.position);
+                        agent.speed = 22f;
+                        agent.SetDestination(bikePosition.position); // ĐÃ FIX: Chạy thẳng ra xe đạp
+                    }
+                    Animator anim = enemyObj.GetComponentInChildren<Animator>();
+                    if (anim != null) { anim.SetBool("isWalking", false); anim.SetBool("isRunning", true); }
+                }
+            }
+
+            // CHẠY TỚI XE ĐẠP
+            if (bikePosition != null)
+            {
+                float runTime = 1.0f; float timer = 0f; Vector3 startPos = player.transform.position;
+                while (timer < runTime) { timer += Time.deltaTime; player.transform.position = Vector3.Lerp(startPos, bikePosition.position, timer / runTime); player.transform.LookAt(bikePosition); yield return null; }
+            }
+
+            // ==========================================
+            // TƯƠNG TÁC CÓ THỜI GIAN (QTE TIMEOUT)
+            // ==========================================
+            if (interactPromptText != null)
+            {
+                interactPromptText.text = "<color=red>NHẤN [E] ĐỂ CẮT XÍCH! KẺ ĐỊCH ĐANG TỚI!</color>";
+                interactPromptText.gameObject.SetActive(true);
+            }
+
+            float timeLimit = 3.5f; // Người chơi có 3.5 giây để bấm E
+            float qteTimer = 0f;
+            bool qteSuccess = false;
+
+            while (qteTimer < timeLimit)
+            {
+                qteTimer += Time.deltaTime;
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    qteSuccess = true;
+                    break;
+                }
+                yield return null; // Chờ frame tiếp theo
+            }
+
+            if (interactPromptText != null) interactPromptText.gameObject.SetActive(false);
+
+            if (qteSuccess)
+            {
+                // THÀNH CÔNG: Thoát khỏi vòng lặp
+                escaped = true;
+            }
+            else
+            {
+                // THẤT BẠI: Bị bắt, chạy Jumpscare và quay lại Checkpoint
+                Debug.Log("<color=red>GAME OVER TẠM THỜI: Đã quá trễ!</color>");
+                if (cinematicAudio != null && caughtJumpscareSound != null) cinematicAudio.PlayOneShot(caughtJumpscareSound);
+
+                if (interactPromptText != null)
+                {
+                    interactPromptText.text = "<color=red>BẠN ĐÃ BỊ TÓM LẠI!</color>";
+                    interactPromptText.gameObject.SetActive(true);
+                }
+
+                // Dừng kẻ địch
+                foreach (GameObject enemyObj in cinematicEnemies)
+                {
+                    if (enemyObj != null) enemyObj.GetComponent<NavMeshAgent>().speed = 0;
+                }
+
+                yield return new WaitForSeconds(2f); // Nhìn dòng chữ bị tóm 2 giây
+                if (interactPromptText != null) interactPromptText.gameObject.SetActive(false);
+
+                // Mờ đen và đưa Player về chân tường để làm lại
+                yield return StartCoroutine(FadeScreen(1f, 1f));
+                player.transform.position = climbDownEnd.position;
+                yield return new WaitForSeconds(1f);
+                yield return StartCoroutine(FadeScreen(0f, 1f));
             }
         }
 
-        // ĐOẠN 3: CẮT XÍCH & QUAY ĐẦU (ĐÃ FIX NHỊP ĐIỆU)
-        if (bikePosition != null)
-        {
-            float runTime = 1.2f; float timer = 0f; Vector3 startPos = player.transform.position;
-            while (timer < runTime) { timer += Time.deltaTime; player.transform.position = Vector3.Lerp(startPos, bikePosition.position, timer / runTime); player.transform.LookAt(bikePosition); yield return null; }
-        }
-
+        // ==========================================
+        // PHẦN 3: THÀNH CÔNG - PHÓNG XE & CAMERA LIA SAU LƯNG
+        // ==========================================
         if (cinematicAudio != null && cutSound != null) cinematicAudio.PlayOneShot(cutSound);
         if (bikeChainVisual != null) bikeChainVisual.SetActive(false);
 
-        yield return new WaitForSeconds(0.2f); // Khựng lại vì giật mình
+        yield return new WaitForSeconds(0.2f);
 
-        // QUAY ĐẦU NHÌN ĐỐI THỦ
+        // Giật mình quay đầu nhìn kẻ địch
         if (enemyGateStartPos != null)
         {
             float turnTime = 0.3f; float turnTimer = 0f; Quaternion startRot = player.transform.rotation;
@@ -134,16 +244,32 @@ public class RooftopEscapeManager : MonoBehaviour
             dir.y = 0; Quaternion targetRot = Quaternion.LookRotation(dir);
 
             while (turnTimer < turnTime) { turnTimer += Time.deltaTime; player.transform.rotation = Quaternion.Slerp(startRot, targetRot, turnTimer / turnTime); yield return null; }
-
-            // ĐÃ TĂNG: Đứng hình nhìn kẻ địch lâu hơn để thấy chúng đang lao tới
-            yield return new WaitForSeconds(2.0f); // Tăng lên 2 giây cho kịch tính
+            yield return new WaitForSeconds(1f);
         }
 
+        // BIẾN MẤT CÙNG XE ĐẠP (Giả vờ đã nhảy lên xe)
         if (bikeVisual != null) bikeVisual.SetActive(false);
         if (cinematicAudio != null && bikeRideSound != null) { cinematicAudio.Stop(); cinematicAudio.PlayOneShot(bikeRideSound); }
 
-        // ĐÃ SỬA: Mờ đen chậm lại (2 giây) để tạo cảm giác thoát hiểm trong gang tấc
-        yield return StartCoroutine(FadeScreen(1f, 2.0f));
+        // MỚI: CAMERA PAN RA SAU LƯNG ĐỂ NỐI SANG SCENE ĐUA XE
+        if (mainCameraTransform != null)
+        {
+            Vector3 targetCamPos = player.transform.position - player.transform.forward * 4f + Vector3.up * 2f;
+            float camPanTime = 1.5f;
+            float camTimer = 0f;
+            Vector3 startCamPos = mainCameraTransform.position;
+
+            while (camTimer < camPanTime)
+            {
+                camTimer += Time.deltaTime;
+                mainCameraTransform.position = Vector3.Lerp(startCamPos, targetCamPos, camTimer / camPanTime);
+                mainCameraTransform.LookAt(player.transform.position + player.transform.forward * 10f); // Nhìn xa xăm về phía trước
+                yield return null;
+            }
+        }
+
+        // Mờ đen chuyển qua màn đua xe
+        yield return StartCoroutine(FadeScreen(1f, 1.5f));
         SceneManager.LoadScene(nextSceneName);
     }
 
