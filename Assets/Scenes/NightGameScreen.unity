@@ -871,6 +871,7 @@ MonoBehaviour:
   btnAllIn: {fileID: 1479500946}
   btnCloseCasino: {fileID: 803402561}
   interactPoint: {fileID: 1838071084}
+  dealerAnimator: {fileID: 266149739}
   rollDuration: 7.4
   spawnRadius: 20
   diceSpacing: 30
@@ -891,6 +892,7 @@ MonoBehaviour:
   btnRestartGame: {fileID: 1754879474}
   warnAtGambleCount: 8
   trapAtGambleCount: 9
+  deathAtGambleCount: 14
 --- !u!4 &182085096
 Transform:
   m_ObjectHideFlags: 0
@@ -1361,6 +1363,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 261995043}
   m_CullTransparentMesh: 1
+--- !u!95 &266149739 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 7c35a2728509b024690e8a0529064480, type: 3}
+  m_PrefabInstance: {fileID: 1455184824}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &282919144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4117,7 +4124,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7c35a2728509b024690e8a0529064480, type: 3}
       propertyPath: m_Name
-      value: BaoVe (1)
+      value: NhaCai
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7c35a2728509b024690e8a0529064480, type: 3}
       propertyPath: m_TagString

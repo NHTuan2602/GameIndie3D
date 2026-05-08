@@ -41,7 +41,7 @@ public class PlayerHUD : MonoBehaviour
         if (GameManager.instance.hp != lastHp) { lastHp = GameManager.instance.hp; valueChanged = true; }
         if (GameManager.instance.stamina != lastStamina) { lastStamina = GameManager.instance.stamina; valueChanged = true; }
         if (GameManager.instance.money != lastMoney) { lastMoney = GameManager.instance.money; valueChanged = true; }
-        if (GameManager.instance.karma != lastKarma) { lastKarma = GameManager.instance.karma; valueChanged = true; }
+        /*if (GameManager.instance.karma != lastKarma) { lastKarma = GameManager.instance.karma; valueChanged = true; }*/
         if (GameManager.instance.successfulScamsToday != lastKpi) { lastKpi = GameManager.instance.successfulScamsToday; valueChanged = true; }
 
         // 2. NẾU BỊ RÚT MÁU / CỘNG TIỀN -> Cập nhật số liệu và Bật đồng hồ đếm ngược 3 giây!
@@ -82,8 +82,8 @@ public class PlayerHUD : MonoBehaviour
             moneyText.text = GameManager.instance.money.ToString("N0") + " VNĐ";
         }
 
-        if (karmaText != null)
-            karmaText.text = "Nghiệp: " + GameManager.instance.karma;
+        /*if (karmaText != null)
+            karmaText.text = "Nghiệp: " + GameManager.instance.karma;*/
 
         if (kpiText != null)
             kpiText.text = "KPI: " + GameManager.instance.successfulScamsToday + "/" + GameManager.instance.targetKPI;

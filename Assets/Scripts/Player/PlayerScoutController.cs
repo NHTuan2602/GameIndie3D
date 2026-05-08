@@ -4,27 +4,26 @@ using TMPro;
 public class PlayerScoutController : MonoBehaviour
 {
     [Header("--- HỆ THỐNG TIA MẮT (RAYCAST) ---")]
-    public Camera playerCamera;           // Kéo Main Camera của Player vào đây
-    public float interactDistance = 4f;   // Tăng tầm nhìn lên 4 mét cho thoải mái
-    public TextMeshProUGUI hintText;      // Chữ "Bấm [E] để ghi nhớ..." ở giữa màn hình
-    public LayerMask itemLayer;           // BỔ SUNG: Nên tạo Layer riêng cho Items để Raycast tối ưu hơn
+    public Camera playerCamera;
+    public float interactDistance = 4f;
+    public TextMeshProUGUI hintText;
+    public LayerMask itemLayer;
 
     [Header("--- HỆ THỐNG SỔ TAY (NOTEBOOK) ---")]
-    public GameObject notebookPanel;      // Kéo Panel Sổ tay UI vào đây
-    public TextMeshProUGUI txtWrench;     // Chữ hiển thị nhiệm vụ Cờ lê
-    public TextMeshProUGUI txtMap;        // Chữ hiển thị nhiệm vụ Bản đồ
-    public TextMeshProUGUI txtRope;       // Chữ hiển thị nhiệm vụ Dây thừng
+    public GameObject notebookPanel;
+    public TextMeshProUGUI txtNippers;     // Kềm
+    public TextMeshProUGUI txtNotebook;    // ĐÃ SỬA: Thay Bản đồ (Map) thành Sổ tay (Notebook)
+    public TextMeshProUGUI txtRope;        // Dây thừng
+    public TextMeshProUGUI txtKey;         // Chìa khóa
 
     [Header("--- SCRIPT ĐIỀU KHIỂN CHUỘT ---")]
-    [Tooltip("Kéo script quay chuột (Ví dụ: MouseLook hoặc PlayerController nếu nó xử lý quay) vào đây để khóa chuột khi mở sổ")]
     public MonoBehaviour mouseLookScript;
 
     private bool isNotebookOpen = false;
-    private GameObject currentTarget = null; // Vật thể đang bị nhìn trúng
+    private GameObject currentTarget = null;
 
     void Start()
     {
-        // Ẩn UI khi bắt đầu
         if (notebookPanel != null) notebookPanel.SetActive(false);
         if (hintText != null) hintText.gameObject.SetActive(false);
         UpdateNotebookUI();
@@ -36,54 +35,51 @@ public class PlayerScoutController : MonoBehaviour
         HandleNotebookToggle();
     }
 
-    // 1. CHỨC NĂNG BẮN TIA LAZER TỪ MẮT
     private void HandleRaycastInteraction()
     {
-        // Nếu đang mở sổ tay thì không cho tương tác đồ vật
         if (isNotebookOpen) return;
 
-        // Tạo tia ray từ tâm camera
         Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         RaycastHit hit;
 
-        // Bắn tia dài 4m. Nhìn trúng vật gì đó (có thể dùng itemLayer để tối ưu)
         if (Physics.Raycast(ray, out hit, interactDistance))
         {
             GameObject obj = hit.collider.gameObject;
 
-            // KIỂM TRA XEM ĐÓ CÓ PHẢI ĐỒ VƯỢT NGỤC KHÔNG DỰA VÀO TAG
-            // Đồng thời phải kiểm tra GameManager có tồn tại và Item đó CHƯA được lấy
             if (GameManager.instance != null)
             {
-                if (obj.CompareTag("Item_Wrench") && !GameManager.instance.hasWrench)
+                // ĐỒNG BỘ ĐÚNG 4 MÓN: KỀM, SỔ TAY, DÂY THỪNG, CHÌA KHÓA
+                if (obj.CompareTag("Item_Nippers") && !GameManager.instance.hasNippers)
                 {
-                    ShowHint("Bấm [E] để ghi nhớ vị trí Cờ Lê", obj);
+                    ShowHint("Bấm [E] để lấy Kềm Cắt Xích", obj);
                 }
-                else if (obj.CompareTag("Item_Map") && !GameManager.instance.hasMap)
+                else if (obj.CompareTag("Item_Notebook") && !GameManager.instance.hasNotebook)
                 {
-                    ShowHint("Bấm [E] để chụp lén Bản Đồ", obj);
+                    ShowHint("Bấm [E] để lấy Sổ Tay Ghi Chép", obj);
                 }
                 else if (obj.CompareTag("Item_Rope") && !GameManager.instance.hasRope)
                 {
-                    ShowHint("Bấm [E] để giấu Dây Thừng", obj);
+                    ShowHint("Bấm [E] để chôm Dây Thừng", obj);
+                }
+                else if (obj.CompareTag("Item_Key") && !GameManager.instance.hasKey)
+                {
+                    ShowHint("Bấm [E] để trộm Chìa Khóa", obj);
                 }
                 else
                 {
-                    HideHint(); // Nhìn trúng vật có Tag Item nhưng GameManager chưa init hoặc đã lấy rồi
+                    HideHint();
                 }
             }
             else
             {
-                HideHint(); // Nhìn trúng vật gì đó không phải Item
+                HideHint();
             }
         }
         else
         {
-            HideHint(); // Không nhìn trúng gì cả
+            HideHint();
         }
 
-        // BẤM E ĐỂ LẤY ĐỒ
-        // Đã sửa: Phải đang KHÔNG mở sổ tay và có currentTarget mới cho bấm E
         if (!isNotebookOpen && currentTarget != null && Input.GetKeyDown(KeyCode.E))
         {
             CollectItem(currentTarget);
@@ -110,24 +106,20 @@ public class PlayerScoutController : MonoBehaviour
     {
         if (GameManager.instance == null) return;
 
-        // Cập nhật vào Não bộ của Game (GameManager)
-        if (item.CompareTag("Item_Wrench")) GameManager.instance.hasWrench = true;
-        else if (item.CompareTag("Item_Map")) GameManager.instance.hasMap = true;
+        // ĐỒNG BỘ 4 MÓN ĐỒ LƯU VÀO GAMEMANAGER
+        if (item.CompareTag("Item_Nippers")) GameManager.instance.hasNippers = true;
+        else if (item.CompareTag("Item_Notebook")) GameManager.instance.hasNotebook = true;
         else if (item.CompareTag("Item_Rope")) GameManager.instance.hasRope = true;
+        else if (item.CompareTag("Item_Key")) GameManager.instance.hasKey = true;
 
-        // Tắt object đó đi (Coi như đã nhặt)
-        // Chú ý: Trong game stealth, đôi khi bạn chỉ muốn "ghi nhớ" chứ không làm nó biến mất
-        // Nếu muốn Item vẫn còn đó, hãy tag nó sang Tag "Interacted"
         item.SetActive(false);
 
         HideHint();
         UpdateNotebookUI();
 
-        // Thêm hiệu ứng âm thanh hoặc Particle ở đây nếu cần
-        Debug.Log("<color=green>Đã ghi nhớ vật phẩm thành công!</color>");
+        Debug.Log("<color=green>Đã lấy vật phẩm thành công!</color>");
     }
 
-    // 2. CHỨC NĂNG BẬT/TẮT SỔ TAY BẰNG PHÍM TAB
     private void HandleNotebookToggle()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -138,40 +130,46 @@ public class PlayerScoutController : MonoBehaviour
             if (isNotebookOpen)
             {
                 UpdateNotebookUI();
-                // Tạm dừng xoay chuột để xem sổ (quan trọng để mouse không quay Player lung tung)
                 if (mouseLookScript != null) mouseLookScript.enabled = false;
-
-                // Mở sổ thì nên hiện chuột lên để người chơi có thể click (nếu sổ có nút bấm)
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
             else
             {
-                // Bật lại xoay chuột
                 if (mouseLookScript != null) mouseLookScript.enabled = true;
-
-                // Đóng sổ thì ẩn chuột và khóa lại tâm màn hình
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
         }
     }
 
-    // 3. CẬP NHẬT GIAO DIỆN SỔ TAY (GẠCH BỎ KHI ĐÃ TÌM THẤY)
     private void UpdateNotebookUI()
     {
         if (GameManager.instance == null) return;
 
-        // Cờ lê
-        if (GameManager.instance.hasWrench) txtWrench.text = "<s>1. Tìm vật cứng cắt xích (Đã có Cờ lê)</s>";
-        else txtWrench.text = "1. Cần tìm vật cứng để cắt xích rào";
+        if (txtNippers != null)
+        {
+            if (GameManager.instance.hasNippers) txtNippers.text = "<s>1. Kềm cắt xích (Đã lấy)</s>";
+            else txtNippers.text = "1. Tìm Kềm để cắt xích rào";
+        }
 
-        // Bản đồ
-        if (GameManager.instance.hasMap) txtMap.text = "<s>2. Bản đồ tuyến đường tuần tra (Đã chụp)</s>";
-        else txtMap.text = "2. Phải mò vào văn phòng quản lý tìm Bản đồ";
+        // Cập nhật giao diện cho Sổ Tay
+        if (txtNotebook != null)
+        {
+            if (GameManager.instance.hasNotebook) txtNotebook.text = "<s>2. Sổ tay ghi chép (Đã lấy)</s>";
+            else txtNotebook.text = "2. Tìm Sổ tay để lên kế hoạch";
+        }
 
-        // Dây thừng
-        if (GameManager.instance.hasRope) txtRope.text = "<s>3. Dây thừng đu tường (Đã giấu)</s>";
-        else txtRope.text = "3. Tìm dây thừng ở khu nhà kho";
+        if (txtRope != null)
+        {
+            if (GameManager.instance.hasRope) txtRope.text = "<s>3. Dây thừng đu tường (Đã chôm)</s>";
+            else txtRope.text = "3. Tìm dây thừng ở khu nhà kho";
+        }
+
+        if (txtKey != null)
+        {
+            if (GameManager.instance.hasKey) txtKey.text = "<s>4. Chìa khóa cổng chính (Đã chôm)</s>";
+            else txtKey.text = "4. Trộm chìa khóa của quản lý";
+        }
     }
 }

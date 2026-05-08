@@ -43,7 +43,6 @@ public class EnemyPatrol : MonoBehaviour
 
     private NavMeshAgent agent;
     private Animator anim;
-    private PlayerHide playerHideState;
     private int currentWaypointIndex = 0;
 
     private bool isWaiting = false;
@@ -61,7 +60,7 @@ public class EnemyPatrol : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         if (anim == null) anim = GetComponentInParent<Animator>();
 
-        if (playerTarget != null) playerHideState = playerTarget.GetComponent<PlayerHide>();
+        // ĐÃ XÓA: Dòng tìm script PlayerHide bị lỗi ở đây
 
         if (agent != null)
         {
@@ -92,7 +91,7 @@ public class EnemyPatrol : MonoBehaviour
         }
 
         CheckPlayerInSight();
-        HandleFootsteps(isMoving); // Gọi hàm phát âm thanh
+        HandleFootsteps(isMoving);
 
         if (isChasing)
         {
@@ -117,9 +116,6 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // MỚI: XỬ LÝ NHỊP BƯỚC CHÂN CỦA KẺ ĐỊCH
-    // ==========================================
     void HandleFootsteps(bool isMoving)
     {
         if (isMoving)
@@ -149,7 +145,7 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (playerHideState != null && playerHideState.isHidden && !isChasing) return;
+            // ĐÃ XÓA: Logic check trạng thái ẩn nấp ở đây
             if (!isSlowed) HandleCatchingPlayer();
         }
     }
@@ -179,7 +175,7 @@ public class EnemyPatrol : MonoBehaviour
 
     void CheckPlayerInSight()
     {
-        if (playerHideState != null && playerHideState.isHidden && !isChasing) return;
+        // ĐÃ XÓA: Logic check trạng thái ẩn nấp ở đây
 
         float distanceToPlayer = Vector3.Distance(transform.position, playerTarget.position);
 
@@ -208,7 +204,6 @@ public class EnemyPatrol : MonoBehaviour
                         if (!isSlowed) agent.speed = chaseSpeed;
                         if (enemyFlashlight != null && !isSlowed) enemyFlashlight.color = Color.red;
 
-                        // Kích hoạt còi báo động
                         if (AudioManager.instance != null) AudioManager.instance.PlayAlarm(transform.position);
                     }
                 }

@@ -29,15 +29,22 @@ public class GameManager : MonoBehaviour
     public int maxStamina = 100;
     public bool hasAskedToContinue = false;
 
-    [Header("Chỉ số Tiến trình & Đạo đức")]
+    [Header("Chỉ số Tiến trình & Tiền Bạc")]
     public float money = 0f;
-    public int karma = 100;
+    // ĐÃ XÓA KARMA!
 
     [Header("Hệ thống Lương & KPI")]
     public int currentDay = 1;
     public int maxDays = 5;
     public int attemptedScamsToday = 0;
     public int successfulScamsToday = 0;
+
+    // ĐÃ THÊM: Biến đếm tổng số vụ lừa thành công để kích hoạt Ending Công An
+    [Tooltip("Tổng số vụ lừa thành công trong cả game")]
+    public int totalSuccessfulScamsAllDays = 0;
+    [Tooltip("Lừa thành công bao nhiêu người thì bị Công an tóm?")]
+    public int policeArrestThreshold = 15;
+
     public int targetKPI = 3;
     public int maxAttemptsPerDay = 5;
     public float currentCommissionRate = 0.1f;
@@ -45,16 +52,11 @@ public class GameManager : MonoBehaviour
     public int exchangeRateVND = 25000;
     public int consecutiveScamFails = 0;
 
-    [Header("Vật phẩm Vượt ngục (Dữ liệu thật)")]
+    [Header("Vật phẩm Vượt ngục (Chỉ còn 4 món)")]
     public bool hasNotebook = false;
-    public bool hasWrench = false;
-    public bool hasMap = false;
-    public bool hasCalledPolice = false;
+    public bool hasNippers = false; // Đã đổi tên từ Wrench thành Nippers (Kềm)
     public bool hasRope = false;
     public bool hasKey = false;
-    public bool hasMemento = false;
-    public int collectedQuestItems = 0;
-    public int requiredItemsToEscape = 3;
 
     [Header("Hệ thống Mạng (Đêm thám thính)")]
     public int caughtCountThisNight = 0;
@@ -82,25 +84,23 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
-        else { Destroy(gameObject); return; } // Phải có return để ngắt luồng ngay lập tức
+        else { Destroy(gameObject); return; }
 
         if (enableDevMode)
         {
-            Debug.Log("<color=magenta>--- DEV MODE KÍCH HOẠT: BƠM FULL ĐỒ VÀO TÚI ---</color>");
+            Debug.Log("<color=magenta>--- DEV MODE KÍCH HOẠT: BƠM FULL 4 MÓN ĐỒ VÀO TÚI ---</color>");
             currentDay = testStartDay;
             currentPhase = testStartPhase;
             hasNotebook = testHasNotebook;
             hasRope = testHasRope;
-            hasWrench = testHasNippers;
+            hasNippers = testHasNippers;
             hasKey = testHasKey;
             if (SceneManager.GetActiveScene().name.Contains("Night")) currentPhase = GamePhase.Night;
         }
 
-        // ĐỒNG BỘ DỮ LIỆU TÍN DỤNG ĐEN TỪ SÒNG BẠC NGAY KHI MỞ GAME
         SyncCasinoData();
     }
 
-    // Hàm gọi để đồng bộ với TaiXiuManager
     public void SyncCasinoData()
     {
         isBlackCreditActive = PlayerPrefs.GetInt("Casino_BlackCredit", 0) == 1;
@@ -129,14 +129,15 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    public void OnScamSuccess(float rawVNDEarned, int karmaLost)
+    // ĐÃ SỬA: Giữ biến dummyKarmaLost để không làm mẻ code ở các file khác đang gọi hàm này
+    public void OnScamSuccess(float rawVNDEarned, int dummyKarmaLost = 0)
     {
         attemptedScamsToday++;
         successfulScamsToday++;
+        totalSuccessfulScamsAllDays++; // Cộng dồn số vụ lừa hoàn hảo!
         consecutiveScamFails = 0;
+
         money += (rawVNDEarned * currentCommissionRate);
-        karma -= karmaLost;
-        if (karma < 0) karma = 0;
         CheckShiftProgress();
     }
 
@@ -253,12 +254,10 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 0f;
 
-        // VÁ LỖI TÌM LẠI UI ĐỂ TRÁNH NULL
-        GameObject caughtPanel = GameObject.Find("CaughtPanel"); // Phải đảm bảo Canvas có Panel tên y hệt thế này
+        GameObject caughtPanel = GameObject.Find("CaughtPanel");
         if (caughtPanel != null) caughtPanel.SetActive(true);
 
         yield return new WaitForSecondsRealtime(2f);
-        // Sau 2 giây hiện nút ra (Tùy logic UI của bạn)
     }
 
     public void ClickSangNgayHomSau()
@@ -296,7 +295,6 @@ public class GameManager : MonoBehaviour
         caughtCountThisNight = 0;
         hasTalkedToNPC = false;
 
-        // ĐỒNG BỘ LẠI TRƯỚC KHI CHUYỂN NGÀY
         SyncCasinoData();
 
         if (isBlackCreditActive)
@@ -311,28 +309,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // =================================================================
+    // ĐÃ NÂNG CẤP LẠI TẤT CẢ ENDING THEO LOGIC MỚI TỐI GIẢN
+    // =================================================================
     private void EvaluateEndings()
     {
-        int itemCount = (hasWrench ? 1 : 0) + (hasMap ? 1 : 0) + (hasRope ? 1 : 0);
+        int itemCount = (hasNotebook ? 1 : 0) + (hasNippers ? 1 : 0) + (hasRope ? 1 : 0) + (hasKey ? 1 : 0);
 
-        // Đã bỏ biến totalGambleCount trong này vì quản lý bên kia rồi, chỉ cần check ko bị giang hồ xiết nợ
-        bool canEscapeNight5 = (itemCount == 3 && karma > 20 && !isBlackCreditActive);
-
-        if (canEscapeNight5)
+        if (totalSuccessfulScamsAllDays >= policeArrestThreshold)
         {
-            if (hasCalledPolice && hasMemento)
-                Debug.Log("<size=120%><color=#00FFFF><b>TRUE ENDING:</b> Đã gọi Cảnh sát và trả Kỷ vật! Bạn được giải cứu an toàn.</color></size>");
-            else
-                Debug.Log("<size=120%><color=#00FF00><b>NEUTRAL ENDING:</b> Tẩu thoát thành công nhưng lẩn trốn trong rừng.</color></size>");
+            Debug.Log($"<size=120%><color=#FF00FF><b>ENDING A (LƯỚI TRỜI):</b> Lừa đảo hoàn hảo {totalSuccessfulScamsAllDays} người! Quy mô quá lớn, Cục An Ninh Mạng đã tóm cổ bạn tại biên giới!</color></size>");
+        }
+        else if (itemCount == 4 && !isBlackCreditActive)
+        {
+            Debug.Log("<size=120%><color=#00FFFF><b>TRUE ENDING:</b> Đủ 4 món Sổ, Kềm, Dây, Chìa. Mở khóa, cắt rào, đu dây tẩu thoát thành công trong đêm!</color></size>");
+        }
+        else if (isBlackCreditActive)
+        {
+            Debug.Log("<size=120%><color=red><b>BAD ENDING:</b> Bị kẹt lại do dính khoản nợ Tín dụng đen. Bọn chúng đã lôi bạn đi bán nội tạng.</color></size>");
+        }
+        else if (hp <= 30)
+        {
+            Debug.Log("<size=120%><color=#888888><b>DEATH ENDING:</b> Quá kiệt sức. Gục ngã và chết trong khu trại.</color></size>");
         }
         else
         {
-            currentDay = 6;
-            if (karma <= 20) Debug.Log("<size=120%><color=#FF00FF><b>ENDING A (Lưới Trời):</b> 1 năm sau bị Công an VN bắt tại sân bay.</color></size>");
-            else if (hp < 30) Debug.Log("<size=120%><color=#888888><b>DEATH ENDING:</b> Tử vong do dẫm đạp trong bạo loạn.</color></size>");
-            else if (itemCount >= 2) Debug.Log("<size=120%><color=#FFFF00><b>RIOT SURVIVOR:</b> Lợi dụng bạo loạn, nhảy sông bơi thoát thân.</color></size>");
-            else Debug.Log("<size=120%><color=#FF0000><b>TRAPPED ENDING:</b> Bị bắt lại bán xuống hầm mỏ.</color></size>");
+            Debug.Log($"<size=120%><color=#FF0000><b>TRAPPED ENDING:</b> Chỉ có {itemCount}/4 món đồ nghề. Kẹt lại làm scammer cho chúng cả đời.</color></size>");
         }
+
+        // Đoạn này bạn có thể gọi hàm bật các UI Panel Ending tương ứng giống như sòng bạc
     }
 
     private void CheckDeath()
@@ -354,8 +359,6 @@ public class GameManager : MonoBehaviour
             case GamePhase.Morning: sceneName = "ScamScreen"; break;
             case GamePhase.Noon: sceneName = "NoonCanteenScene"; break;
             case GamePhase.Afternoon: sceneName = "ScamScreen"; break;
-
-            // ĐÃ SỬA LẠI THÀNH TÊN ĐÚNG THEO ẢNH BẠN CHỤP LÀ NightGameScreen
             case GamePhase.Night: sceneName = "NightGameScreen"; break;
         }
 

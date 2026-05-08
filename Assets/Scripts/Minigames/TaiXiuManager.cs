@@ -41,6 +41,13 @@ public class TaiXiuManager : MonoBehaviour
     [Header("--- KẾT NỐI VỚI BÀN 3D ---")]
     public MinigameInteract interactPoint;
 
+    // ==========================================
+    // ĐÃ THÊM: Biến quản lý Animator của Nhà cái
+    // ==========================================
+    [Header("--- NHÀ CÁI ---")]
+    [Tooltip("Kéo con NPC Nhà Cái vào đây để gọi nó xóc đĩa")]
+    public Animator dealerAnimator;
+
     [Header("--- CÀI ĐẶT XÚC XẮC ---")]
     public float rollDuration = 7f;
     public float spawnRadius = 35f;
@@ -69,9 +76,9 @@ public class TaiXiuManager : MonoBehaviour
     public Button btnRestartGame;
 
     [Header("Cài đặt Số ván kích hoạt Sự kiện")]
-    public int warnAtGambleCount = 8;   // Ván 9: Auto thắng dụ dỗ
-    public int trapAtGambleCount = 9;   // Ván 10: Sập hầm ép thua
-    public int deathAtGambleCount = 14; // Ván 15: Ép All-in lấy mạng
+    public int warnAtGambleCount = 8;
+    public int trapAtGambleCount = 9;
+    public int deathAtGambleCount = 14;
 
     private int gambleCount = 0;
     private bool isIndebted = false;
@@ -379,6 +386,14 @@ public class TaiXiuManager : MonoBehaviour
 
         statusText.text = "ĐANG XÓC ĐĨA...";
         statusText.color = Color.red;
+
+        // ==========================================
+        // ĐÃ THÊM: Gọi Nhà cái múa xúc xắc
+        // ==========================================
+        if (dealerAnimator != null)
+        {
+            dealerAnimator.SetTrigger("onShake");
+        }
 
         float rollTime = rollDuration;
         float soundTimer = 0f;
