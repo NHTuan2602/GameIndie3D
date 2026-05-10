@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 
 public enum GamePhase { Morning, Noon, Afternoon, Night }
+// ĐÃ THÊM: Định nghĩa các loại Ending
+public enum EndingType { None, TrueEscape, BadCredit, Arrested, RiotSurvivor, Death, Trapped }
 
 public class GameManager : MonoBehaviour
 {
@@ -31,7 +33,6 @@ public class GameManager : MonoBehaviour
 
     [Header("Chỉ số Tiến trình & Tiền Bạc")]
     public float money = 0f;
-    // ĐÃ XÓA KARMA!
 
     [Header("Hệ thống Lương & KPI")]
     public int currentDay = 1;
@@ -39,7 +40,6 @@ public class GameManager : MonoBehaviour
     public int attemptedScamsToday = 0;
     public int successfulScamsToday = 0;
 
-    // ĐÃ THÊM: Biến đếm tổng số vụ lừa thành công để kích hoạt Ending Công An
     [Tooltip("Tổng số vụ lừa thành công trong cả game")]
     public int totalSuccessfulScamsAllDays = 0;
     [Tooltip("Lừa thành công bao nhiêu người thì bị Công an tóm?")]
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Vật phẩm Vượt ngục (Chỉ còn 4 món)")]
     public bool hasNotebook = false;
-    public bool hasNippers = false; // Đã đổi tên từ Wrench thành Nippers (Kềm)
+    public bool hasNippers = false;
     public bool hasRope = false;
     public bool hasKey = false;
 
@@ -80,6 +80,9 @@ public class GameManager : MonoBehaviour
     public bool isEscapeStart = false;
     public int escapeProgress = 0;
     public bool isRedAlert = false;
+
+    // ĐÃ THÊM: Biến lưu trữ kết cục hiện tại
+    public EndingType currentEnding = EndingType.None;
 
     void Awake()
     {
@@ -112,7 +115,6 @@ public class GameManager : MonoBehaviour
         isEscapeStart = true;
         isRedAlert = true;
         RenderSettings.ambientLight = Color.red;
-        Debug.Log("<color=red>BÁO ĐỘNG ĐỎ! CHẾ ĐỘ VƯỢT NGỤC KÍCH HOẠT!</color>");
     }
 
     public bool StartScammingVictim(int staminaCost)
@@ -129,12 +131,11 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    // ĐÃ SỬA: Giữ biến dummyKarmaLost để không làm mẻ code ở các file khác đang gọi hàm này
     public void OnScamSuccess(float rawVNDEarned, int dummyKarmaLost = 0)
     {
         attemptedScamsToday++;
         successfulScamsToday++;
-        totalSuccessfulScamsAllDays++; // Cộng dồn số vụ lừa hoàn hảo!
+        totalSuccessfulScamsAllDays++;
         consecutiveScamFails = 0;
 
         money += (rawVNDEarned * currentCommissionRate);
@@ -232,7 +233,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator ShockSequenceRoutine()
     {
-        Debug.Log("<color=yellow>BẮT ĐẦU CHÍCH ĐIỆN...</color>");
         if (sfxSource != null && shockSound != null) sfxSource.PlayOneShot(shockSound);
 
         if (playerCamera != null)
@@ -310,34 +310,42 @@ public class GameManager : MonoBehaviour
     }
 
     // =================================================================
-    // ĐÃ NÂNG CẤP LẠI TẤT CẢ ENDING THEO LOGIC MỚI TỐI GIẢN
+    // ĐÃ SỬA: LƯU ENDING VÀ CHUYỂN SANG ENDING SCENE
     // =================================================================
     private void EvaluateEndings()
     {
         int itemCount = (hasNotebook ? 1 : 0) + (hasNippers ? 1 : 0) + (hasRope ? 1 : 0) + (hasKey ? 1 : 0);
 
-        if (totalSuccessfulScamsAllDays >= policeArrestThreshold)
+        if (isBlackCreditActive)
         {
-            Debug.Log($"<size=120%><color=#FF00FF><b>ENDING A (LƯỚI TRỜI):</b> Lừa đảo hoàn hảo {totalSuccessfulScamsAllDays} người! Quy mô quá lớn, Cục An Ninh Mạng đã tóm cổ bạn tại biên giới!</color></size>");
+            currentEnding = EndingType.BadCredit;
         }
-        else if (itemCount == 4 && !isBlackCreditActive)
+        else if (itemCount == 4)
         {
-            Debug.Log("<size=120%><color=#00FFFF><b>TRUE ENDING:</b> Đủ 4 món Sổ, Kềm, Dây, Chìa. Mở khóa, cắt rào, đu dây tẩu thoát thành công trong đêm!</color></size>");
-        }
-        else if (isBlackCreditActive)
-        {
-            Debug.Log("<size=120%><color=red><b>BAD ENDING:</b> Bị kẹt lại do dính khoản nợ Tín dụng đen. Bọn chúng đã lôi bạn đi bán nội tạng.</color></size>");
-        }
-        else if (hp <= 30)
-        {
-            Debug.Log("<size=120%><color=#888888><b>DEATH ENDING:</b> Quá kiệt sức. Gục ngã và chết trong khu trại.</color></size>");
+            // Chơi Minigame Đạp xe thành công
+            currentEnding = EndingType.TrueEscape;
         }
         else
         {
-            Debug.Log($"<size=120%><color=#FF0000><b>TRAPPED ENDING:</b> Chỉ có {itemCount}/4 món đồ nghề. Kẹt lại làm scammer cho chúng cả đời.</color></size>");
+            // KHÔNG ĐỦ ĐỒ TRỐN ĐÊM 5 -> CHUYỂN SANG NGÀY 6 (SỰ KIỆN BẠO LOẠN)
+            currentDay = 6;
+
+            if (totalSuccessfulScamsAllDays >= 20)
+            {
+                currentEnding = EndingType.Arrested;
+            }
+            else if (hp >= 50 && itemCount >= 2)
+            {
+                currentEnding = EndingType.RiotSurvivor;
+            }
+            else
+            {
+                currentEnding = EndingType.Death;
+            }
         }
 
-        // Đoạn này bạn có thể gọi hàm bật các UI Panel Ending tương ứng giống như sòng bạc
+        // CHUYỂN SCENE CHẠY CHỮ
+        SceneManager.LoadScene("EndingScene");
     }
 
     private void CheckDeath()
@@ -345,7 +353,8 @@ public class GameManager : MonoBehaviour
         if (hp <= 0)
         {
             hp = 0;
-            Debug.Log("<size=150%><color=grey><b>GAME OVER:</b> BẠN ĐÃ KIỆT SỨC VÀ GỤC NGÃ!</color></size>");
+            currentEnding = EndingType.Death;
+            SceneManager.LoadScene("EndingScene"); // Chết giữa chừng cũng ném qua màn Ending luôn
         }
     }
 
