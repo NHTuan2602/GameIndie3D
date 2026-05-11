@@ -33,7 +33,7 @@ public class AutoGateController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Bus") || other.CompareTag("Player"))
+        if (other.CompareTag("Bus") || other.CompareTag("Bus"))
         {
             isPlayerNear = true;
         }
@@ -41,7 +41,7 @@ public class AutoGateController : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Bus") || other.CompareTag("Player"))
+        if (other.CompareTag("Bus") || other.CompareTag("Bus"))
         {
             isPlayerNear = false;
         }

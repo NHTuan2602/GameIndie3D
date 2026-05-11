@@ -39,37 +39,42 @@ public class CanteenManager : MonoBehaviour
         // 2. Chờ đúng 5 giây
         yield return new WaitForSeconds(5f);
 
-        // 3. NPC Xuất hiện!
-        if (audioSource != null && npcVoice != null) audioSource.PlayOneShot(npcVoice);
+        int day = 1;
+        if (GameManager.instance != null) day = GameManager.instance.currentDay;
+
+        // 3. NPC CHỈ XUẤT HIỆN TỪ NGÀY 1 ĐẾN NGÀY 4
+        if (day < 5)
+        {
+            if (audioSource != null && npcVoice != null) audioSource.PlayOneShot(npcVoice);
+        }
+
         if (dialoguePanel != null) dialoguePanel.SetActive(true);
         if (btnFinishLunch != null) btnFinishLunch.gameObject.SetActive(true);
 
-        // 4. KIỂM TRA NGÀY VÀ ĐƯA RA GỢI Ý (Đọc từ GameManager)
-        if (GameManager.instance != null)
+        // 4. KIỂM TRA NGÀY VÀ CHẠY CỐT TRUYỆN HỒN MA
+        switch (day)
         {
-            int day = GameManager.instance.currentDay;
-            switch (day)
-            {
-                case 1:
-                    npcText.text = "Khẽ thôi... Tao biết mày muốn trốn. Đêm mai (Đêm 2) đợi bảo vệ đi vệ sinh, thử lẻn ra hành lang xem sao.";
-                    break;
-                case 2:
-                    npcText.text = "Giỏi lắm. Đêm nay mày phải tìm được cái cờ lê ở phòng kho. Không có nó, không cắt được xích cổng đâu.";
-                    GameManager.instance.hasTalkedToNPC = true; // Mở khóa chức năng Thám Thính từ đây
-                    break;
-                case 3:
-                    npcText.text = "Cửa sau có mật mã. Tối nay vào phòng lão quản lý tìm tờ bản đồ và mật mã đi. Bị bắt là chết đấy!";
-                    break;
-                case 4:
-                    npcText.text = "Tao giấu một cái điện thoại nắp gập dưới đệm phòng mày. Tối nay lôi ra mà gọi ngầm cho cảnh sát biên giới đi!";
-                    break;
-                case 5:
-                    npcText.text = "Đêm nay là đêm cuối... Tao nghe nói bọn nó định thanh trừng mày. Có đủ đồ nghề chưa? Cút khỏi đây ngay đêm nay đi!";
-                    break;
-                default:
-                    npcText.text = "Cứ giữ mồm giữ miệng. Sống sót là trên hết.";
-                    break;
-            }
+            case 1:
+                npcText.text = "Này ma mới, tao ở cái trại này lâu lắm rồi... chứng kiến nhiều kẻ bỏ mạng lắm. Ráng nhét tí cơm vào bụng đi kẻo gục.\nĐêm mai đợi bảo vệ đi vệ sinh, thử lẻn xuống <color=yellow>Tầng 1</color> xem sao. Tìm cuốn <color=yellow>Sổ tay</color> để ghi chép đường thoát.";
+                break;
+            case 2:
+                npcText.text = "Mặt mày xanh xao quá, nhưng vẫn còn sống là tốt rồi.\nĐêm nay mày phải mò lên <color=yellow>Tầng 2</color>. Trên khu nhà kho có <color=yellow>Kềm cắt xích</color> và <color=yellow>Dây thừng</color>, thiếu chúng nó thì không trèo tường được đâu.";
+                if (GameManager.instance != null) GameManager.instance.hasTalkedToNPC = true;
+                break;
+            case 3:
+                npcText.text = "Gần đây bọn cai ngục đi tuần gắt gao lắm. Mày tìm được đồ nghề chưa?\nNếu có đồ rồi thì phải có <color=yellow>Chìa khóa</color> cổng. Lão quản lý hay vứt nó ở phòng làm việc trên <color=yellow>Tầng 3</color>. Lên đó cẩn thận, tao từng bị tóm ở cầu thang đấy...";
+                break;
+            case 4:
+                // PLOT TWIST: Lời từ biệt của hồn ma
+                npcText.text = "Mày gom đủ 4 món chưa? <color=yellow>Sổ, Kềm, Dây, Chìa khóa</color>... Nhớ lấy bài học của tao. Ngày xưa tao cũng tới được cái cổng đó, nhưng... bọn nó chặt đứt dây thừng của tao.\nĐêm nay tao đi trước đây. Đêm mai (Đêm 5) là hạn chót của mày, bọn nó bắt đầu thanh trừng rồi. Tự bảo trọng!";
+                break;
+            case 5:
+                // NGÀY 5: Không có NPC, chuyển sang độc thoại nội tâm (in nghiêng)
+                npcText.text = "<i>Chỗ ngồi đối diện trống không... Lão già hay ngồi kể chuyện vượt ngục mấy hôm trước đâu rồi?\nKhông còn thời gian nữa. Tối nay mình PHẢI TRỐN!</i>";
+                break;
+            default:
+                npcText.text = "<i>Chỉ có tiếng nhai cơm lạnh lẽo...</i>";
+                break;
         }
     }
 
