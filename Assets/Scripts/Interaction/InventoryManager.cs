@@ -7,10 +7,16 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager Instance;
 
     [Header("UI Túi Đồ")]
-    public GameObject inventoryPanel; // Khung UI tổng
-    public TextMeshProUGUI itemNameText; // Tên vật phẩm ở giữa
-    public TextMeshProUGUI itemDescriptionText; // Mô tả gợi ý
-    public TextMeshProUGUI itemCounterText; // Số thứ tự (VD: 1/3)
+    public GameObject inventoryPanel;
+    public TextMeshProUGUI itemNameText;
+    public TextMeshProUGUI itemDescriptionText;
+    public TextMeshProUGUI itemCounterText;
+
+    [Header("Dữ liệu gốc (Kéo file ItemData vào đây)")]
+    public ItemData notebookData;
+    public ItemData nippersData;
+    public ItemData ropeData;
+    public ItemData keyData;
 
     private List<ItemData> collectedItems = new List<ItemData>();
     private int currentIndex = 0;
@@ -26,6 +32,15 @@ public class InventoryManager : MonoBehaviour
     void Start()
     {
         inventoryPanel.SetActive(false);
+
+        // PHỤC HỒI TÚI ĐỒ TỪ GAME MANAGER KHI VỪA VÀO MÀN MỚI
+        if (GameManager.instance != null)
+        {
+            if (GameManager.instance.hasNotebook && notebookData != null) AddItem(notebookData);
+            if (GameManager.instance.hasNippers && nippersData != null) AddItem(nippersData);
+            if (GameManager.instance.hasRope && ropeData != null) AddItem(ropeData);
+            if (GameManager.instance.hasKey && keyData != null) AddItem(keyData);
+        }
     }
 
     void Update()
@@ -44,10 +59,15 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    // Đã gộp và xóa hàm trùng lặp
     public void AddItem(ItemData newItem)
     {
-        collectedItems.Add(newItem);
-        Debug.Log("<color=green>Đã bỏ vào túi: " + newItem.itemName + "</color>");
+        // Kiểm tra xem trong túi đã có món này chưa để tránh bị đúp 2 món giống nhau
+        if (!collectedItems.Contains(newItem))
+        {
+            collectedItems.Add(newItem);
+            Debug.Log("<color=green>Đã bỏ vào túi: " + newItem.itemName + "</color>");
+        }
     }
 
     public void ToggleInventory()
@@ -65,7 +85,7 @@ public class InventoryManager : MonoBehaviour
         else
         {
             Time.timeScale = 1f; // TIẾP TỤC TRÒ CHƠI
-            Cursor.lockState = CursorLockMode.Locked; // Khóa chuột lại vào giữa màn hình
+            Cursor.lockState = CursorLockMode.Locked; // Khóa chuột lại
             Cursor.visible = false;
         }
     }
@@ -76,7 +96,7 @@ public class InventoryManager : MonoBehaviour
 
         currentIndex += direction;
 
-        // Vòng lặp: Nếu qua trái món đầu tiên thì nhảy xuống món cuối cùng
+        // Vòng lặp: Qua trái món đầu thì nhảy xuống món cuối
         if (currentIndex < 0) currentIndex = collectedItems.Count - 1;
         if (currentIndex >= collectedItems.Count) currentIndex = 0;
 
@@ -100,19 +120,11 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // MỚI: HÀM LỤC TÚI ĐỒ TÌM CHÌA KHÓA
-    // ==========================================
     public bool HasItem(string searchItemID)
     {
         foreach (ItemData item in collectedItems)
         {
-            // LƯU Ý: Đảm bảo biến itemID trong file ItemData.cs của bạn viết đúng chữ hoa/thường như này
-            // Nếu bên đó bạn viết là 'id' hoặc 'ItemID', hãy đổi chữ 'itemID' ở dưới cho khớp nhé!
-            if (item.itemID == searchItemID)
-            {
-                return true;
-            }
+            if (item.itemID == searchItemID) return true;
         }
         return false;
     }

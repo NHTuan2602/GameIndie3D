@@ -4,6 +4,11 @@ using System.Collections;
 
 public class EnemyPatrol : MonoBehaviour
 {
+    // ==========================================
+    // MỚI: BIẾN TOÀN CỤC BÁO HIỆU NGƯỜI CHƠI TRỐN
+    // ==========================================
+    public static bool isPlayerHidden = false; 
+
     [Header("Cài đặt Tuần tra")]
     public Transform[] waypoints;
     public float waitTime = 2f;
@@ -54,13 +59,12 @@ public class EnemyPatrol : MonoBehaviour
 
     void Start()
     {
+        isPlayerHidden = false; // Reset lại mỗi khi load màn
         agent = GetComponentInParent<NavMeshAgent>();
         if (agent == null) agent = GetComponentInChildren<NavMeshAgent>();
 
         anim = GetComponentInChildren<Animator>();
         if (anim == null) anim = GetComponentInParent<Animator>();
-
-        // ĐÃ XÓA: Dòng tìm script PlayerHide bị lỗi ở đây
 
         if (agent != null)
         {
@@ -88,6 +92,17 @@ public class EnemyPatrol : MonoBehaviour
         {
             anim.SetBool("isWalking", isMoving && !isChasing && !isSlowed);
             anim.SetBool("isRunning", isMoving && isChasing && !isSlowed);
+        }
+
+        // ==========================================
+        // MỚI: NGƯỜI CHƠI VÀO PHÒNG TRỐN -> HỦY RƯỢT ĐUỔI
+        // ==========================================
+        if (isPlayerHidden)
+        {
+            if (isChasing) GiveUpChase();
+            else PatrolRoutine();
+            HandleFootsteps(isMoving);
+            return; // Dừng chạy code bên dưới, AI không check tầm nhìn nữa
         }
 
         CheckPlayerInSight();
@@ -143,9 +158,9 @@ public class EnemyPatrol : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        // MỚI: Cấm quái cắn nếu người chơi đang trong phòng trốn
+        if (other.CompareTag("Player") && !isPlayerHidden)
         {
-            // ĐÃ XÓA: Logic check trạng thái ẩn nấp ở đây
             if (!isSlowed) HandleCatchingPlayer();
         }
     }
@@ -175,8 +190,6 @@ public class EnemyPatrol : MonoBehaviour
 
     void CheckPlayerInSight()
     {
-        // ĐÃ XÓA: Logic check trạng thái ẩn nấp ở đây
-
         float distanceToPlayer = Vector3.Distance(transform.position, playerTarget.position);
 
         if (distanceToPlayer <= viewRadius)
@@ -187,6 +200,7 @@ public class EnemyPatrol : MonoBehaviour
 
             if (Vector3.Angle(transform.forward, directionToPlayer) < viewAngle / 2)
             {
+                // Nhớ đổi ObstacleMask thành Default trong Inspector để nó không nhìn thấu tường nhé!
                 if (!Physics.Raycast(headPosition, directionToPlayer, distanceToPlayer, obstacleMask))
                 {
                     currentChaseTimer = wallhackChaseTime;

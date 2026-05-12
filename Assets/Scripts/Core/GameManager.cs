@@ -3,13 +3,14 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 
 public enum GamePhase { Morning, Noon, Afternoon, Night }
-// ĐÃ THÊM: Định nghĩa các loại Ending
+// Định nghĩa các loại Ending
 public enum EndingType { None, TrueEscape, BadCredit, Arrested, RiotSurvivor, Death, Trapped }
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
+    [Header("UI Ban Đêm")]
+    public GameObject caughtPanelUI; // Khai báo thẳng biến để kéo thả
     [Header("Chế độ Dev (Dành cho Test Đêm 5)")]
     public bool enableDevMode = false;
     [Range(1, 6)] public int testStartDay = 5;
@@ -81,7 +82,7 @@ public class GameManager : MonoBehaviour
     public int escapeProgress = 0;
     public bool isRedAlert = false;
 
-    // ĐÃ THÊM: Biến lưu trữ kết cục hiện tại
+    // Biến lưu trữ kết cục hiện tại
     public EndingType currentEnding = EndingType.None;
 
     void Awake()
@@ -99,6 +100,14 @@ public class GameManager : MonoBehaviour
             hasNippers = testHasNippers;
             hasKey = testHasKey;
             if (SceneManager.GetActiveScene().name.Contains("Night")) currentPhase = GamePhase.Night;
+        }
+        else
+        {
+            // NẾU KHÔNG BẬT DEV MODE -> GAME SẼ ĐỌC TỪ Ổ CỨNG LÊN
+            hasNotebook = PlayerPrefs.GetInt("HasNotebook", 0) == 1;
+            hasNippers = PlayerPrefs.GetInt("HasNippers", 0) == 1;
+            hasRope = PlayerPrefs.GetInt("HasRope", 0) == 1;
+            hasKey = PlayerPrefs.GetInt("HasKey", 0) == 1;
         }
 
         SyncCasinoData();
@@ -170,11 +179,11 @@ public class GameManager : MonoBehaviour
     private void CheckShiftProgress()
     {
         if (currentPhase == GamePhase.Morning && attemptedScamsToday >= 3)
-            TransitionToPhase(GamePhase.Noon);
+            TransitionToPhase(GamePhase.Noon); // KHÔNG bật cờ qua ngày mới
         else if (currentPhase == GamePhase.Afternoon && attemptedScamsToday >= maxAttemptsPerDay)
         {
             EndDaySummary();
-            TransitionToPhase(GamePhase.Night);
+            TransitionToPhase(GamePhase.Night); // KHÔNG bật cờ qua ngày mới
         }
         else
         {
@@ -252,12 +261,17 @@ public class GameManager : MonoBehaviour
         }
         else yield return new WaitForSeconds(2.0f);
 
-        Time.timeScale = 0f;
+        Time.timeScale = 0f; // Đóng băng thời gian
 
-        GameObject caughtPanel = GameObject.Find("CaughtPanel");
-        if (caughtPanel != null) caughtPanel.SetActive(true);
-
-        yield return new WaitForSecondsRealtime(2f);
+        // ĐÃ SỬA: Gọi trực tiếp biến thay vì dùng lệnh Find
+        if (caughtPanelUI != null)
+        {
+            caughtPanelUI.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("<color=red>CHƯA KÉO CAUGHT PANEL VÀO GAME MANAGER!</color>");
+        }
     }
 
     public void ClickSangNgayHomSau()
@@ -300,18 +314,17 @@ public class GameManager : MonoBehaviour
         if (isBlackCreditActive)
         {
             currentPhase = GamePhase.Night;
-            TransitionToPhase(GamePhase.Night);
+            // GỬI CỜ "TRUE" ĐỂ CHẠY MÀN HÌNH CHUYỂN NGÀY
+            TransitionToPhase(GamePhase.Night, true);
         }
         else
         {
             currentPhase = GamePhase.Morning;
-            TransitionToPhase(GamePhase.Morning);
+            // GỬI CỜ "TRUE" ĐỂ CHẠY MÀN HÌNH CHUYỂN NGÀY
+            TransitionToPhase(GamePhase.Morning, true);
         }
     }
 
-    // =================================================================
-    // ĐÃ SỬA: LƯU ENDING VÀ CHUYỂN SANG ENDING SCENE
-    // =================================================================
     private void EvaluateEndings()
     {
         int itemCount = (hasNotebook ? 1 : 0) + (hasNippers ? 1 : 0) + (hasRope ? 1 : 0) + (hasKey ? 1 : 0);
@@ -322,14 +335,11 @@ public class GameManager : MonoBehaviour
         }
         else if (itemCount == 4)
         {
-            // Chơi Minigame Đạp xe thành công
             currentEnding = EndingType.TrueEscape;
         }
         else
         {
-            // KHÔNG ĐỦ ĐỒ TRỐN ĐÊM 5 -> CHUYỂN SANG NGÀY 6 (SỰ KIỆN BẠO LOẠN)
             currentDay = 6;
-
             if (totalSuccessfulScamsAllDays >= 20)
             {
                 currentEnding = EndingType.Arrested;
@@ -344,7 +354,6 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // CHUYỂN SCENE CHẠY CHỮ
         SceneManager.LoadScene("EndingScene");
     }
 
@@ -354,24 +363,44 @@ public class GameManager : MonoBehaviour
         {
             hp = 0;
             currentEnding = EndingType.Death;
-            SceneManager.LoadScene("EndingScene"); // Chết giữa chừng cũng ném qua màn Ending luôn
+            SceneManager.LoadScene("EndingScene");
         }
     }
 
-    public void TransitionToPhase(GamePhase newPhase)
+    // ĐÃ SỬA: Thêm biến isNewDay = false làm mặc định để phân biệt Chuyển Ngày và Chuyển Ca
+    public void TransitionToPhase(GamePhase newPhase, bool isNewDay = false)
     {
         currentPhase = newPhase;
         string sceneName = "";
 
         switch (currentPhase)
         {
-            case GamePhase.Morning: sceneName = "ScamScreen"; break;
-            case GamePhase.Noon: sceneName = "NoonCanteenScene"; break;
-            case GamePhase.Afternoon: sceneName = "ScamScreen"; break;
-            case GamePhase.Night: sceneName = "NightGameScreen"; break;
+            case GamePhase.Morning:
+                sceneName = "ScamScreen";
+                break;
+            case GamePhase.Noon:
+                sceneName = "NoonCanteenScene";
+                break;
+            case GamePhase.Afternoon:
+                sceneName = "ScamScreen";
+                break;
+            case GamePhase.Night:
+                // PLOT TWIST TẠI ĐÂY: Nếu là Đêm 1 thì bế đi đánh bạc
+                if (currentDay == 1)
+                {
+                    Debug.Log("<color=yellow>CỐT TRUYỆN: Đêm 1 - Bị dụ đi đánh bạc!</color>");
+                    sceneName = "NightGameScreen"; // Chuyển tới sòng bạc
+                }
+                else
+                {
+                    Debug.Log($"<color=cyan>Đêm {currentDay} - Về phòng ngủ.</color>");
+                    sceneName = "NightScreen"; // Từ đêm 2 trở đi về phòng ngủ
+                }
+                break;
         }
 
-        if (DayTransitionManager.instance != null)
+        // Chỉ bật màn hình đen "Ngày thứ X" khi thức dậy sang ngày mới
+        if (isNewDay && DayTransitionManager.instance != null)
         {
             DayTransitionManager.instance.StartTransition(sceneName);
         }

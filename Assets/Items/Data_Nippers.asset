@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7493fb6ec097351458d681c41a6fb3ac, type: 3}
   m_Name: Data_Nippers
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: Nippers
+  itemID: nippers
   itemName: "C\xE1i k\u1EC1m c\u1EAFt"
   description: "K\u1EC0M D\xD9NG \u0110\u1EC2 C\xC1C R\xC0O "
