@@ -33,7 +33,6 @@ public class AutoDoorController : MonoBehaviour
     private bool isPlayerNear = false;
     private Collider playerCollider;
 
-    // MỚI: Biến đếm số người đang đứng ở cửa
     private int occupantsCount = 0;
 
     void Start()
@@ -57,7 +56,7 @@ public class AutoDoorController : MonoBehaviour
             float lookAngle = Vector3.Dot(playerCollider.transform.forward, directionToDoor);
 
             if (lookAngle > 0f) TryToInteract(playerCollider);
-            else Debug.Log("<color=yellow>Đang quay lưng với cửa!</color>");
+            else Debug.Log("<color=yellow>[Cửa] Đang quay lưng với cửa!</color>");
         }
     }
 
@@ -101,7 +100,7 @@ public class AutoDoorController : MonoBehaviour
             {
                 if (audioSource != null && lockedSound != null && !audioSource.isPlaying)
                     audioSource.PlayOneShot(lockedSound);
-                Debug.Log($"<color=red>CỬA KHÓA! Cần vật phẩm: {requiredKeyID}</color>");
+                Debug.Log($"<color=red>[Cửa] CỬA KHÓA! Cần vật phẩm: {requiredKeyID}</color>");
             }
         }
         else OpenDoor(other.transform.position);
@@ -116,9 +115,12 @@ public class AutoDoorController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Ghi log ra Console để xem ai đang chạm vào cửa
+        Debug.Log($"<color=cyan>[Cửa] Có vật thể chạm vào Trigger: {other.name} (Tag: {other.tag})</color>");
+
         if (other.CompareTag("Player") || other.CompareTag("Enemy"))
         {
-            occupantsCount++; // Có người bước vào vùng cửa
+            occupantsCount++;
         }
 
         if (other.CompareTag("Player"))
@@ -128,7 +130,7 @@ public class AutoDoorController : MonoBehaviour
         }
         else if (other.CompareTag("Enemy"))
         {
-            // Quái thì tự động mở cửa (nếu cửa không khóa)
+            Debug.Log("<color=magenta>[Cửa] Kẻ địch đã chạm cửa! Yêu cầu mở cửa tự động!</color>");
             if (!isLocked) OpenDoor(other.transform.position);
         }
     }
@@ -137,7 +139,7 @@ public class AutoDoorController : MonoBehaviour
     {
         if (other.CompareTag("Player") || other.CompareTag("Enemy"))
         {
-            occupantsCount--; // Có người bước ra
+            occupantsCount--;
             if (occupantsCount < 0) occupantsCount = 0;
         }
 
@@ -147,7 +149,6 @@ public class AutoDoorController : MonoBehaviour
             playerCollider = null;
         }
 
-        // CHỈ ĐÓNG CỬA KHI KHÔNG CÒN AI ĐỨNG TRONG VÙNG ĐÓ NỮA
         if (occupantsCount == 0 && isOpen && !isLocked)
         {
             if (closeRoutine != null) StopCoroutine(closeRoutine);
