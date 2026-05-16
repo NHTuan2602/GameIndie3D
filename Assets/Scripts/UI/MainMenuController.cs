@@ -13,6 +13,7 @@ public class MainMenuController : MonoBehaviour
     [Header("Giao diện Nút bấm (Menu Mới)")]
     public Button playButton;
     public Button exitButton;
+    public GameObject titleText; // GÓC KHUẤT: Khai báo thêm chữ Tiêu đề để tắt cho sạch
 
     [Header("Giao diện Nhập Tên")]
     public GameObject nameInputPanel;
@@ -20,7 +21,7 @@ public class MainMenuController : MonoBehaviour
     public Button confirmNameButton;
 
     [Header("Âm thanh (Audio Clips)")]
-    public AudioClip clickSound; // Thay âm thanh giấy/điện thoại bằng tiếng click chuột
+    public AudioClip clickSound;
 
     private AudioSource audioSource;
     private bool isTransitioning = false;
@@ -36,10 +37,10 @@ public class MainMenuController : MonoBehaviour
         if (blackScreenFade != null) blackScreenFade.SetActive(false);
         if (nameInputPanel != null) nameInputPanel.SetActive(false);
 
-        // GẮN SỰ KIỆN TỰ ĐỘNG (Không cần kéo thả OnClick ngoài Unity nữa)
+        // GẮN SỰ KIỆN TỰ ĐỘNG
         if (playButton != null) playButton.onClick.AddListener(OnClickPlayGame);
         if (exitButton != null) exitButton.onClick.AddListener(OnClickQuitGame);
-        if (confirmNameButton != null) confirmNameButton.onClick.AddListener(OnConfirmName);
+        //if (confirmNameButton != null) confirmNameButton.onClick.AddListener(OnConfirmName);
     }
 
     // ==========================================
@@ -50,12 +51,15 @@ public class MainMenuController : MonoBehaviour
         if (isTransitioning) return;
         PlayClickSound();
 
-        // Bật bảng nhập tên lên
+        // 1. Bật bảng nhập tên lên
         if (nameInputPanel != null) nameInputPanel.SetActive(true);
 
-        // Khóa 2 nút nền để người chơi không bấm lung tung
-        if (playButton != null) playButton.interactable = false;
-        if (exitButton != null) exitButton.interactable = false;
+        // 2. FIX LỖI Ở ĐÂY: Dùng gameObject.SetActive(false) để làm BIẾN MẤT hoàn toàn
+        if (playButton != null) playButton.gameObject.SetActive(false);
+        if (exitButton != null) exitButton.gameObject.SetActive(false);
+
+        // 3. Tắt luôn chữ tiêu đề cho gọn
+        if (titleText != null) titleText.SetActive(false);
     }
 
     // ==========================================
