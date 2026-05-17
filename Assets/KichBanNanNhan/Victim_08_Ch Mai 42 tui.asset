@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
   victimName: "Ch\u1ECB Mai (42 tu\u1ED5i)"
   jobOrAge: "Gi\u1EA3i ng\xE2n vay App kh\xF4ng c\u1EA7n th\u1EBF ch\u1EA5p"
-  avatar: {fileID: 0}
+  avatar: {fileID: 21300000, guid: ead17c906eee9a1439d2ccf0d5d25424, type: 3}
   isTroll: 0
   staminaCost: 20
   potentialReward: 5000000

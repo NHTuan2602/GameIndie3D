@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
   victimName: "Khang (22 tu\u1ED5i)"
   jobOrAge: "Pass gi\xE0y hi\u1EC7u fake/b\xF9ng ti\u1EC1n"
-  avatar: {fileID: 0}
+  avatar: {fileID: 21300000, guid: ead17c906eee9a1439d2ccf0d5d25424, type: 3}
   isTroll: 0
   staminaCost: 20
   potentialReward: 7000000

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VictimProfile
   victimName: "Th\u1EA3o Ng\xE2n (28 tu\u1ED5i)"
   jobOrAge: "B\xE1n Combo Du L\u1ECBch gi\xE1 s\u1ED1c"
-  avatar: {fileID: 0}
+  avatar: {fileID: 21300000, guid: ead17c906eee9a1439d2ccf0d5d25424, type: 3}
   isTroll: 0
   staminaCost: 20
   potentialReward: 8000000

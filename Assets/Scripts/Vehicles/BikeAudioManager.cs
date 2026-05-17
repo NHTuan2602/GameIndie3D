@@ -1,16 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
-// ĐÃ SỬA: Đổi tên Class thành BikeAudioManager
 public class BikeAudioManager : MonoBehaviour
 {
-    // ĐÃ SỬA: Đổi tên biến Singleton cho khớp
     public static BikeAudioManager instance;
 
-    [Header("Cấu trúc Nhạc Động")]
+    [Header("Nhạc Nền (BGM)")]
     public AudioSource bgmSource;
-    public AudioClip introClip;
-    public AudioClip loopClip;
+    public AudioClip mainBGM; // ĐÃ SỬA: Chỉ dùng 1 bài duy nhất
 
     [Header("Hiệu ứng SFX (Loa phát)")]
     public AudioSource sfxSource;
@@ -20,7 +17,6 @@ public class BikeAudioManager : MonoBehaviour
     public AudioClip hitSound;
     public AudioClip potholeHit;
     public AudioClip rampJump;
-
     public AudioClip pickupItem;
     public AudioClip enemyHurt;
 
@@ -28,31 +24,20 @@ public class BikeAudioManager : MonoBehaviour
 
     void Start()
     {
-        if (introClip != null && bgmSource != null)
+        // Phát đúng 1 bài nhạc và lặp lại liên tục
+        if (mainBGM != null && bgmSource != null)
         {
-            StartCoroutine(PlayDynamicMusic());
+            bgmSource.clip = mainBGM;
+            bgmSource.loop = true; // Bật chế độ lặp
+            bgmSource.Play();
         }
     }
 
-    IEnumerator PlayDynamicMusic()
-    {
-        bgmSource.clip = introClip;
-        bgmSource.loop = false;
-        bgmSource.Play();
-
-        yield return new WaitForSeconds(introClip.length - 0.1f);
-
-        bgmSource.clip = loopClip;
-        bgmSource.loop = true;
-        bgmSource.Play();
-    }
-
-    // Các kênh gọi âm thanh
-    public void PlayThrow() { sfxSource.PlayOneShot(throwBrick); }
-    public void PlayHit() { sfxSource.PlayOneShot(hitSound); }
-    public void PlayPothole() { sfxSource.PlayOneShot(potholeHit); }
-    public void PlayJump() { sfxSource.PlayOneShot(rampJump); }
-
-    public void PlayPickup() { sfxSource.PlayOneShot(pickupItem); }
-    public void PlayEnemyHurt() { sfxSource.PlayOneShot(enemyHurt); }
+    // Các kênh gọi âm thanh (Đã thêm check an toàn chống lỗi đỏ)
+    public void PlayThrow() { if (throwBrick != null && sfxSource != null) sfxSource.PlayOneShot(throwBrick); }
+    public void PlayHit() { if (hitSound != null && sfxSource != null) sfxSource.PlayOneShot(hitSound); }
+    public void PlayPothole() { if (potholeHit != null && sfxSource != null) sfxSource.PlayOneShot(potholeHit); }
+    public void PlayJump() { if (rampJump != null && sfxSource != null) sfxSource.PlayOneShot(rampJump); }
+    public void PlayPickup() { if (pickupItem != null && sfxSource != null) sfxSource.PlayOneShot(pickupItem); }
+    public void PlayEnemyHurt() { if (enemyHurt != null && sfxSource != null) sfxSource.PlayOneShot(enemyHurt); }
 }

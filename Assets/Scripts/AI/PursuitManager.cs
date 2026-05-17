@@ -21,7 +21,7 @@ public class PursuitManager : MonoBehaviour
     public GameObject killNotificationUI;
     public TextMeshProUGUI killMessageText;
     public GameObject gameOverPanel;
-    public GameObject winPanel;
+    // public GameObject winPanel; // TẠM ẨN: Không dùng panel Win cũ nữa vì đã chuyển sang Ending Screen
 
     private bool isGameOver = false;
 
@@ -40,7 +40,8 @@ public class PursuitManager : MonoBehaviour
     {
         if (isGameOver)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            // Nếu GameOver (Bị bắt/Tông xe), ấn Space để chơi lại màn đua xe
+            if (Input.GetKeyDown(KeyCode.Space) && gameOverPanel.activeSelf)
             {
                 Time.timeScale = 1f;
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -67,15 +68,12 @@ public class PursuitManager : MonoBehaviour
             Instantiate(projectilePrefab, player.transform.position + Vector3.up, Quaternion.identity);
         }
 
-        // COMBO BƯỚC 1 & 2: Vừa phát tiếng TING (Nhặt đồ) vừa phát tiếng VÚT (Ném luôn)
-        // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
         if (BikeAudioManager.instance != null)
         {
             BikeAudioManager.instance.PlayPickup();
             BikeAudioManager.instance.PlayThrow();
         }
 
-        // Chờ 0.8 giây cho viên gạch bay trên không trung rồi mới tính sát thương
         StartCoroutine(HandleDamageAndNotification());
     }
 
@@ -89,8 +87,6 @@ public class PursuitManager : MonoBehaviour
     {
         enemiesRemaining--;
 
-        // COMBO BƯỚC 3: Đổi thành tiếng KÍNH VỠ / ĐỊCH LA LÊN
-        // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
         if (BikeAudioManager.instance != null) BikeAudioManager.instance.PlayEnemyHurt();
 
         string pName = "BẠN";
@@ -99,6 +95,7 @@ public class PursuitManager : MonoBehaviour
         int killedIndex = 10 - enemiesRemaining;
         ShowKillNotification($"{pName.ToUpper()} ĐÃ HẠ KẺ ĐỊCH THỨ {killedIndex}!");
 
+        // Khi thanh máu về 0 -> Kích hoạt WinGame
         if (enemiesRemaining <= 0) WinGame();
     }
     // =============================================================
@@ -125,11 +122,10 @@ public class PursuitManager : MonoBehaviour
         if (isGameOver) return;
         isGameOver = true;
 
-        // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
         if (BikeAudioManager.instance != null && BikeAudioManager.instance.bgmSource != null)
         {
             BikeAudioManager.instance.bgmSource.Stop();
-            BikeAudioManager.instance.PlayHit(); // Tiếng RẦM (Tông xe)
+            BikeAudioManager.instance.PlayHit();
         }
 
         StartCoroutine(ShowGameOverDelayed());
@@ -139,13 +135,39 @@ public class PursuitManager : MonoBehaviour
     {
         Time.timeScale = 0;
         yield return new WaitForSecondsRealtime(1.5f);
-        gameOverPanel.SetActive(true);
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
     }
 
+    // =============================================================
+    // ĐÃ FIX: CHUYỂN CẢNH ENDING KHI THẮNG (MÁU ĐỊCH = 0)
+    // =============================================================
     public void WinGame()
     {
+        if (isGameOver) return;
         isGameOver = true;
-        winPanel.SetActive(true);
-        Time.timeScale = 0;
+
+        // 1. Ép GameManager ghi nhận kết cục Tự Do (TrueEscape)
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.currentEnding = EndingType.TrueEscape;
+        }
+
+        // 2. Tắt nhạc đua xe dồn dập đi
+        if (BikeAudioManager.instance != null && BikeAudioManager.instance.bgmSource != null)
+        {
+            BikeAudioManager.instance.bgmSource.Stop();
+        }
+
+        // 3. Gọi Coroutine để chờ 1.5 giây rồi mới đá sang màn Ending
+        StartCoroutine(TransitionToEndingScene());
+    }
+
+    IEnumerator TransitionToEndingScene()
+    {
+        // Đợi 1.5 giây để người chơi nhìn thấy thông báo Hạ kẻ địch thứ 10
+        yield return new WaitForSeconds(1.5f);
+
+        // Lưu ý: Tên "EndingScene" trong ngoặc kép phải CHÍNH XÁC với tên file Scene Ending của bạn ngoài thư mục Scenes.
+        SceneManager.LoadScene("EndingScene");
     }
 }
