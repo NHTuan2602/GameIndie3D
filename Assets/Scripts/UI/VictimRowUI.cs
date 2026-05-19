@@ -4,18 +4,23 @@ using UnityEngine.UI;
 
 public class VictimRowUI : MonoBehaviour
 {
-    public TextMeshProUGUI nameText;       // Kéo Cột 1 vào đây
-    public TextMeshProUGUI infoText;       // Kéo Cột 2 vào đây
-    public TextMeshProUGUI difficultyText; // Kéo Cột 3 vào đây
-    public Button actionButton;            // Kéo Cột 4 vào đây
+    [Header("Kéo thả 4 thành phần UI vào đây")]
+    public TextMeshProUGUI nameText;       // Cột 1: Tên nạn nhân
+    public TextMeshProUGUI infoText;       // Cột 2: Dòng "Giải ngân vay App..."
+    public TextMeshProUGUI difficultyText; // Cột 3: Dòng chữ sẽ thay thế "Tài sản..."
+    public Button actionButton;            // Cột 4: Nút Kết nối
 
-    // Hàm này sẽ được Manager gọi để điền chữ vào 4 ô
     public void SetupRow(string vName, string vInfo, string vDiff, int staminaCost)
     {
-        nameText.text = vName;
-        infoText.text = vInfo;
+        if (nameText != null) nameText.text = vName;
 
-        // Tự động phối màu: Stamina đỏ, Độ khó vàng
-        difficultyText.text = $"<color=#FF5555>-{staminaCost} Thể lực</color>\n<color=#FFFF00>{vDiff}</color>";
+        // Giữ nguyên cột 2 hiển thị kiểu lừa đảo
+        if (infoText != null) infoText.text = vInfo;
+
+        // ÉP CỘT 3 HIỂN THỊ ĐỘ KHÓ & THỂ LỰC (Chữ Tài sản gõ tay sẽ bị bay màu)
+        if (difficultyText != null)
+        {
+            difficultyText.text = $"Độ khó: <color=#FFFF00>{vDiff}</color>\n<color=#FF5555>-{staminaCost} Thể lực</color>";
+        }
     }
 }

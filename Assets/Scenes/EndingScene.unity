@@ -533,7 +533,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.392}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.9843137}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1069,7 +1069,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1244,13 +1244,18 @@ MonoBehaviour:
   testEndingToPlay: 3
   txtDayLabel: {fileID: 2125651624}
   txtDialogue: {fileID: 873091173}
-  btnReturnMenu: {fileID: 715075130}
+  btnReturnMenu: {fileID: 715075132}
   imgEndingCard: {fileID: 1793549935}
-  sprArrested: {fileID: 0}
-  sprRiotSurvivor: {fileID: 0}
+  sprArrested: {fileID: 21300000, guid: e84b8ac23146318488833cad1afd980a, type: 3}
+  sprRiotSurvivor: {fileID: 21300000, guid: 2443d82159fb22a43977debfdba19d3a, type: 3}
   sprDeath: {fileID: 0}
-  sprTrueEscape: {fileID: 0}
-  audioSource: {fileID: 1923553981}
+  sprTrueEscape: {fileID: 21300000, guid: 0c5605e590cb178468e798b7d6939660, type: 3}
+  bgmArrested: {fileID: 0}
+  bgmRiotSurvivor: {fileID: 0}
+  bgmDeath: {fileID: 0}
+  bgmTrueEscape: {fileID: 0}
+  bgmAudioSource: {fileID: 1923553981}
+  sfxAudioSource: {fileID: 0}
   typingSound: {fileID: 0}
   riotSound: {fileID: 0}
 --- !u!4 &1923553983
@@ -1303,7 +1308,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 211.6}
-  m_SizeDelta: {x: 800.99, y: 557}
+  m_SizeDelta: {x: 915.3, y: 557}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2125651623
 CanvasRenderer:
@@ -1360,8 +1365,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45.2
-  m_fontSizeBase: 45.2
+  m_fontSize: 115.8
+  m_fontSizeBase: 115.8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

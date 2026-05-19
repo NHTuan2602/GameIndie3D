@@ -13,7 +13,7 @@ public class VictimProfile : ScriptableObject
     public bool isTroll = false;
 
     [Header("Chỉ số yêu cầu & Phần thưởng")]
-    public int staminaCost = 20;
+    // ĐÃ XÓA BIẾN STAMINA Ở ĐÂY
     public int potentialReward = 5000000;
 
     [Tooltip("Số điểm Đạo đức bị trừ khi lừa. Troll thì để 0.")]

@@ -4,43 +4,41 @@ using System.Collections;
 
 public class EnemyPatrol : MonoBehaviour
 {
-    // ==========================================
-    // MỚI: BIẾN TOÀN CỤC BÁO HIỆU NGƯỜI CHƠI TRỐN
-    // ==========================================
-    public static bool isPlayerHidden = false; 
+    public static bool isPlayerHidden = false;
 
     [Header("Cài đặt Tuần tra")]
     public Transform[] waypoints;
     public float waitTime = 2f;
 
-    [Header("Cài đặt Tốc độ")]
+    [Header("Cài đặt Tốc độ & Hụt Hơi (MỚI)")]
     public float patrolSpeed = 3.5f;
     public float chaseSpeed = 7f;
     public float slowSpeed = 1.5f;
+    [Tooltip("Mỗi giây rượt đuổi, tốc độ AI sẽ giảm đi chừng này")]
+    public float chaseSpeedDecay = 0.5f;
+    [Tooltip("Tốc độ chậm nhất khi AI bị đuối sức")]
+    public float minChaseSpeed = 3.5f;
 
     [Header("Cài đặt Tầm nhìn")]
     public float viewRadius = 10f;
-    [Range(0, 360)]
-    public float viewAngle = 90f;
+    [Range(0, 360)] public float viewAngle = 90f;
     public Transform playerTarget;
     public LayerMask obstacleMask;
-
-    [Header("Cài đặt Đèn pin AI")]
     public Light enemyFlashlight;
 
-    [Header("Tối ưu Tìm đường")]
+    [Header("Tối ưu & Wallhack")]
     public float pathUpdateDelay = 0.2f;
     private float pathUpdateTimer = 0f;
-
-    [Header("Tối ưu Tầm nhìn")]
     public float headHeightOffset = 1.6f;
-
-    [Header("Cơ chế Chó Săn (Wallhack)")]
     public float wallhackChaseTime = 10f;
     private float currentChaseTimer = 0f;
 
-    [Header("Cài đặt Âm thanh Bước chân (MỚI)")]
+    [Header("Âm thanh (CẬP NHẬT)")]
     public AudioSource footstepSource;
+    public AudioSource sfxSource; // Kéo 1 AudioSource mới vào đây để phát tiếng cắn
+    public AudioClip catchWarningSound; // Kéo tiếng "Xoẹt" (bị thương) 2 lần đầu
+    public AudioClip catchFatalSound;   // Kéo tiếng "Rầm" (chết) lần thứ 3
+
     public float patrolStepInterval = 0.6f;
     public float chaseStepInterval = 0.3f;
     public float slowStepInterval = 0.9f;
@@ -59,7 +57,7 @@ public class EnemyPatrol : MonoBehaviour
 
     void Start()
     {
-        isPlayerHidden = false; // Reset lại mỗi khi load màn
+        isPlayerHidden = false;
         agent = GetComponentInParent<NavMeshAgent>();
         if (agent == null) agent = GetComponentInChildren<NavMeshAgent>();
 
@@ -80,6 +78,7 @@ public class EnemyPatrol : MonoBehaviour
         }
 
         if (footstepSource == null) footstepSource = GetComponent<AudioSource>();
+        if (sfxSource == null) sfxSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -94,15 +93,12 @@ public class EnemyPatrol : MonoBehaviour
             anim.SetBool("isRunning", isMoving && isChasing && !isSlowed);
         }
 
-        // ==========================================
-        // MỚI: NGƯỜI CHƠI VÀO PHÒNG TRỐN -> HỦY RƯỢT ĐUỔI
-        // ==========================================
         if (isPlayerHidden)
         {
             if (isChasing) GiveUpChase();
             else PatrolRoutine();
             HandleFootsteps(isMoving);
-            return; // Dừng chạy code bên dưới, AI không check tầm nhìn nữa
+            return;
         }
 
         CheckPlayerInSight();
@@ -110,6 +106,13 @@ public class EnemyPatrol : MonoBehaviour
 
         if (isChasing)
         {
+            // MỚI: AI bị hụt hơi (giảm tốc độ dần)
+            if (!isSlowed)
+            {
+                agent.speed -= chaseSpeedDecay * Time.deltaTime;
+                if (agent.speed < minChaseSpeed) agent.speed = minChaseSpeed;
+            }
+
             currentChaseTimer -= Time.deltaTime;
             if (currentChaseTimer > 0)
             {
@@ -136,7 +139,6 @@ public class EnemyPatrol : MonoBehaviour
         if (isMoving)
         {
             stepTimer += Time.deltaTime;
-
             float currentInterval = patrolStepInterval;
             if (isChasing) currentInterval = chaseStepInterval;
             else if (isSlowed) currentInterval = slowStepInterval;
@@ -150,15 +152,11 @@ public class EnemyPatrol : MonoBehaviour
                 stepTimer = 0f;
             }
         }
-        else
-        {
-            stepTimer = 0f;
-        }
+        else stepTimer = 0f;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // MỚI: Cấm quái cắn nếu người chơi đang trong phòng trốn
         if (other.CompareTag("Player") && !isPlayerHidden)
         {
             if (!isSlowed) HandleCatchingPlayer();
@@ -170,6 +168,16 @@ public class EnemyPatrol : MonoBehaviour
         if (GameManager.instance != null)
         {
             bool isOutForTonight = GameManager.instance.OnPlayerCaught();
+
+            // MỚI: CHỌN ÂM THANH THEO SỐ LẦN BẮT
+            if (sfxSource != null)
+            {
+                if (!isOutForTonight && catchWarningSound != null)
+                    sfxSource.PlayOneShot(catchWarningSound); // 2 lần đầu
+                else if (isOutForTonight && catchFatalSound != null)
+                    sfxSource.PlayOneShot(catchFatalSound); // Lần 3 chết
+            }
+
             if (!isOutForTonight) StartCoroutine(ApplySlowPenalty(5f));
         }
         else StartCoroutine(ApplySlowPenalty(5f));
@@ -200,7 +208,6 @@ public class EnemyPatrol : MonoBehaviour
 
             if (Vector3.Angle(transform.forward, directionToPlayer) < viewAngle / 2)
             {
-                // Nhớ đổi ObstacleMask thành Default trong Inspector để nó không nhìn thấu tường nhé!
                 if (!Physics.Raycast(headPosition, directionToPlayer, distanceToPlayer, obstacleMask))
                 {
                     currentChaseTimer = wallhackChaseTime;
@@ -209,12 +216,13 @@ public class EnemyPatrol : MonoBehaviour
                     {
                         isChasing = true;
 
-                        if (isInvestigating && investigateRoutine != null)
+                        if (investigateRoutine != null)
                         {
                             StopCoroutine(investigateRoutine);
                             isInvestigating = false;
                         }
 
+                        // MỚI: Reset lại tốc độ max khi vừa nhìn thấy người chơi
                         if (!isSlowed) agent.speed = chaseSpeed;
                         if (enemyFlashlight != null && !isSlowed) enemyFlashlight.color = Color.red;
 
@@ -239,7 +247,6 @@ public class EnemyPatrol : MonoBehaviour
     void PatrolRoutine()
     {
         if (waypoints.Length == 0) return;
-
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             if (!isWaiting)
@@ -264,12 +271,9 @@ public class EnemyPatrol : MonoBehaviour
     public void InvestigateNoise(Vector3 noisePosition)
     {
         if (isChasing || isSlowed) return;
-
         isInvestigating = true;
         isWaiting = false;
-
         if (enemyFlashlight != null) enemyFlashlight.color = new Color(1f, 0.5f, 0f);
-
         if (investigateRoutine != null) StopCoroutine(investigateRoutine);
         investigateRoutine = StartCoroutine(InvestigateRoutine(noisePosition));
     }
@@ -278,12 +282,10 @@ public class EnemyPatrol : MonoBehaviour
     {
         agent.SetDestination(targetPos);
         while (agent.pathPending || agent.remainingDistance > 1.5f) yield return null;
-
         if (anim != null) anim.SetBool("isWalking", false);
         yield return new WaitForSeconds(4f);
-
         isInvestigating = false;
         if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
         if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
     }
-}
+}   
