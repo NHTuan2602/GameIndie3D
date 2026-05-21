@@ -36,7 +36,6 @@ public class EndingManager : MonoBehaviour
 
     void Start()
     {
-        // Ép ẩn nút và tiêu đề ngay từ frame đầu tiên
         if (btnReturnMenu != null) btnReturnMenu.gameObject.SetActive(false);
         if (txtDayLabel != null) txtDayLabel.gameObject.SetActive(false);
 
@@ -64,22 +63,47 @@ public class EndingManager : MonoBehaviour
         {
             case EndingType.Arrested:
                 dayLabel = "LƯỚI TRỜI";
-                finalDialogue = "Lưới trời lồng lộng, thưa mà khó lọt. Bạn đã bị lực lượng chức năng tóm gọn cùng toàn bộ đường dây lừa đảo...";
+                finalDialogue = "Bạn đã sống sót khỏi cuộc bạo loạn và được thăng chức, trong lúc về quê ăn tết thì đã bị lực lượng chức năng bắt. Lưới trời lồng lộng, thưa nhưng khó thoát.";
                 finalSprite = sprArrested;
                 finalBgm = bgmArrested;
                 break;
 
             case EndingType.RiotSurvivor:
-                dayLabel = "KẺ SỐNG SÓT";
-                finalDialogue = "Khu trại xảy ra bạo loạn lớn... Nhờ thành tích lừa đảo xuất sắc, bạn giữ được mạng sống nhưng mãi mãi kẹt lại nơi địa ngục trần gian này.";
-                finalSprite = sprRiotSurvivor;
-                finalBgm = bgmRiotSurvivor;
+                // Tính số lượng đồ đang có trong tay người chơi lúc này
+                int itemCollected = 0;
+                if (GameManager.instance != null)
+                {
+                    itemCollected = (GameManager.instance.hasNotebook ? 1 : 0) +
+                                    (GameManager.instance.hasNippers ? 1 : 0) +
+                                    (GameManager.instance.hasRope ? 1 : 0) +
+                                    (GameManager.instance.hasKey ? 1 : 0);
+                }
+
+                // FIX: Gộp chung 3 và 4 món vào 1 ending Bạo Loạn Tẩu Thoát thành công
+                if (itemCollected >= 3)
+                {
+                    dayLabel = "BẠO LOẠN TẨU THOÁT";
+                    finalDialogue = "Khu trại xảy ra bạo loạn lớn! Dù trước đó bị lính gác phát hiện, nhưng nhờ sở hữu đủ công cụ sinh tồn cốt lõi, bạn đã lợi dụng trận hỗn chiến để tự cắt rào, bẻ khóa và trốn thoát thành công khỏi địa ngục!";
+                    finalSprite = sprTrueEscape; // Sử dụng hình trốn thoát
+                    finalBgm = bgmTrueEscape;    // Nhạc hào hùng chiến thắng
+                }
+                else
+                {
+                    // Fallback an toàn: Đáng lẽ GameManager đã đưa nhánh <=2 món sang Death. 
+                    // Nhưng nếu rớt vào đây, nó sẽ tự trả về kết cục bi thảm do thiếu đồ.
+                    dayLabel = "KẾT CỤC BI THẢM";
+                    finalDialogue = "Khu trại xảy ra bạo loạn lớn... Vì chỉ gom được quá ít vật dụng phòng thân, bạn đã không thể sống sót qua cuộc hỗn chiến. BẠN ĐÃ BIẾN MẤT KHÔNG ĐỂ LẠI DẤU VẾT...";
+                    finalSprite = sprDeath;
+                    finalBgm = bgmDeath;
+                }
+
+                // Tiếng ồn bạo loạn chung cho nhánh này
                 if (sfxAudioSource != null && riotSound != null) sfxAudioSource.PlayOneShot(riotSound);
                 break;
 
             case EndingType.Death:
                 dayLabel = "KẾT CỤC BI THẢM";
-                finalDialogue = "Chống đối thất bại hoặc không hoàn thành chỉ tiêu... BẠN ĐÃ BIẾN MẤT KHÔNG ĐỂ LẠI DẤU VẾT...";
+                finalDialogue = "Chống đối thất bại, máu xuống quá thấp hoặc thiếu công cụ sinh tồn... BẠN ĐÃ BIẾN MẤT KHÔNG ĐỂ LẠI DẤU VẾT...";
                 finalSprite = sprDeath;
                 finalBgm = bgmDeath;
                 break;
@@ -94,6 +118,7 @@ public class EndingManager : MonoBehaviour
             case EndingType.BadCredit:
                 dayLabel = "CON NỢ";
                 finalDialogue = "Bị cuốn vào vòng xoáy cờ bạc, bạn đã bán mình cho tổ chức tín dụng đen và bị chuyển đi nơi khác...";
+                finalSprite = sprDeath;
                 break;
         }
 
@@ -109,36 +134,27 @@ public class EndingManager : MonoBehaviour
             bgmAudioSource.Play();
         }
 
-        // Truyền cả đoạn text Tiêu đề vào luồng Coroutine để đợi
         StartCoroutine(TypeDialogue(finalDialogue, dayLabel));
     }
 
     IEnumerator TypeDialogue(string dialogue, string dayLabel)
     {
         txtDialogue.text = "";
-
-        // Đảm bảo chữ được bật lên khi bắt đầu gõ
         txtDialogue.gameObject.SetActive(true);
 
         foreach (char letter in dialogue.ToCharArray())
         {
             txtDialogue.text += letter;
-
             if (sfxAudioSource != null && typingSound != null)
             {
                 sfxAudioSource.PlayOneShot(typingSound, 0.2f);
             }
-
-            yield return new WaitForSeconds(0.04f); // Tốc độ gõ chữ
+            yield return new WaitForSeconds(0.04f);
         }
 
-        // ĐÃ FIX: Chờ 3 giây để người chơi kịp đọc hết câu
         yield return new WaitForSeconds(3f);
-
-        // Tắt đoạn text đi để trả lại background sạch sẽ
         txtDialogue.gameObject.SetActive(false);
 
-        // Sau đó mới BẬT Tiêu đề Ending và Nút bấm lên
         if (txtDayLabel != null)
         {
             txtDayLabel.text = dayLabel;

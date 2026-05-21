@@ -3,7 +3,6 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 
 public enum GamePhase { Morning, Noon, Afternoon, Night }
-// Định nghĩa các loại Ending
 public enum EndingType { None, TrueEscape, BadCredit, Arrested, RiotSurvivor, Death, Trapped }
 
 public class GameManager : MonoBehaviour
@@ -82,7 +81,6 @@ public class GameManager : MonoBehaviour
     public int escapeProgress = 0;
     public bool isRedAlert = false;
 
-    // Biến lưu trữ kết cục hiện tại
     public EndingType currentEnding = EndingType.None;
 
     void Awake()
@@ -125,7 +123,6 @@ public class GameManager : MonoBehaviour
         RenderSettings.ambientLight = Color.red;
     }
 
-    // ĐÃ FIX: Giữ nguyên tham số dummy để các file khác không bị lỗi, nhưng vô hiệu hóa thể lực
     public bool StartScammingVictim(int dummyStaminaCost = 0)
     {
         if (hp <= 0) { CheckDeath(); return false; }
@@ -150,12 +147,11 @@ public class GameManager : MonoBehaviour
 
         if (consecutiveScamFails >= 2)
         {
-            TakeShockDamage(50); // Phạt nặng nếu fail 2 lần liên tiếp
+            TakeShockDamage(50);
             consecutiveScamFails = 0;
         }
         else
         {
-            // ĐÃ FIX: Không còn thể lực, lừa hụt 1 lần sẽ bị giật điện nhẹ (Trừ 10 HP)
             TakeShockDamage(10);
         }
         CheckShiftProgress();
@@ -167,7 +163,6 @@ public class GameManager : MonoBehaviour
             TransitionToPhase(GamePhase.Noon);
         else if (currentPhase == GamePhase.Afternoon && attemptedScamsToday >= maxAttemptsPerDay)
         {
-            // ĐÃ FIX: Ép Unity phải tìm cả những Object đang bị tắt tàng hình!
             ShiftSummaryUI summaryUI = FindFirstObjectByType<ShiftSummaryUI>(FindObjectsInactive.Include);
 
             if (summaryUI != null)
@@ -182,6 +177,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            
             VictimSelectionManager vsm = FindFirstObjectByType<VictimSelectionManager>(FindObjectsInactive.Include);
             if (vsm != null) vsm.ShowSelectionUI(currentDay);
         }
@@ -232,6 +228,9 @@ public class GameManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        ConfiscateAllItems();
+
         StartCoroutine(ShockSequenceRoutine());
     }
 
@@ -262,10 +261,6 @@ public class GameManager : MonoBehaviour
         {
             caughtPanelUI.SetActive(true);
         }
-        else
-        {
-            Debug.LogError("<color=red>CHƯA KÉO CAUGHT PANEL VÀO GAME MANAGER!</color>");
-        }
     }
 
     public void ClickSangNgayHomSau()
@@ -281,7 +276,6 @@ public class GameManager : MonoBehaviour
 
     public void SleepThroughNight()
     {
-        // Ngủ chỉ hồi máu
         hp = Mathf.Min(maxHp, hp + 10);
         AdvanceToNextDay();
     }
@@ -318,33 +312,36 @@ public class GameManager : MonoBehaviour
     private void EvaluateEndings()
     {
         int itemCount = (hasNotebook ? 1 : 0) + (hasNippers ? 1 : 0) + (hasRope ? 1 : 0) + (hasKey ? 1 : 0);
+        bool failedStealth = caughtCountThisNight >= maxCaughtBeforeReset;
 
         if (isBlackCreditActive)
         {
             currentEnding = EndingType.BadCredit;
+            SceneManager.LoadScene("EndingScene");
         }
-        else if (itemCount == 4)
+        // Đủ 4 món và KHÔNG BỊ BẮT -> Đua xe tẩu thoát
+        else if (itemCount == 4 && !failedStealth)
         {
-            currentEnding = EndingType.TrueEscape;
+            Debug.Log("<color=green>TRỐN THOÁT HOÀN HẢO: LUÂN CHUYỂN QUA MINIGAME ĐUA XE ĐẠP!</color>");
+            SceneManager.LoadScene("EscapeCyclingScene");
+        }
+        // FIX Lưới trời: Lừa >= 15 người và KHÔNG CÓ món đồ nào
+        else if (totalSuccessfulScamsAllDays >= policeArrestThreshold && itemCount == 0)
+        {
+            currentEnding = EndingType.Arrested;
+            SceneManager.LoadScene("EndingScene");
+        }
+        // Gặp bạo loạn khi có >= 3 món
+        else if (itemCount >= 3)
+        {
+            currentEnding = EndingType.RiotSurvivor;
+            SceneManager.LoadScene("EndingScene");
         }
         else
         {
-            currentDay = 6;
-            if (totalSuccessfulScamsAllDays >= 20)
-            {
-                currentEnding = EndingType.Arrested;
-            }
-            else if (hp >= 50 && itemCount >= 2)
-            {
-                currentEnding = EndingType.RiotSurvivor;
-            }
-            else
-            {
-                currentEnding = EndingType.Death;
-            }
+            currentEnding = EndingType.Death;
+            SceneManager.LoadScene("EndingScene");
         }
-
-        SceneManager.LoadScene("EndingScene");
     }
 
     private void CheckDeath()
@@ -364,30 +361,15 @@ public class GameManager : MonoBehaviour
 
         switch (currentPhase)
         {
-            case GamePhase.Morning:
-                sceneName = "ScamScreen";
-                break;
-            case GamePhase.Noon:
-                sceneName = "NoonCanteenScene";
-                break;
-            case GamePhase.Afternoon:
-                sceneName = "ScamScreen";
-                break;
+            case GamePhase.Morning: sceneName = "ScamScreen"; break;
+            case GamePhase.Noon: sceneName = "NoonCanteenScene"; break;
+            case GamePhase.Afternoon: sceneName = "ScamScreen"; break;
             case GamePhase.Night:
-                if (currentDay == 1)
-                {
-                    Debug.Log("<color=yellow>CỐT TRUYỆN: Đêm 1 - Bị dụ đi đánh bạc!</color>");
-                    sceneName = "NightGameScreen";
-                }
-                else
-                {
-                    Debug.Log($"<color=cyan>Đêm {currentDay} - Về phòng ngủ.</color>");
-                    sceneName = "NightScreen";
-                }
+                if (currentDay == 1) sceneName = "NightGameScreen";
+                else sceneName = "NightScreen";
                 break;
         }
 
-        // Tích hợp với hệ thống màn hình đen chuyển ngày nếu có
         if (isNewDay && DayTransitionManager.instance != null)
         {
             DayTransitionManager.instance.StartTransition(sceneName);
@@ -396,5 +378,25 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(sceneName);
         }
+    }
+
+    public void ConfiscateAllItems()
+    {
+        if (currentDay >= 5)
+        {
+            Debug.Log("<color=yellow>ĐÊM 5: Giữ nguyên đồ vật để tính toán Ending phân nhánh!</color>");
+            return;
+        }
+
+        hasNotebook = false;
+        hasNippers = false;
+        hasRope = false;
+        hasKey = false;
+
+        PlayerPrefs.SetInt("HasNotebook", 0);
+        PlayerPrefs.SetInt("HasNippers", 0);
+        PlayerPrefs.SetInt("HasRope", 0);
+        PlayerPrefs.SetInt("HasKey", 0);
+        PlayerPrefs.Save();
     }
 }

@@ -1241,7 +1241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EndingManager
   enableTestMode: 1
-  testEndingToPlay: 3
+  testEndingToPlay: 4
   txtDayLabel: {fileID: 2125651624}
   txtDialogue: {fileID: 873091173}
   btnReturnMenu: {fileID: 715075132}

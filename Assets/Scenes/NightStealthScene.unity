@@ -5149,11 +5149,19 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: f8579ffb8b2458d4c8c7a9859317b230, type: 3}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
+      propertyPath: testHasKey
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
       propertyPath: caughtPanel
       value: 
       objectReference: {fileID: 1634420519}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
       propertyPath: hasNotebook
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
+      propertyPath: testHasRope
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
@@ -5174,11 +5182,15 @@ PrefabInstance:
       objectReference: {fileID: 1634420519}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
       propertyPath: enableDevMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
+      propertyPath: testHasNippers
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
       propertyPath: testHasNotebook
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
       propertyPath: playerCameraAnim
@@ -9592,6 +9604,8 @@ MonoBehaviour:
   patrolSpeed: 2
   chaseSpeed: 5
   slowSpeed: 1.5
+  chaseSpeedDecay: 0.5
+  minChaseSpeed: 3.5
   viewRadius: 6.02
   viewAngle: 56
   playerTarget: {fileID: 162882918}
@@ -9603,6 +9617,9 @@ MonoBehaviour:
   headHeightOffset: 1.6
   wallhackChaseTime: 10
   footstepSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  catchWarningSound: {fileID: 0}
+  catchFatalSound: {fileID: 0}
   patrolStepInterval: 0.6
   chaseStepInterval: 0.3
   slowStepInterval: 0.9
@@ -21938,6 +21955,8 @@ MonoBehaviour:
   patrolSpeed: 2
   chaseSpeed: 5
   slowSpeed: 1.5
+  chaseSpeedDecay: 0.5
+  minChaseSpeed: 3.5
   viewRadius: 6.02
   viewAngle: 56
   playerTarget: {fileID: 162882918}
@@ -21949,6 +21968,9 @@ MonoBehaviour:
   headHeightOffset: 1.6
   wallhackChaseTime: 10
   footstepSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  catchWarningSound: {fileID: 0}
+  catchFatalSound: {fileID: 0}
   patrolStepInterval: 0.6
   chaseStepInterval: 0.3
   slowStepInterval: 0.9
@@ -24852,7 +24874,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.04607568, y: 0.097898446, z: 0.0072096633}
+  m_Size: {x: 0.39, y: 0.38, z: 0.57}
   m_Center: {x: -0.00052534137, y: 0.048949223, z: -0.0000059700105}
 --- !u!1 &996745607 stripped
 GameObject:
@@ -40119,6 +40141,8 @@ MonoBehaviour:
   patrolSpeed: 3.5
   chaseSpeed: 12.83
   slowSpeed: 1.5
+  chaseSpeedDecay: 0.5
+  minChaseSpeed: 3.5
   viewRadius: 10
   viewAngle: 90
   playerTarget: {fileID: 0}
@@ -40130,6 +40154,9 @@ MonoBehaviour:
   headHeightOffset: 1.6
   wallhackChaseTime: 10
   footstepSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  catchWarningSound: {fileID: 0}
+  catchFatalSound: {fileID: 0}
   patrolStepInterval: 0.6
   chaseStepInterval: 0.3
   slowStepInterval: 0.9
@@ -48305,6 +48332,8 @@ MonoBehaviour:
   patrolSpeed: 3.5
   chaseSpeed: 12.83
   slowSpeed: 1.5
+  chaseSpeedDecay: 0.5
+  minChaseSpeed: 3.5
   viewRadius: 10
   viewAngle: 90
   playerTarget: {fileID: 0}
@@ -48316,6 +48345,9 @@ MonoBehaviour:
   headHeightOffset: 1.6
   wallhackChaseTime: 10
   footstepSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  catchWarningSound: {fileID: 0}
+  catchFatalSound: {fileID: 0}
   patrolStepInterval: 0.6
   chaseStepInterval: 0.3
   slowStepInterval: 0.9
@@ -49045,6 +49077,8 @@ MonoBehaviour:
   patrolSpeed: 3.5
   chaseSpeed: 12.83
   slowSpeed: 1.5
+  chaseSpeedDecay: 0.5
+  minChaseSpeed: 3.5
   viewRadius: 10
   viewAngle: 90
   playerTarget: {fileID: 0}
@@ -49056,6 +49090,9 @@ MonoBehaviour:
   headHeightOffset: 1.6
   wallhackChaseTime: 10
   footstepSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  catchWarningSound: {fileID: 0}
+  catchFatalSound: {fileID: 0}
   patrolStepInterval: 0.6
   chaseStepInterval: 0.3
   slowStepInterval: 0.9
@@ -53640,6 +53677,8 @@ MonoBehaviour:
   patrolSpeed: 2
   chaseSpeed: 5
   slowSpeed: 1.5
+  chaseSpeedDecay: 0.5
+  minChaseSpeed: 3.5
   viewRadius: 6.02
   viewAngle: 56
   playerTarget: {fileID: 162882918}
@@ -53651,6 +53690,9 @@ MonoBehaviour:
   headHeightOffset: 1.6
   wallhackChaseTime: 10
   footstepSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  catchWarningSound: {fileID: 0}
+  catchFatalSound: {fileID: 0}
   patrolStepInterval: 0.6
   chaseStepInterval: 0.3
   slowStepInterval: 0.9
@@ -54896,6 +54938,8 @@ MonoBehaviour:
   patrolSpeed: 3.5
   chaseSpeed: 12.83
   slowSpeed: 1.5
+  chaseSpeedDecay: 0.5
+  minChaseSpeed: 3.5
   viewRadius: 10
   viewAngle: 90
   playerTarget: {fileID: 0}
@@ -54907,6 +54951,9 @@ MonoBehaviour:
   headHeightOffset: 1.6
   wallhackChaseTime: 10
   footstepSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  catchWarningSound: {fileID: 0}
+  catchFatalSound: {fileID: 0}
   patrolStepInterval: 0.6
   chaseStepInterval: 0.3
   slowStepInterval: 0.9
