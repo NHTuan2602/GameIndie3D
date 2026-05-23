@@ -1,63 +1,69 @@
 using UnityEngine;
+using System.Collections;
 
 public class ObstacleSpawner : MonoBehaviour
 {
-    [Header("Tọa độ 4 Làn (BẮT BUỘC NHẬP: -10.5, -3.5, 3.5, 10.5)")]
-    public float[] laneCenters = new float[4] { -10.5f, -3.5f, 3.5f, 10.5f };
+    [Header("Tọa độ 4 Làn (BẮT BUỘC NHẬP: -23.65, -11.99, -0.6, 11.2)")]
+    public float[] laneCenters = new float[4];
 
-    [Header("Kho Vật Phẩm (Tĩnh) - Làn Phải")]
-    public GameObject[] dangerPrefabs; // Ổ gà
-    public GameObject[] buffPrefabs;   // Xe tải làm dốc tăng tốc
-    public GameObject brickPrefab;     // Gạch
-    public GameObject trafficSignGatePrefab;
+    [Header("Kho Xe Ngược Chiều")]
+    public GameObject[] leftVehicles;
+    public float startSpawnLeftAfter = 10f;
+    public float leftSpawnInterval = 2f;
 
-    [Header("Kho Hung Thần (Động) - Làn Trái")]
-    public GameObject[] highSpeedVehicles; // Xe khách, xe cấp cứu...
+    [Header("Kho Xe Cùng Chiều")]
+    public GameObject[] rightVehicles;
+    public float rightSpawnInterval = 2f;
 
-    [Header("Kho Quái Xế Lạng Lách (Ninja Lead)")]
+    [Header("Kho Vật Phẩm Đặc Biệt (CẢ 4 LÀN)")]
+    public GameObject[] specialItems;
+    public float specialSpawnInterval = 5f;
+
+    [Header("Kho Quái Xế Lạng Lách")]
     public GameObject recklessBikerPrefab;
     public float spawnDistanceBehind = -40f;
-    private float bikerTimer;
 
     [Header("Cài đặt Cổng Biển Báo (V.I.P)")]
+    public GameObject trafficSignGatePrefab;
     public float gateInterval = 30f;
     public float gapDuration = 3f;
     public float gateLifeTime = 15f;
 
-    [Header("Cài đặt Đẻ Quái Vật")]
-    public float startSpawnBusAfter = 10f;
-    public float busSpawnInterval = 2f;
-    private float globalTimer = 0f;
-
-    [Header("Cài đặt Vật cản tĩnh & Gạch")]
+    [Header("Cài đặt Cốt lõi")]
     public Transform player;
     public float spawnDistanceAhead = 150f;
-    public float spawnInterval = 2f;
-    public float brickInterval = 6f;
-    [Range(0f, 1f)] public float buffChance = 0.2f;
-
-    [Header("Radar Chống Trùng Lặp")]
     public int maxSpawnAttempts = 3;
     public Vector3 clearanceBoxSize = new Vector3(1.5f, 1f, 20f);
 
-    private float obstacleTimer;
-    private float brickTimer;
+    // --- Các bộ đếm thời gian (Timers) ---
+    private float globalTimer = 0f;
     private float gateTimer;
-    private float vehicleTimer;
     private float gateActiveTimer;
     private float safeZoneTimer = 0f;
+    private float leftTimer;
+    private float rightTimer;
+    private float specialTimer;
+    private float bikerTimer;
+
+    // --- CƠ CHẾ ĐẢO CHIỀU MỚI ---
+    [Header("Trạng thái Đảo Chiều Giao Thông")]
+    public bool isReversed = false; // False = Bình thường, True = Đã đảo chiều
+    private float transitionPauseTimer = 0f; // Thời gian "Nín đẻ" để dọn đường khi vừa đảo chiều
 
     void Update()
     {
         globalTimer += Time.deltaTime;
 
-        // 1. HỆ THỐNG CỔNG BIỂN BÁO
+        // Giảm thời gian "nín đẻ" dọn đường
+        if (transitionPauseTimer > 0) transitionPauseTimer -= Time.deltaTime;
+
         gateTimer += Time.deltaTime;
         if (gateActiveTimer > 0) gateActiveTimer -= Time.deltaTime;
         if (safeZoneTimer > 0) safeZoneTimer -= Time.deltaTime;
 
         bool isGapTime = (gateInterval - gateTimer) <= gapDuration;
 
+        // 1. SINH CỔNG BIỂN BÁO
         if (gateTimer >= gateInterval)
         {
             SpawnGate();
@@ -65,56 +71,63 @@ public class ObstacleSpawner : MonoBehaviour
             gateActiveTimer = gateLifeTime;
         }
 
-        if (isGapTime) return;
+        // Nếu đang trong thời gian nín đẻ chờ xe cũ đi qua HOẶC sắp có cổng thì không đẻ gì cả
+        if (isGapTime || transitionPauseTimer > 0) return;
 
-        // 2. HỆ THỐNG XE HUNG THẦN (CHỈ ĐẺ Ở LÀN 0 VÀ 1 - TRÁI)
-        if (globalTimer >= startSpawnBusAfter && gateActiveTimer <= 0 && safeZoneTimer <= 0)
+        // 2 & 3. XÁC ĐỊNH LÀN NÀO LÀ NGƯỢC CHIỀU / CÙNG CHIỀU DỰA VÀO TRẠNG THÁI isReversed
+        int oncomingMinLane = isReversed ? 2 : 0;
+        int oncomingMaxLane = isReversed ? 4 : 2;
+
+        int samedirMinLane = isReversed ? 0 : 2;
+        int samedirMaxLane = isReversed ? 2 : 4;
+
+        // ĐẺ XE NGƯỢC CHIỀU
+        if (globalTimer >= startSpawnLeftAfter && gateActiveTimer <= 0 && safeZoneTimer <= 0)
         {
-            vehicleTimer += Time.deltaTime;
-            if (vehicleTimer >= busSpawnInterval)
+            leftTimer += Time.deltaTime;
+            if (leftTimer >= leftSpawnInterval)
             {
-                SpawnHighSpeedVehicle();
-                vehicleTimer = 0f;
+                SpawnVehicle(leftVehicles, oncomingMinLane, oncomingMaxLane);
+                leftTimer = 0f;
             }
         }
 
-        // 3. HỆ THỐNG VẬT CẢN TĨNH (CHỈ ĐẺ Ở LÀN 2 VÀ 3 - PHẢI)
-        obstacleTimer += Time.deltaTime;
-        if (obstacleTimer >= spawnInterval)
+        // ĐẺ XE CÙNG CHIỀU
+        rightTimer += Time.deltaTime;
+        if (rightTimer >= rightSpawnInterval)
         {
-            SpawnRandomObstacle();
-            obstacleTimer = 0f;
+            SpawnVehicle(rightVehicles, samedirMinLane, samedirMaxLane);
+            rightTimer = 0f;
         }
 
-        brickTimer += Time.deltaTime;
-        if (brickTimer >= brickInterval)
+        // 4. VẬT PHẨM ĐẶC BIỆT (Luôn đẻ cả 4 làn)
+        specialTimer += Time.deltaTime;
+        if (specialTimer >= specialSpawnInterval)
         {
-            SpawnSingleBrick();
-            brickTimer = 0f;
+            SpawnVehicle(specialItems, 0, 4);
+            specialTimer = 0f;
         }
 
-        // 4. HỆ THỐNG ĐẺ QUÁI XẾ LẠNG LÁCH (Từ giây 15 trở đi)
+        // 5. QUÁI XẾ LẠNG LÁCH (Luôn đi ở làn Cùng Chiều)
         if (globalTimer >= 15f)
         {
             bikerTimer += Time.deltaTime;
             if (bikerTimer >= 5f)
             {
-                SpawnRecklessBiker();
+                SpawnRecklessBiker(samedirMinLane, samedirMaxLane);
                 bikerTimer = 0f;
             }
         }
     }
 
-    void SpawnHighSpeedVehicle()
+    void SpawnVehicle(GameObject[] prefabArray, int minLane, int maxLane)
     {
-        if (highSpeedVehicles == null || highSpeedVehicles.Length == 0) return;
+        if (prefabArray == null || prefabArray.Length == 0) return;
 
         for (int i = 0; i < maxSpawnAttempts; i++)
         {
-            GameObject prefabToSpawn = highSpeedVehicles[Random.Range(0, highSpeedVehicles.Length)];
-
-            // ĐÃ FIX: Chỉ lấy tâm của Làn 0 hoặc Làn 1 (2 làn trái)
-            float randomLaneX = laneCenters[Random.Range(0, 2)];
+            GameObject prefabToSpawn = prefabArray[Random.Range(0, prefabArray.Length)];
+            float randomLaneX = laneCenters[Random.Range(minLane, maxLane)];
             Vector3 checkPos = new Vector3(randomLaneX, 1f, player.position.z + spawnDistanceAhead);
 
             if (IsPathClear(checkPos))
@@ -128,53 +141,13 @@ public class ObstacleSpawner : MonoBehaviour
         }
     }
 
-    void SpawnRandomObstacle()
-    {
-        GameObject prefabToSpawn = null;
-        if (Random.value < buffChance && buffPrefabs.Length > 0) prefabToSpawn = buffPrefabs[Random.Range(0, buffPrefabs.Length)];
-        else if (dangerPrefabs.Length > 0) prefabToSpawn = dangerPrefabs[Random.Range(0, dangerPrefabs.Length)];
-
-        if (prefabToSpawn != null)
-        {
-            for (int i = 0; i < maxSpawnAttempts; i++)
-            {
-                // ĐÃ FIX: Không random bừa bãi nữa, ép vào đúng giữa Làn 2 hoặc Làn 3 (2 làn phải)
-                float randomX = laneCenters[Random.Range(2, 4)];
-                Vector3 checkPos = new Vector3(randomX, 1f, player.position.z + spawnDistanceAhead);
-
-                if (IsPathClear(checkPos))
-                {
-                    Spawn(prefabToSpawn, randomX);
-                    break;
-                }
-            }
-        }
-    }
-
-    void SpawnSingleBrick()
-    {
-        if (brickPrefab == null) return;
-        for (int i = 0; i < maxSpawnAttempts; i++)
-        {
-            // ĐÃ FIX: Gạch cũng chỉ nằm gọn gàng ở Làn 2 hoặc 3
-            float randomX = laneCenters[Random.Range(2, 4)];
-            Vector3 checkPos = new Vector3(randomX, 1f, player.position.z + spawnDistanceAhead);
-
-            if (IsPathClear(checkPos))
-            {
-                Spawn(brickPrefab, randomX);
-                break;
-            }
-        }
-    }
-
-    void SpawnRecklessBiker()
+    void SpawnRecklessBiker(int minLane, int maxLane)
     {
         if (recklessBikerPrefab == null) return;
 
-        // Quái xế lạng lách giữa Làn 2 và 3
-        float laneLeftX = laneCenters[2];
-        float laneRightX = laneCenters[3];
+        // Quái xế lạng lách giữa 2 làn CÙNG CHIỀU hiện tại
+        float laneLeftX = laneCenters[minLane];
+        float laneRightX = laneCenters[maxLane - 1];
 
         Vector3 spawnPos = new Vector3((laneLeftX + laneRightX) / 2f, 1f, player.position.z + spawnDistanceBehind);
         GameObject bikerObj = Instantiate(recklessBikerPrefab, spawnPos, Quaternion.identity);
@@ -203,14 +176,33 @@ public class ObstacleSpawner : MonoBehaviour
             {
                 gateScript.SetLanePositions(laneCenters);
 
-                // Ép làn: 50% bắt chạy sang trái (Nguy hiểm), 50% cho ở lại phải (An toàn)
-                bool forceLeft = (Random.value > 0.5f);
+                // Random xem có ép người chơi sang Làn Ngược Chiều hay không
+                bool forceOncoming = (Random.value > 0.5f);
+
+                // Truyền vào Gate dựa theo trạng thái đảo chiều hiện tại
+                bool forceLeft = isReversed ? !forceOncoming : forceOncoming;
                 gateScript.SetupGateFor4Lanes(forceLeft);
 
-                if (forceLeft) safeZoneTimer = 4f; // Khóa mồm xe ngược chiều 4 giây
+                // Nếu ép sang làn ngược chiều, khóa họng xe ngược chiều 4 giây
+                if (forceOncoming) safeZoneTimer = 4f;
             }
             Destroy(gateObj, 15f);
+
+            // BẮT ĐẦU ĐẾM NGƯỢC 5 GIÂY ĐỂ ĐẢO CHIỀU GIAO THÔNG
+            StartCoroutine(SwapTrafficRoutine(5f));
         }
+    }
+
+    IEnumerator SwapTrafficRoutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Kích hoạt đảo chiều
+        isReversed = !isReversed;
+        Debug.Log("<color=red>CẢNH BÁO: ĐÃ ĐẢO CHIỀU GIAO THÔNG!</color>");
+
+        // Tạm "nín đẻ" 2 giây để xe cũ đi khuất, tránh xe mới tông xe cũ
+        transitionPauseTimer = 2f;
     }
 
     bool IsPathClear(Vector3 spawnPos)
@@ -226,19 +218,10 @@ public class ObstacleSpawner : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(0, 1, 0, 0.3f);
-        if (player != null)
+        if (player != null && laneCenters.Length >= 4)
         {
-            Vector3 checkPos = new Vector3(0, 1f, player.position.z + spawnDistanceAhead);
+            Vector3 checkPos = new Vector3(laneCenters[2], 1f, player.position.z + spawnDistanceAhead);
             Gizmos.DrawCube(checkPos, clearanceBoxSize * 2);
         }
-    }
-
-    void Spawn(GameObject prefab, float x)
-    {
-        if (prefab == null) return;
-        float spawnY = prefab.transform.position.y;
-        Vector3 spawnPos = new Vector3(x, spawnY, player.position.z + spawnDistanceAhead);
-        GameObject obj = Instantiate(prefab, spawnPos, prefab.transform.rotation);
-        Destroy(obj, 15f);
     }
 }

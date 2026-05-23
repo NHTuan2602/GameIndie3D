@@ -10,31 +10,39 @@ public class SignGateController : MonoBehaviour
     public Material safeMaterial;
     public Material[] dangerMaterials;
 
-    void Start()
+    void Awake()
     {
         AutoFindComponents();
     }
 
-    // ĐÃ FIX LỖI "HỒN LÌA KHỎI XÁC": Dời nguyên cái Cột (Column) đi, các phần con sẽ đi theo!
     public void SetLanePositions(float[] centers)
     {
         if (centers.Length < 4) return;
 
-        // Làn 1 (Trái ngoài cùng)
-        Transform col0 = FindDeepChild(transform, "Column_0");
-        if (col0) col0.position = new Vector3(transform.position.x + centers[0], col0.position.y, col0.position.z);
+        // Gọi hàm "Máy hút bụi" để tự động nắn lại toàn bộ 4 cột thẳng tắp theo code
+        AlignColumn("Column_0", centers[0]);
+        AlignColumn("Column_1", centers[1]);
+        AlignColumn("Column_2", centers[2]);
+        AlignColumn("Column_3", centers[3]);
+    }
 
-        // Làn 2 (Trái trong)
-        Transform col1 = FindDeepChild(transform, "Column_1");
-        if (col1) col1.position = new Vector3(transform.position.x + centers[1], col1.position.y, col1.position.z);
+    // ==========================================
+    // HÀM MỚI: TỰ ĐỘNG FIX LỖI "HỒN LÌA KHỎI XÁC"
+    // ==========================================
+    void AlignColumn(string colName, float targetWorldX)
+    {
+        Transform col = FindDeepChild(transform, colName);
+        if (col == null) return;
 
-        // Làn 3 (Phải trong)
-        Transform col2 = FindDeepChild(transform, "Column_2");
-        if (col2) col2.position = new Vector3(transform.position.x + centers[2], col2.position.y, col2.position.z);
+        // 1. Ép tất cả các object con (Biển báo, Cột sắt, Blocker) về thẳng hàng ngay giữa Column
+        // Bất chấp việc bạn lỡ tay kéo chúng lệch đi đâu trong cửa sổ Unity
+        foreach (Transform child in col)
+        {
+            child.localPosition = new Vector3(0, child.localPosition.y, child.localPosition.z);
+        }
 
-        // Làn 4 (Phải ngoài cùng)
-        Transform col3 = FindDeepChild(transform, "Column_3");
-        if (col3) col3.position = new Vector3(transform.position.x + centers[3], col3.position.y, col3.position.z);
+        // 2. Bứng nguyên cái Column (đã gọn gàng) đặt vào đúng tọa độ của Làn đường
+        col.position = new Vector3(targetWorldX, col.position.y, col.position.z);
     }
 
     Transform FindDeepChild(Transform parent, string targetName)
@@ -52,7 +60,6 @@ public class SignGateController : MonoBehaviour
 
     void AutoFindComponents()
     {
-        // Radar thò vào tận bên trong để gắp MeshRenderer dán hình và Blocker làm bẫy
         Transform b0 = FindDeepChild(transform, "Board_0");
         if (b0) signBoards[0] = b0.GetComponent<MeshRenderer>();
         Transform blk0 = FindDeepChild(transform, "Blocker_0");
@@ -76,32 +83,34 @@ public class SignGateController : MonoBehaviour
 
     public void SetupGateFor4Lanes(bool forceSafeOnLeft)
     {
-        int safeLaneIndex = 0;
+        // 1. Chọn ngẫu nhiên 2 làn bất kỳ (từ 0 đến 3) để làm đường sống
+        int safeLane1 = Random.Range(0, 4);
+        int safeLane2 = safeLane1;
 
-        if (forceSafeOnLeft)
+        // Đảm bảo làn sống thứ 2 không bị trùng với làn thứ 1
+        while (safeLane2 == safeLane1)
         {
-            // Ép người chơi phải lao sang 2 làn trái (ngược chiều)
-            safeLaneIndex = Random.Range(0, 2);
-        }
-        else
-        {
-            // Cho phép người chơi ở 2 làn phải (cùng chiều)
-            safeLaneIndex = Random.Range(2, 4);
+            safeLane2 = Random.Range(0, 4);
         }
 
-        // Đóng/Mở đường và Dán hình
+        // 2. Dán hình và bật/tắt bẫy
         for (int i = 0; i < 4; i++)
         {
-            if (i == safeLaneIndex)
+            // Kiểm tra xem làn hiện tại có phải là 1 trong 2 làn sống vừa quay ngẫu nhiên không
+            bool isSafeLane = (i == safeLane1 || i == safeLane2);
+
+            if (isSafeLane)
             {
                 if (signBoards[i] != null) signBoards[i].material = safeMaterial;
-                if (deathBlockers[i] != null) deathBlockers[i].SetActive(false); // Đường sống (Tắt tường tàng hình)
+                if (deathBlockers[i] != null) deathBlockers[i].SetActive(false);
             }
             else
             {
                 if (signBoards[i] != null && dangerMaterials.Length > 0)
+                {
                     signBoards[i].material = dangerMaterials[Random.Range(0, dangerMaterials.Length)];
-                if (deathBlockers[i] != null) deathBlockers[i].SetActive(true); // Đường chết (Bật tường tàng hình lên)
+                }
+                if (deathBlockers[i] != null) deathBlockers[i].SetActive(true);
             }
         }
     }

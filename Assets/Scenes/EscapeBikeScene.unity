@@ -143,7 +143,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1701562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,7 +184,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1701561}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -3319,7 +3319,7 @@ MonoBehaviour:
   roadPrefab: {fileID: 2113556605}
   player: {fileID: 3139154462895998818}
   chunkLength: 50
-  startChunks: 5
+  startChunks: 8
   safeZone: 60
 --- !u!4 &337974618
 Transform:
@@ -3349,34 +3349,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleSpawner
   laneCenters:
-  - 11.2
-  - -0.6
-  - -11.99
   - -23.65
-  dangerPrefabs:
-  - {fileID: 4513376245420728301, guid: 23e6d2151b73daf4d9fa864d342122de, type: 3}
-  - {fileID: 5709303475149400157, guid: 96966d961df01b54daf3b82d9b80f5ad, type: 3}
-  buffPrefabs:
+  - -11.89
+  - -0.6
+  - 11.2
+  leftVehicles:
   - {fileID: 1390025514114751936, guid: a38e0c68461b9b449bd05cf0968e0c64, type: 3}
   - {fileID: 2923546734930175036, guid: 28d77f9d826b6f54d8e2e62d61562170, type: 3}
-  brickPrefab: {fileID: 1448944355177938890, guid: 3a4e3b0704492b14bb0e8a100ee1b47d, type: 3}
-  trafficSignGatePrefab: {fileID: 2042321795}
-  highSpeedVehicles:
-  - {fileID: 2923546734930175036, guid: 28d77f9d826b6f54d8e2e62d61562170, type: 3}
+  startSpawnLeftAfter: 10
+  leftSpawnInterval: 2
+  rightVehicles:
+  - {fileID: 5709303475149400157, guid: 96966d961df01b54daf3b82d9b80f5ad, type: 3}
+  rightSpawnInterval: 2
+  specialItems:
+  - {fileID: 1448944355177938890, guid: 3a4e3b0704492b14bb0e8a100ee1b47d, type: 3}
+  - {fileID: 4513376245420728301, guid: 23e6d2151b73daf4d9fa864d342122de, type: 3}
+  specialSpawnInterval: 5
   recklessBikerPrefab: {fileID: 0}
   spawnDistanceBehind: -40
+  trafficSignGatePrefab: {fileID: 2042321795}
   gateInterval: 35
   gapDuration: 3
   gateLifeTime: 15
-  startSpawnBusAfter: 15
-  busSpawnInterval: 2
   player: {fileID: 3139154462895998818}
-  spawnDistanceAhead: 150
-  spawnInterval: 2
-  brickInterval: 6
-  buffChance: 0.266
+  spawnDistanceAhead: 300
   maxSpawnAttempts: 3
   clearanceBoxSize: {x: 1.5, y: 1, z: 20}
+  isReversed: 0
 --- !u!4 &339142566 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 186ad8f063dbf430da4d56ebc0cb14e0, type: 3}
@@ -4752,7 +4751,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 5.629999, y: 5.53, z: -93.4}
-  m_LocalScale: {x: 5.96, y: 0, z: 6.760001}
+  m_LocalScale: {x: 5.96, y: 1.45, z: 6.760001}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1707016585}
@@ -5548,7 +5547,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &593848663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5589,7 +5588,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593848662}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -7413,7 +7412,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 2000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -8896,7 +8895,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -17.9, y: 5.39364, z: -93.4}
-  m_LocalScale: {x: 5.96, y: 0, z: 6.76}
+  m_LocalScale: {x: 5.96, y: 1.45, z: 6.76}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 995887606}
@@ -14910,7 +14909,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 69438b262e6dfd44f970b32856ae415c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -23.650002
+      value: 11.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 69438b262e6dfd44f970b32856ae415c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -15461,7 +15460,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1659216702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15502,7 +15501,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1659216701}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -16809,7 +16808,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 16.32, y: 5.53, z: -93.4}
-  m_LocalScale: {x: 5.96, y: 0, z: 6.760001}
+  m_LocalScale: {x: 5.96, y: 1.45, z: 6.760001}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1444997360}
@@ -17740,7 +17739,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -29.99, y: 5.53, z: -93.4}
-  m_LocalScale: {x: 5.96, y: 0, z: 6.7600007}
+  m_LocalScale: {x: 5.96, y: 1.45, z: 6.7600007}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1365882769}
@@ -18940,7 +18939,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1904294683
 Transform:
   m_ObjectHideFlags: 0
@@ -18996,7 +18995,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1904294682}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -20349,7 +20348,7 @@ Transform:
   m_GameObject: {fileID: 2042321795}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.33396, z: 69.38852}
+  m_LocalPosition: {x: 0, y: 5.33396, z: -29.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -21294,7 +21293,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4147477453379218564, guid: 51fcdf45925b4e345a2feacbe722aa19, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.2
+      value: -23.65
       objectReference: {fileID: 0}
     - target: {fileID: 4419716542217914073, guid: 51fcdf45925b4e345a2feacbe722aa19, type: 3}
       propertyPath: m_Enabled
@@ -21314,7 +21313,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5052184490293809890, guid: 51fcdf45925b4e345a2feacbe722aa19, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.6
+      value: -11.99
       objectReference: {fileID: 0}
     - target: {fileID: 5082981665584893482, guid: 51fcdf45925b4e345a2feacbe722aa19, type: 3}
       propertyPath: m_LocalPosition.x
@@ -21330,7 +21329,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6895161492149834773, guid: 51fcdf45925b4e345a2feacbe722aa19, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.99
+      value: -0.6
       objectReference: {fileID: 0}
     - target: {fileID: 7204043518191010201, guid: 51fcdf45925b4e345a2feacbe722aa19, type: 3}
       propertyPath: m_Name
