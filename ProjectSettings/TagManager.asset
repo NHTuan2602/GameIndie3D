@@ -24,6 +24,7 @@ TagManager:
   - AC_NhaCai
   - AC_PheThang
   - AC_PheThua
+  - WarningIcon
   layers:
   - Default
   - TransparentFX

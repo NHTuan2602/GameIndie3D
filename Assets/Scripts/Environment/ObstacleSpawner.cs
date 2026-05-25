@@ -135,7 +135,7 @@ public class ObstacleSpawner : MonoBehaviour
                 float spawnY = prefabToSpawn.transform.position.y;
                 Vector3 spawnPos = new Vector3(randomLaneX, spawnY, player.position.z + spawnDistanceAhead);
                 GameObject obj = Instantiate(prefabToSpawn, spawnPos, prefabToSpawn.transform.rotation);
-                Destroy(obj, 20f);
+                Destroy(obj, 40f);
                 break;
             }
         }
@@ -150,7 +150,7 @@ public class ObstacleSpawner : MonoBehaviour
         float laneRightX = laneCenters[maxLane - 1];
 
         Vector3 spawnPos = new Vector3((laneLeftX + laneRightX) / 2f, 1f, player.position.z + spawnDistanceBehind);
-        GameObject bikerObj = Instantiate(recklessBikerPrefab, spawnPos, Quaternion.identity);
+        GameObject bikerObj = Instantiate(recklessBikerPrefab, spawnPos, recklessBikerPrefab.transform.rotation);
 
         RecklessBiker bikerScript = bikerObj.GetComponent<RecklessBiker>();
         if (bikerScript != null) bikerScript.SetupLanes(laneLeftX, laneRightX);
@@ -186,7 +186,7 @@ public class ObstacleSpawner : MonoBehaviour
                 // Nếu ép sang làn ngược chiều, khóa họng xe ngược chiều 4 giây
                 if (forceOncoming) safeZoneTimer = 4f;
             }
-            Destroy(gateObj, 15f);
+            Destroy(gateObj, 30f);
 
             // BẮT ĐẦU ĐẾM NGƯỢC 5 GIÂY ĐỂ ĐẢO CHIỀU GIAO THÔNG
             StartCoroutine(SwapTrafficRoutine(5f));
