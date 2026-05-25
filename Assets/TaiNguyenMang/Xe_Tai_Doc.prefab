@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df5763d704f76ba48b7ef049bcae0f14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyVehicle
-  driveSpeed: 5
+  driveSpeed: 10
   headLights: []
   flashSpeed: 15
   baseIntensity: 50

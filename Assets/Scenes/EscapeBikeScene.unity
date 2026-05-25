@@ -3360,6 +3360,7 @@ MonoBehaviour:
   leftSpawnInterval: 2
   rightVehicles:
   - {fileID: 5709303475149400157, guid: 96966d961df01b54daf3b82d9b80f5ad, type: 3}
+  - {fileID: 1390025514114751936, guid: 26d8223c2987f004dac7dac7cd2b1d51, type: 3}
   rightSpawnInterval: 2
   specialItems:
   - {fileID: 1448944355177938890, guid: 3a4e3b0704492b14bb0e8a100ee1b47d, type: 3}
