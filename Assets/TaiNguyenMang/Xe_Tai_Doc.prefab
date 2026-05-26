@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1939976864901868012}
   - component: {fileID: 596758582582542971}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Diem vo hinh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5400628461227149772}
-  - component: {fileID: -4000604449121269178}
+  - component: {fileID: -7013262242867999493}
   m_Layer: 0
   m_Name: Xe_Tai_Doc
   m_TagString: Buff
@@ -147,7 +147,7 @@ Transform:
   - {fileID: 7246663512018927918}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-4000604449121269178
+--- !u!114 &-7013262242867999493
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -156,16 +156,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 5709303475149400157}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df5763d704f76ba48b7ef049bcae0f14, type: 3}
+  m_Script: {fileID: 11500000, guid: e6015655ca5989d47bdd195833e67516, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyVehicle
-  driveSpeed: 10
-  headLights: []
-  flashSpeed: 15
-  baseIntensity: 50
-  maxIntensity: 300
-  audioSource: {fileID: 0}
-  passBySound: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::SmartTrafficVehicle
+  defaultSpeed: 20
+  sensorLength: 25
+  safeDistance: 8
+  sensorOffset: {x: 0, y: 1, z: 0}
 --- !u!1 &8648622715835192378
 GameObject:
   m_ObjectHideFlags: 0

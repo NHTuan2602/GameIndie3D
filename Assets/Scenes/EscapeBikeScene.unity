@@ -244,7 +244,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.56000024, y: -2.8939602, z: -91.22}
-  m_LocalScale: {x: 11.6, y: 26.28, z: 4}
+  m_LocalScale: {x: 11.6, y: 9.1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1444997360}
@@ -3460,16 +3460,19 @@ MonoBehaviour:
   - {fileID: 2923546734930175036, guid: 28d77f9d826b6f54d8e2e62d61562170, type: 3}
   startSpawnLeftAfter: 10
   leftSpawnInterval: 2
+  leftSpawnChance: 79.4
   rightVehicles:
   - {fileID: 5709303475149400157, guid: 96966d961df01b54daf3b82d9b80f5ad, type: 3}
   - {fileID: 1390025514114751936, guid: 26d8223c2987f004dac7dac7cd2b1d51, type: 3}
   rightSpawnInterval: 2
+  rightSpawnChance: 33.6
   specialItems:
   - {fileID: 1448944355177938890, guid: 3a4e3b0704492b14bb0e8a100ee1b47d, type: 3}
   - {fileID: 4513376245420728301, guid: 23e6d2151b73daf4d9fa864d342122de, type: 3}
   specialSpawnInterval: 5
   recklessBikerPrefab: {fileID: 5136333863722176169, guid: 0b19c7041ca391b41aa110666767bbbe, type: 3}
   spawnDistanceBehind: -40
+  bikerSpawnInterval: 8
   trafficSignGatePrefab: {fileID: 2042321795}
   gateInterval: 35
   gapDuration: 3
@@ -5751,7 +5754,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -12.234999, y: -2.8939605, z: -91.22}
-  m_LocalScale: {x: 11.38, y: 26.28, z: 4}
+  m_LocalScale: {x: 11.38, y: 9.1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 995887606}
@@ -15664,7 +15667,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 12.74, y: -2.89396, z: -91.22}
-  m_LocalScale: {x: 15, y: 26.28, z: 4}
+  m_LocalScale: {x: 15, y: 9.1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1707016585}
@@ -19128,7 +19131,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -23.8, y: -2.8939605, z: -91.22}
-  m_LocalScale: {x: 11.75, y: 26.28, z: 4}
+  m_LocalScale: {x: 11.75, y: 9.1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1365882769}
