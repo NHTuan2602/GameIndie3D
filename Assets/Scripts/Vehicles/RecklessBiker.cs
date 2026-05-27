@@ -8,20 +8,31 @@ public class RecklessBiker : MonoBehaviour
     public float forwardSpeed = 90f;
     public float weaveFrequency = 4f;
 
+    [Header("Nhân vật NPC (MỚI)")]
+    public GameObject npcModel; // Chỗ để gắn thằng lái xe vào
+
     [Header("Hệ thống Cảnh báo")]
     public Image warningIcon;
     public AudioSource sirenSource;
     public AudioClip warningBeep;
 
-    [Header("Hiệu ứng Tai nạn (MỚI)")]
+    [Header("Hiệu ứng Tai nạn")]
     public AudioClip screamCrashSound;
     private bool isCrashed = false;
+
+    // Khai báo 2 hướng xoay độc lập cho xe và người
     private Vector3 crashSpinDirection;
+    private Vector3 npcSpinDirection;
 
     private Transform player;
     private float midPoint;
     private float amplitude;
     private bool isReady = false;
+
+    private bool isWeaving = false;
+    private float straightLineX;
+    private float weaveStartTime;
+    private float phaseOffset;
 
     public void SetupLanes(float leftLaneX, float rightLaneX)
     {
@@ -41,8 +52,21 @@ public class RecklessBiker : MonoBehaviour
             if (iconObj != null) warningIcon = iconObj.GetComponent<Image>();
         }
 
+        if (player != null)
+        {
+            straightLineX = player.position.x;
+        }
+        else
+        {
+            straightLineX = midPoint;
+        }
+
         StartCoroutine(WarningRoutine());
+
+        // Tạo góc lộn nhào ngẫu nhiên cho Xe (Lật ngang lộn xộn)
         crashSpinDirection = new Vector3(Random.Range(300, 600), Random.Range(200, 500), Random.Range(100, 400));
+        // Tạo góc lộn nhào cho Người (Xoay đầu chúi nhủi về phía trước)
+        npcSpinDirection = new Vector3(Random.Range(500, 800), Random.Range(-200, 200), Random.Range(-100, 100));
     }
 
     IEnumerator WarningRoutine()
@@ -58,7 +82,6 @@ public class RecklessBiker : MonoBehaviour
 
         while (timer < 1.5f)
         {
-            // FIX LỖI 1: Nếu té giữa chừng, PHẢI TẮT CHẤM THAN trước khi ngắt vòng lặp!
             if (isCrashed)
             {
                 if (warningIcon != null) warningIcon.enabled = false;
@@ -79,22 +102,52 @@ public class RecklessBiker : MonoBehaviour
 
     void Update()
     {
+        // NẾU BỊ TÉ, CHẠY THUẬT TOÁN "MỖI NGƯỜI 1 NẺO"
         if (isCrashed)
         {
-            transform.Translate(Vector3.up * 8f * Time.deltaTime, Space.World);
-            transform.Translate(Vector3.back * 15f * Time.deltaTime, Space.World);
+            // 1. CHIẾC XE MÁY: Bị khựng lại, dội ngược ra sau và văng lật ngang
+            transform.Translate(Vector3.up * 5f * Time.deltaTime, Space.World);
+            transform.Translate(Vector3.back * 10f * Time.deltaTime, Space.World);
             transform.Rotate(crashSpinDirection * Time.deltaTime);
-            return;
+
+            // 2. NHÂN VẬT LÁI XE: Bị quán tính tống mạnh lên cao, bay vút về phía trước và dạt sang phải
+            if (npcModel != null)
+            {
+                npcModel.transform.Translate(Vector3.up * 15f * Time.deltaTime, Space.World);
+                npcModel.transform.Translate(Vector3.forward * 20f * Time.deltaTime, Space.World);
+                npcModel.transform.Translate(Vector3.right * 8f * Time.deltaTime, Space.World);
+                npcModel.transform.Rotate(npcSpinDirection * Time.deltaTime);
+            }
+
+            return; // Khóa di chuyển bình thường
         }
 
         if (player == null || !isReady) return;
 
         transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
-        float newX = midPoint + Mathf.Sin(Time.time * weaveFrequency) * amplitude;
-        transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+
+        if (!isWeaving)
+        {
+            transform.position = new Vector3(straightLineX, transform.position.y, transform.position.z);
+
+            if (transform.position.z > player.position.z + 2f)
+            {
+                isWeaving = true;
+                weaveStartTime = Time.time;
+                float ratio = Mathf.Clamp((straightLineX - midPoint) / amplitude, -1f, 1f);
+                phaseOffset = Mathf.Asin(ratio);
+            }
+        }
+        else
+        {
+            float timeSinceWeave = Time.time - weaveStartTime;
+            float newX = midPoint + Mathf.Sin(timeSinceWeave * weaveFrequency + phaseOffset) * amplitude;
+            transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+        }
 
         if (transform.position.z > player.position.z + 250f)
         {
+            if (npcModel != null) Destroy(npcModel); // Dọn rác
             Destroy(gameObject);
         }
     }
@@ -116,15 +169,29 @@ public class RecklessBiker : MonoBehaviour
 
             if (sirenSource != null) sirenSource.Stop();
 
-            // FIX LỖI 2: Phát âm thanh tại vị trí Camera thay vì vị trí chiếc xe bị rớt lại
-            // Cài đặt âm lượng 2f (Gấp đôi) để nghe tiếng hét chói tai cực rõ!
             if (screamCrashSound != null && Camera.main != null)
             {
-                AudioSource.PlayClipAtPoint(screamCrashSound, Camera.main.transform.position, 2f);
+                GameObject audioObj = new GameObject("ScreamAudio_2D");
+                AudioSource source = audioObj.AddComponent<AudioSource>();
+                source.clip = screamCrashSound;
+                source.spatialBlend = 0f;
+                source.volume = 0.7f;
+                source.Play();
+                Destroy(audioObj, screamCrashSound.length + 0.1f);
             }
 
             Collider col = GetComponent<Collider>();
             if (col != null) col.enabled = false;
+
+            // BƯỚC ĐỘT PHÁ: "LY HÔN" CHIẾC XE VÀ THẰNG NPC
+            if (npcModel != null)
+            {
+                // Cắt đứt quan hệ cha-con. Từ giờ tao không còn ngồi trên xe nữa!
+                npcModel.transform.SetParent(null);
+
+                // Tiêu hủy xác thằng NPC sau 2.5 giây để không thành rác
+                Destroy(npcModel, 2.5f);
+            }
 
             Destroy(gameObject, 2.5f);
         }
