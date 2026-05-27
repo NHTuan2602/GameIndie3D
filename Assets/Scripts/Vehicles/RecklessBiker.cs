@@ -8,8 +8,8 @@ public class RecklessBiker : MonoBehaviour
     public float forwardSpeed = 90f;
     public float weaveFrequency = 4f;
 
-    [Header("Nhân vật NPC (MỚI)")]
-    public GameObject npcModel; // Chỗ để gắn thằng lái xe vào
+    [Header("Nhân vật NPC")]
+    public GameObject npcModel;
 
     [Header("Hệ thống Cảnh báo")]
     public Image warningIcon;
@@ -20,7 +20,6 @@ public class RecklessBiker : MonoBehaviour
     public AudioClip screamCrashSound;
     private bool isCrashed = false;
 
-    // Khai báo 2 hướng xoay độc lập cho xe và người
     private Vector3 crashSpinDirection;
     private Vector3 npcSpinDirection;
 
@@ -33,6 +32,9 @@ public class RecklessBiker : MonoBehaviour
     private float straightLineX;
     private float weaveStartTime;
     private float phaseOffset;
+
+    // BIẾN MỚI: Trạng thái tàng hình khi đuổi theo từ xa
+    private bool isCatchingUp = true;
 
     public void SetupLanes(float leftLaneX, float rightLaneX)
     {
@@ -52,20 +54,12 @@ public class RecklessBiker : MonoBehaviour
             if (iconObj != null) warningIcon = iconObj.GetComponent<Image>();
         }
 
-        if (player != null)
-        {
-            straightLineX = player.position.x;
-        }
-        else
-        {
-            straightLineX = midPoint;
-        }
+        if (player != null) straightLineX = player.position.x;
+        else straightLineX = midPoint;
 
         StartCoroutine(WarningRoutine());
 
-        // Tạo góc lộn nhào ngẫu nhiên cho Xe (Lật ngang lộn xộn)
         crashSpinDirection = new Vector3(Random.Range(300, 600), Random.Range(200, 500), Random.Range(100, 400));
-        // Tạo góc lộn nhào cho Người (Xoay đầu chúi nhủi về phía trước)
         npcSpinDirection = new Vector3(Random.Range(500, 800), Random.Range(-200, 200), Random.Range(-100, 100));
     }
 
@@ -102,15 +96,12 @@ public class RecklessBiker : MonoBehaviour
 
     void Update()
     {
-        // NẾU BỊ TÉ, CHẠY THUẬT TOÁN "MỖI NGƯỜI 1 NẺO"
         if (isCrashed)
         {
-            // 1. CHIẾC XE MÁY: Bị khựng lại, dội ngược ra sau và văng lật ngang
             transform.Translate(Vector3.up * 5f * Time.deltaTime, Space.World);
             transform.Translate(Vector3.back * 10f * Time.deltaTime, Space.World);
             transform.Rotate(crashSpinDirection * Time.deltaTime);
 
-            // 2. NHÂN VẬT LÁI XE: Bị quán tính tống mạnh lên cao, bay vút về phía trước và dạt sang phải
             if (npcModel != null)
             {
                 npcModel.transform.Translate(Vector3.up * 15f * Time.deltaTime, Space.World);
@@ -118,11 +109,16 @@ public class RecklessBiker : MonoBehaviour
                 npcModel.transform.Translate(Vector3.right * 8f * Time.deltaTime, Space.World);
                 npcModel.transform.Rotate(npcSpinDirection * Time.deltaTime);
             }
-
-            return; // Khóa di chuyển bình thường
+            return;
         }
 
         if (player == null || !isReady) return;
+
+        // KIỂM TRA BẤT TỬ: Nếu đã tiến sát lưng người chơi ở khoảng cách 15m, Tắt bất tử!
+        if (isCatchingUp && transform.position.z >= player.position.z - 15f)
+        {
+            isCatchingUp = false;
+        }
 
         transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
 
@@ -147,7 +143,7 @@ public class RecklessBiker : MonoBehaviour
 
         if (transform.position.z > player.position.z + 250f)
         {
-            if (npcModel != null) Destroy(npcModel); // Dọn rác
+            if (npcModel != null) Destroy(npcModel);
             Destroy(gameObject);
         }
     }
@@ -165,8 +161,10 @@ public class RecklessBiker : MonoBehaviour
 
         if (other.CompareTag("Obstacle"))
         {
-            isCrashed = true;
+            // NẾU ĐANG BẤT TỬ MÀ ĐỤNG TRÚNG XE TẢI -> XUYÊN QUA LUÔN (KHÔNG LÀM GÌ CẢ)
+            if (isCatchingUp) return;
 
+            isCrashed = true;
             if (sirenSource != null) sirenSource.Stop();
 
             if (screamCrashSound != null && Camera.main != null)
@@ -175,7 +173,7 @@ public class RecklessBiker : MonoBehaviour
                 AudioSource source = audioObj.AddComponent<AudioSource>();
                 source.clip = screamCrashSound;
                 source.spatialBlend = 0f;
-                source.volume = 0.7f;
+                source.volume = 1f;
                 source.Play();
                 Destroy(audioObj, screamCrashSound.length + 0.1f);
             }
@@ -183,16 +181,11 @@ public class RecklessBiker : MonoBehaviour
             Collider col = GetComponent<Collider>();
             if (col != null) col.enabled = false;
 
-            // BƯỚC ĐỘT PHÁ: "LY HÔN" CHIẾC XE VÀ THẰNG NPC
             if (npcModel != null)
             {
-                // Cắt đứt quan hệ cha-con. Từ giờ tao không còn ngồi trên xe nữa!
                 npcModel.transform.SetParent(null);
-
-                // Tiêu hủy xác thằng NPC sau 2.5 giây để không thành rác
                 Destroy(npcModel, 2.5f);
             }
-
             Destroy(gameObject, 2.5f);
         }
     }

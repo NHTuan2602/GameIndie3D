@@ -20555,6 +20555,8 @@ MonoBehaviour:
   dangerMaterials:
   - {fileID: 2100000, guid: 8eb3d2ae4a78a2545a8eafce92b9d409, type: 2}
   - {fileID: 2100000, guid: d39358357e45c6d419e6070439125180, type: 2}
+  safeRoadMaterial: {fileID: 0}
+  dangerRoadMaterial: {fileID: 0}
 --- !u!4 &2046616152 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 186ad8f063dbf430da4d56ebc0cb14e0, type: 3}
