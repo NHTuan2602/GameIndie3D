@@ -195,10 +195,12 @@ public class ObstacleSpawner : MonoBehaviour
             if (gateScript != null)
             {
                 gateScript.SetLanePositions(laneCenters);
-                bool forceOncoming = (Random.value > 0.5f);
-                bool forceLeft = isReversed ? !forceOncoming : forceOncoming;
-                gateScript.SetupGateFor4Lanes(forceLeft);
-                if (forceOncoming) safeZoneTimer = 4f;
+
+                // CHÌA KHÓA Ở ĐÂY: Báo cho Cổng biết trạng thái tiếp theo để nó bật Mũi Tên
+                bool upcomingReverseState = !isReversed;
+                gateScript.SetupGateFor4Lanes(upcomingReverseState);
+
+                safeZoneTimer = 4f;
             }
             Destroy(gateObj, 40f);
             StartCoroutine(SwapTrafficRoutine(5f));
