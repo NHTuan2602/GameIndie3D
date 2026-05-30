@@ -16,9 +16,8 @@ MonoBehaviour:
   jobOrAge: "Cu\u1ED9c \u0111\u1EDDi phi\xEAu b\u1EA1c \"t\u1EC9\""
   avatar: {fileID: 21300000, guid: ead17c906eee9a1439d2ccf0d5d25424, type: 3}
   isTroll: 1
-  staminaCost: 20
-  potentialReward: 5000000
-  karmaPenalty: 20
+  potentialReward: 0
+  karmaPenalty: 0
   difficultyLevel: 0
   rounds:
   - victimMessage: "Ch\xE0o b\u1EA1n, d\u1EA1o n\xE0y s\u1EF1 nghi\u1EC7p \u0111ang

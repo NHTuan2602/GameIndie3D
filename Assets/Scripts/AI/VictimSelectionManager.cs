@@ -59,9 +59,6 @@ public class VictimSelectionManager : MonoBehaviour
                 nameTexts[i].text = tempChoices[i].victimName;
                 jobTexts[i].text = tempChoices[i].jobOrAge;
 
-                // ==========================================
-                // ĐÃ FIX: CHỈ CÒN HIỆN ĐỘ KHÓ, BỎ THỂ LỰC
-                // ==========================================
                 string diffVN = GetDifficultyString(tempChoices[i].difficultyLevel);
                 rewardTexts[i].text = $"Độ khó: <color=#FFFF00>{diffVN}</color>";
 
@@ -128,6 +125,10 @@ public class VictimSelectionManager : MonoBehaviour
 
         minigameController.maxMoneyReward = chosenVictim.potentialReward;
         minigameController.karmaPenalty = chosenVictim.karmaPenalty;
-        minigameController.StartMiniGame(chosenVictim.rounds, chosenVictim.victimName, chosenVictim.avatar);
+
+        // ==========================================
+        // ĐÃ FIX: TRUYỀN THÊM isTroll VÀO HỆ THỐNG
+        // ==========================================
+        minigameController.StartMiniGame(chosenVictim.rounds, chosenVictim.victimName, chosenVictim.avatar, chosenVictim.isTroll);
     }
 }

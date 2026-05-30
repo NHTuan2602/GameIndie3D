@@ -16,7 +16,6 @@ MonoBehaviour:
   jobOrAge: "S\u1EDD trym m\u01A1"
   avatar: {fileID: 21300000, guid: ead17c906eee9a1439d2ccf0d5d25424, type: 3}
   isTroll: 1
-  staminaCost: 20
   potentialReward: 0
   karmaPenalty: 0
   difficultyLevel: 0

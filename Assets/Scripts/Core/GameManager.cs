@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     [Header("Thông định Nhân vật")]
     public string playerName = "Tuấn";
 
-    [Header("Chỉ số Sinh tồn (ĐÃ BỎ THỂ LỰC)")]
+    [Header("Chỉ số Sinh tồn")]
     public int hp = 100;
     public int maxHp = 100;
     public bool hasAskedToContinue = false;
@@ -36,13 +36,11 @@ public class GameManager : MonoBehaviour
 
     [Header("Hệ thống Lương & KPI")]
     public int currentDay = 1;
-    public int maxDays = 5;
+    public int maxDays = 6;
     public int attemptedScamsToday = 0;
     public int successfulScamsToday = 0;
 
-    [Tooltip("Tổng số vụ lừa thành công trong cả game")]
     public int totalSuccessfulScamsAllDays = 0;
-    [Tooltip("Lừa thành công bao nhiêu người thì bị Công an tóm?")]
     public int policeArrestThreshold = 15;
 
     public int targetKPI = 3;
@@ -52,7 +50,7 @@ public class GameManager : MonoBehaviour
     public int exchangeRateVND = 25000;
     public int consecutiveScamFails = 0;
 
-    [Header("Vật phẩm Vượt ngục (Chỉ còn 4 món)")]
+    [Header("Vật phẩm Vượt ngục")]
     public bool hasNotebook = false;
     public bool hasNippers = false;
     public bool hasRope = false;
@@ -76,7 +74,7 @@ public class GameManager : MonoBehaviour
     public bool isCasinoLocked = false;
     public bool isBlackCreditActive = false;
 
-    [Header("Sự kiện Đêm 5")]
+    [Header("Sự kiện Đêm 5/6")]
     public bool isEscapeStart = false;
     public int escapeProgress = 0;
     public bool isRedAlert = false;
@@ -125,12 +123,14 @@ public class GameManager : MonoBehaviour
 
     public bool StartScammingVictim(int dummyStaminaCost = 0)
     {
-        if (hp <= 0) { CheckDeath(); return false; }
+        if (hp <= 0 && currentDay < 6) { CheckDeath(); return false; }
         return true;
     }
 
     public void OnScamSuccess(float rawVNDEarned, int dummyKarmaLost = 0)
     {
+        if (hp <= 0 && currentDay < 6) return;
+
         attemptedScamsToday++;
         successfulScamsToday++;
         totalSuccessfulScamsAllDays++;
@@ -154,30 +154,29 @@ public class GameManager : MonoBehaviour
         {
             TakeShockDamage(10);
         }
-        CheckShiftProgress();
+
+        if (hp > 0 || currentDay >= 6) CheckShiftProgress();
     }
 
     private void CheckShiftProgress()
     {
+        if (hp <= 0 && currentDay < 6) return;
+
         if (currentPhase == GamePhase.Morning && attemptedScamsToday >= 3)
             TransitionToPhase(GamePhase.Noon);
         else if (currentPhase == GamePhase.Afternoon && attemptedScamsToday >= maxAttemptsPerDay)
         {
             ShiftSummaryUI summaryUI = FindFirstObjectByType<ShiftSummaryUI>(FindObjectsInactive.Include);
 
-            if (summaryUI != null)
-            {
-                summaryUI.ShowForceEndShift();
-            }
+            if (summaryUI != null) summaryUI.ShowForceEndShift();
             else
             {
                 EndDaySummary();
-                TransitionToPhase(GamePhase.Night);
+                if (hp > 0 || currentDay >= 6) TransitionToPhase(GamePhase.Night);
             }
         }
         else
         {
-            
             VictimSelectionManager vsm = FindFirstObjectByType<VictimSelectionManager>(FindObjectsInactive.Include);
             if (vsm != null) vsm.ShowSelectionUI(currentDay);
         }
@@ -230,7 +229,6 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
 
         ConfiscateAllItems();
-
         StartCoroutine(ShockSequenceRoutine());
     }
 
@@ -257,10 +255,7 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 0f;
 
-        if (caughtPanelUI != null)
-        {
-            caughtPanelUI.SetActive(true);
-        }
+        if (caughtPanelUI != null) caughtPanelUI.SetActive(true);
     }
 
     public void ClickSangNgayHomSau()
@@ -268,7 +263,13 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        hp = maxHp;
+
+        // Chỉ bơm đầy máu nếu chưa tới Ngày 6. Qua Ngày 6 phải tự sinh tồn!
+        if (currentDay < maxDays - 1)
+        {
+            hp = maxHp;
+        }
+
         AdvanceToNextDay();
     }
 
@@ -276,14 +277,18 @@ public class GameManager : MonoBehaviour
 
     public void SleepThroughNight()
     {
-        hp = Mathf.Min(maxHp, hp + 10);
+        if (currentDay < maxDays - 1)
+        {
+            hp = Mathf.Min(maxHp, hp + 10);
+        }
         AdvanceToNextDay();
     }
 
     public void AdvanceToNextDay()
     {
-        if (currentDay == 5)
+        if (currentDay >= maxDays - 1)
         {
+            currentDay = 6; // Ép mốc Ngày 6
             EvaluateEndings();
             return;
         }
@@ -314,39 +319,55 @@ public class GameManager : MonoBehaviour
         int itemCount = (hasNotebook ? 1 : 0) + (hasNippers ? 1 : 0) + (hasRope ? 1 : 0) + (hasKey ? 1 : 0);
         bool failedStealth = caughtCountThisNight >= maxCaughtBeforeReset;
 
+        // ========================================================
+        // ĐÃ FIX: MÁU DƯỚI 20 Ở NGÀY 6 -> ÉP NHẬN ENDING DEATH (BI THẢM)
+        // ========================================================
+        if (hp < 20)
+        {
+            currentEnding = EndingType.Death;
+            SceneManager.LoadScene("EndingScene");
+            return;
+        }
+
+        // ========================================================
+        // XÉT LẦN LƯỢT CÁC ENDING KHÁC KHI MÁU >= 20
+        // ========================================================
         if (isBlackCreditActive)
         {
             currentEnding = EndingType.BadCredit;
             SceneManager.LoadScene("EndingScene");
         }
-        // Đủ 4 món và KHÔNG BỊ BẮT -> Đua xe tẩu thoát
         else if (itemCount == 4 && !failedStealth)
         {
             Debug.Log("<color=green>TRỐN THOÁT HOÀN HẢO: LUÂN CHUYỂN QUA MINIGAME ĐUA XE ĐẠP!</color>");
             SceneManager.LoadScene("EscapeCyclingScene");
         }
-        // FIX Lưới trời: Lừa >= 15 người và KHÔNG CÓ món đồ nào
+        else if (itemCount >= 3)
+        {
+            // Bị bắt Đêm 5 (failedStealth) nhưng vẫn cầm 4 món, HOẶC có 3 món
+            // Đều rơi vào Kịch bản Bạo Loạn Tẩu Thoát (RiotSurvivor)
+            currentEnding = EndingType.RiotSurvivor;
+            SceneManager.LoadScene("EndingScene");
+        }
         else if (totalSuccessfulScamsAllDays >= policeArrestThreshold && itemCount == 0)
         {
             currentEnding = EndingType.Arrested;
             SceneManager.LoadScene("EndingScene");
         }
-        // Gặp bạo loạn khi có >= 3 món
-        else if (itemCount >= 3)
-        {
-            currentEnding = EndingType.RiotSurvivor;
-            SceneManager.LoadScene("EndingScene");
-        }
         else
         {
+            // Trường hợp còn lại: Thể lực > 20 nhưng ít hơn 3 món đồ -> Bi thảm
             currentEnding = EndingType.Death;
             SceneManager.LoadScene("EndingScene");
         }
     }
 
+    // ========================================================
+    // ĐÃ FIX: CHỈ TỰ ĐỘNG GIẾT KHI MÁU = 0 TỪ NGÀY 1 -> NGÀY 5
+    // ========================================================
     private void CheckDeath()
     {
-        if (hp <= 0)
+        if (hp <= 0 && currentDay < 6)
         {
             hp = 0;
             currentEnding = EndingType.Death;
@@ -370,14 +391,8 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        if (isNewDay && DayTransitionManager.instance != null)
-        {
-            DayTransitionManager.instance.StartTransition(sceneName);
-        }
-        else
-        {
-            SceneManager.LoadScene(sceneName);
-        }
+        if (isNewDay && DayTransitionManager.instance != null) DayTransitionManager.instance.StartTransition(sceneName);
+        else SceneManager.LoadScene(sceneName);
     }
 
     public void ConfiscateAllItems()

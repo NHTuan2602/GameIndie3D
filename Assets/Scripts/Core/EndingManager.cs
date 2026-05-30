@@ -13,7 +13,13 @@ public class EndingManager : MonoBehaviour
     [Header("--- UI CHỮ ---")]
     public TextMeshProUGUI txtDayLabel;
     public TextMeshProUGUI txtDialogue;
+
+    [Header("--- UI NÚT BẤM ---")]
     public Button btnReturnMenu;
+    public Button btnRestartDay;
+
+    [Header("--- TÊN SCENE CHƠI GAME CHÍNH ---")]
+    public string mainGameplaySceneName = "ScamScreen";
 
     [Header("--- UI HÌNH ẢNH ENDING ---")]
     public Image imgEndingCard;
@@ -37,7 +43,11 @@ public class EndingManager : MonoBehaviour
     void Start()
     {
         if (btnReturnMenu != null) btnReturnMenu.gameObject.SetActive(false);
+        if (btnRestartDay != null) btnRestartDay.gameObject.SetActive(false);
+
+        // Tạm thời tắt các UI chữ lúc mới Load Scene
         if (txtDayLabel != null) txtDayLabel.gameObject.SetActive(false);
+        if (txtDialogue != null) txtDialogue.gameObject.SetActive(false);
 
         EndingType endingToPlay = GameManager.instance != null ? GameManager.instance.currentEnding : EndingType.None;
 
@@ -50,6 +60,9 @@ public class EndingManager : MonoBehaviour
 
         if (btnReturnMenu != null)
             btnReturnMenu.onClick.AddListener(ReturnToMainMenu);
+
+        if (btnRestartDay != null)
+            btnRestartDay.onClick.AddListener(RestartCurrentDay);
     }
 
     void SetupEnding(EndingType ending)
@@ -69,7 +82,6 @@ public class EndingManager : MonoBehaviour
                 break;
 
             case EndingType.RiotSurvivor:
-                // Tính số lượng đồ đang có trong tay người chơi lúc này
                 int itemCollected = 0;
                 if (GameManager.instance != null)
                 {
@@ -79,31 +91,38 @@ public class EndingManager : MonoBehaviour
                                     (GameManager.instance.hasKey ? 1 : 0);
                 }
 
-                // FIX: Gộp chung 3 và 4 món vào 1 ending Bạo Loạn Tẩu Thoát thành công
                 if (itemCollected >= 3)
                 {
                     dayLabel = "BẠO LOẠN TẨU THOÁT";
-                    finalDialogue = "Khu trại xảy ra bạo loạn lớn! Dù trước đó bị lính gác phát hiện, nhưng nhờ sở hữu đủ công cụ sinh tồn cốt lõi, bạn đã lợi dụng trận hỗn chiến để tự cắt rào, bẻ khóa và trốn thoát thành công khỏi địa ngục!";
-                    finalSprite = sprTrueEscape; // Sử dụng hình trốn thoát
-                    finalBgm = bgmTrueEscape;    // Nhạc hào hùng chiến thắng
+                    finalDialogue = "Khu trại xảy ra bạo loạn lớn! Dù đêm trước đó bị lính gác phát hiện, nhưng nhờ giữ được đủ công cụ sinh tồn cốt lõi, bạn đã lợi dụng trận hỗn chiến để tự cắt rào, bẻ khóa và trốn thoát thành công khỏi địa ngục!";
+                    finalSprite = sprTrueEscape;
+                    finalBgm = bgmTrueEscape;
                 }
                 else
                 {
-                    // Fallback an toàn: Đáng lẽ GameManager đã đưa nhánh <=2 món sang Death. 
-                    // Nhưng nếu rớt vào đây, nó sẽ tự trả về kết cục bi thảm do thiếu đồ.
                     dayLabel = "KẾT CỤC BI THẢM";
                     finalDialogue = "Khu trại xảy ra bạo loạn lớn... Vì chỉ gom được quá ít vật dụng phòng thân, bạn đã không thể sống sót qua cuộc hỗn chiến. BẠN ĐÃ BIẾN MẤT KHÔNG ĐỂ LẠI DẤU VẾT...";
                     finalSprite = sprDeath;
                     finalBgm = bgmDeath;
                 }
 
-                // Tiếng ồn bạo loạn chung cho nhánh này
                 if (sfxAudioSource != null && riotSound != null) sfxAudioSource.PlayOneShot(riotSound);
                 break;
 
             case EndingType.Death:
-                dayLabel = "KẾT CỤC BI THẢM";
-                finalDialogue = "Chống đối thất bại, máu xuống quá thấp hoặc thiếu công cụ sinh tồn... BẠN ĐÃ BIẾN MẤT KHÔNG ĐỂ LẠI DẤU VẾT...";
+                int currentDay = GameManager.instance != null ? GameManager.instance.currentDay : 1;
+
+                if (currentDay < 6)
+                {
+                    dayLabel = $"GỤC NGÃ TẠI NGÀY {currentDay}";
+                    finalDialogue = "Những trận đòn roi, cú chích điện và áp lực chỉ tiêu đã rút cạn sinh lực của bạn. Bạn đã kiệt sức (Máu = 0) và gục ngã xuống sàn lạnh lẽo...";
+                }
+                else
+                {
+                    dayLabel = "KẾT CỤC BI THẢM";
+                    finalDialogue = "Khu trại xảy ra bạo loạn lớn... Do thể lực của bạn lúc này quá yếu (Máu < 20), bạn đã không chịu đựng nổi những cú giẫm đạp và đã bỏ mạng trong biển người hỗn loạn. BẠN ĐÃ BIẾN MẤT KHÔNG ĐỂ LẠI DẤU VẾT...";
+                }
+
                 finalSprite = sprDeath;
                 finalBgm = bgmDeath;
                 break;
@@ -134,11 +153,22 @@ public class EndingManager : MonoBehaviour
             bgmAudioSource.Play();
         }
 
-        StartCoroutine(TypeDialogue(finalDialogue, dayLabel));
+        StartCoroutine(TypeDialogue(finalDialogue, dayLabel, ending));
     }
 
-    IEnumerator TypeDialogue(string dialogue, string dayLabel)
+    // ========================================================
+    // ĐÃ FIX: TRÌNH TỰ XUẤT HIỆN MƯỢT MÀ KHÔNG BỊ ĐÈ UI
+    // ========================================================
+    IEnumerator TypeDialogue(string dialogue, string dayLabel, EndingType ending)
     {
+        // 1. Bật Tiêu đề lên ngay lập tức để người chơi biết chuyện gì xảy ra
+        if (txtDayLabel != null)
+        {
+            txtDayLabel.text = dayLabel;
+            txtDayLabel.gameObject.SetActive(true);
+        }
+
+        // 2. Chạy hiệu ứng máy chữ
         txtDialogue.text = "";
         txtDialogue.gameObject.SetActive(true);
 
@@ -149,22 +179,40 @@ public class EndingManager : MonoBehaviour
             {
                 sfxAudioSource.PlayOneShot(typingSound, 0.2f);
             }
-            yield return new WaitForSeconds(0.04f);
+            yield return new WaitForSeconds(0.04f); // Tốc độ gõ
         }
 
+        // 3. Chờ 3 giây để người chơi đọc xong dòng text
         yield return new WaitForSeconds(3f);
-        txtDialogue.gameObject.SetActive(false);
 
-        if (txtDayLabel != null)
+        // 4. TẮT đoạn text đi để nhường chỗ trống ở giữa màn hình cho các nút bấm
+        if (txtDialogue != null)
         {
-            txtDayLabel.text = dayLabel;
-            txtDayLabel.gameObject.SetActive(true);
+            txtDialogue.gameObject.SetActive(false);
         }
 
+        // 5. Hiện nút Về Menu
         if (btnReturnMenu != null)
         {
             btnReturnMenu.gameObject.SetActive(true);
         }
+
+        // 6. Hiện nút Chơi Lại (Nếu đủ điều kiện chết ngày 1-5)
+        int currentDay = GameManager.instance != null ? GameManager.instance.currentDay : 1;
+        if (btnRestartDay != null && ending == EndingType.Death && currentDay < 6)
+        {
+            btnRestartDay.gameObject.SetActive(true);
+        }
+    }
+
+    void RestartCurrentDay()
+    {
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.hp = GameManager.instance.maxHp;
+            GameManager.instance.currentEnding = EndingType.None;
+        }
+        SceneManager.LoadScene(mainGameplaySceneName);
     }
 
     void ReturnToMainMenu()
