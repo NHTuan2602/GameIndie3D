@@ -42,6 +42,12 @@ public class EndingManager : MonoBehaviour
 
     void Start()
     {
+        // ========================================================
+        // ĐÃ FIX: ÉP MỞ KHÓA VÀ HIỆN CON TRỎ CHUỘT KHI LOAD ENDING
+        // ========================================================
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (btnReturnMenu != null) btnReturnMenu.gameObject.SetActive(false);
         if (btnRestartDay != null) btnRestartDay.gameObject.SetActive(false);
 

@@ -264,7 +264,6 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Chỉ bơm đầy máu nếu chưa tới Ngày 6. Qua Ngày 6 phải tự sinh tồn!
         if (currentDay < maxDays - 1)
         {
             hp = maxHp;
@@ -288,7 +287,7 @@ public class GameManager : MonoBehaviour
     {
         if (currentDay >= maxDays - 1)
         {
-            currentDay = 6; // Ép mốc Ngày 6
+            currentDay = 6;
             EvaluateEndings();
             return;
         }
@@ -314,59 +313,64 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // ========================================================
+    // ĐÃ FIX: HÀM MỚI ĐỂ GỌI MÀN HÌNH CHUYỂN NGÀY VÀO ENDING
+    // ========================================================
+    private void TriggerEndingTransition(EndingType ending)
+    {
+        currentEnding = ending;
+        if (DayTransitionManager.instance != null)
+        {
+            // Bật màn hình Day Transition (sẽ tự hiện chữ "Ngày 6" vì currentDay đã = 6)
+            // Đợi mờ đi rồi nó mới ném sang EndingScene
+            DayTransitionManager.instance.StartTransition("EndingScene");
+        }
+        else
+        {
+            SceneManager.LoadScene("EndingScene");
+        }
+    }
+
     private void EvaluateEndings()
     {
         int itemCount = (hasNotebook ? 1 : 0) + (hasNippers ? 1 : 0) + (hasRope ? 1 : 0) + (hasKey ? 1 : 0);
         bool failedStealth = caughtCountThisNight >= maxCaughtBeforeReset;
 
-        // ========================================================
-        // ĐÃ FIX: MÁU DƯỚI 20 Ở NGÀY 6 -> ÉP NHẬN ENDING DEATH (BI THẢM)
-        // ========================================================
         if (hp < 20)
         {
-            currentEnding = EndingType.Death;
-            SceneManager.LoadScene("EndingScene");
+            TriggerEndingTransition(EndingType.Death);
             return;
         }
 
-        // ========================================================
-        // XÉT LẦN LƯỢT CÁC ENDING KHÁC KHI MÁU >= 20
-        // ========================================================
         if (isBlackCreditActive)
         {
-            currentEnding = EndingType.BadCredit;
-            SceneManager.LoadScene("EndingScene");
+            TriggerEndingTransition(EndingType.BadCredit);
         }
         else if (itemCount == 4 && !failedStealth)
         {
+            // NGOẠI TRỪ 1: Trốn thoát hoàn hảo bằng xe đạp
+            // Đi thẳng sang màn lái xe, không cần vòng vo qua chuyển ngày
+            currentEnding = EndingType.TrueEscape;
             Debug.Log("<color=green>TRỐN THOÁT HOÀN HẢO: LUÂN CHUYỂN QUA MINIGAME ĐUA XE ĐẠP!</color>");
             SceneManager.LoadScene("EscapeCyclingScene");
         }
         else if (itemCount >= 3)
         {
-            // Bị bắt Đêm 5 (failedStealth) nhưng vẫn cầm 4 món, HOẶC có 3 món
-            // Đều rơi vào Kịch bản Bạo Loạn Tẩu Thoát (RiotSurvivor)
-            currentEnding = EndingType.RiotSurvivor;
-            SceneManager.LoadScene("EndingScene");
+            TriggerEndingTransition(EndingType.RiotSurvivor);
         }
         else if (totalSuccessfulScamsAllDays >= policeArrestThreshold && itemCount == 0)
         {
-            currentEnding = EndingType.Arrested;
-            SceneManager.LoadScene("EndingScene");
+            TriggerEndingTransition(EndingType.Arrested);
         }
         else
         {
-            // Trường hợp còn lại: Thể lực > 20 nhưng ít hơn 3 món đồ -> Bi thảm
-            currentEnding = EndingType.Death;
-            SceneManager.LoadScene("EndingScene");
+            TriggerEndingTransition(EndingType.Death);
         }
     }
 
-    // ========================================================
-    // ĐÃ FIX: CHỈ TỰ ĐỘNG GIẾT KHI MÁU = 0 TỪ NGÀY 1 -> NGÀY 5
-    // ========================================================
     private void CheckDeath()
     {
+        // NGOẠI TRỪ 2: Chết dọc đường ở Ngày 1-5 -> Hiện thẳng Ending Death để chơi lại
         if (hp <= 0 && currentDay < 6)
         {
             hp = 0;
