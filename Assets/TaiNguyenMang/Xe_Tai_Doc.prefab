@@ -406,6 +406,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5400628461227149772}
     m_Modifications:
+    - target: {fileID: 1287960183181634749, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f191e75cd119f942bbc9fe3e93555e8, type: 2}
+    - target: {fileID: 1598566001691058343, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f191e75cd119f942bbc9fe3e93555e8, type: 2}
     - target: {fileID: 2188575160559946743, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
       propertyPath: m_UseGravity
       value: 0
@@ -422,6 +430,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: truck_6_white
       objectReference: {fileID: 0}
+    - target: {fileID: 2862513513061868109, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f191e75cd119f942bbc9fe3e93555e8, type: 2}
+    - target: {fileID: 2937656416492953443, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f191e75cd119f942bbc9fe3e93555e8, type: 2}
     - target: {fileID: 3362309056231419521, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
       propertyPath: m_LocalScale.x
       value: 3
@@ -474,6 +490,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3474826930818733549, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f191e75cd119f942bbc9fe3e93555e8, type: 2}
+    - target: {fileID: 7275813359042083541, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f191e75cd119f942bbc9fe3e93555e8, type: 2}
+    - target: {fileID: 8445216223822081781, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f191e75cd119f942bbc9fe3e93555e8, type: 2}
     - target: {fileID: 8683146447266209897, guid: 70ecda6e069095a49bb4aebd390fd9b2, type: 3}
       propertyPath: m_IsTrigger
       value: 0

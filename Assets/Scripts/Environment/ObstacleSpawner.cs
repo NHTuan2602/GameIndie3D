@@ -34,7 +34,10 @@ public class ObstacleSpawner : MonoBehaviour
 
     [Header("Cài đặt Cốt lõi")]
     public Transform player;
-    public float spawnDistanceAhead = 300f;
+
+    // [ĐÃ SỬA]: Giảm từ 300f xuống 150f để xe không bị hố đen Parabol nuốt chửng
+    public float spawnDistanceAhead = 150f;
+
     public int maxSpawnAttempts = 3;
     public Vector3 clearanceBoxSize = new Vector3(1.5f, 1f, 20f);
 
@@ -239,7 +242,6 @@ public class ObstacleSpawner : MonoBehaviour
         return true;
     }
 
-    // Hàm kiểm tra riêng biệt cho xe máy ở phía sau lưng
     bool IsPathClearForBiker(Vector3 spawnPos)
     {
         Collider[] hits = Physics.OverlapBox(spawnPos, new Vector3(3f, 1f, 10f), Quaternion.identity);
