@@ -530,14 +530,12 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 5192ad7b20fa0db48ac6a59e6e198d48, type: 2}
     - target: {fileID: 5866666021909216657, guid: 7c35a2728509b024690e8a0529064480, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
-        'mixamorig:Spine1'\n\tTransform 'mixamorig:RightArm'\n\tTransform 'mixamorig:LeftLeg'\n\tTransform
-        'mixamorig:LeftShoulder'\n\tTransform 'mixamorig:RightFoot'\n\tTransform
-        'mixamorig:Head'\n\tTransform 'mixamorig:LeftUpLeg'\n\tTransform 'mixamorig:LeftArm'\n\tand
-        more ...\n\tFrom animation clip 'Cheering'"
+      value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8417361359673230750, guid: 7c35a2728509b024690e8a0529064480, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d63913f484bd852458c7fed7af7ac63c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -877,7 +875,7 @@ MonoBehaviour:
   diceSpacing: 30
   audioSource: {fileID: 182085098}
   bgmSource: {fileID: 182085098}
-  bgmClip: {fileID: 8300000, guid: 9bf88e37933b8fd40a32b5f5c5c1bfa7, type: 3}
+  bgmClip: {fileID: 0}
   coinSound: {fileID: 8300000, guid: c605f5c02e26ff348b62719a1e1ecaa4, type: 3}
   shakeSound: {fileID: 8300000, guid: 4fd3d76ac59072d4b8c01eaf9e63cc5e, type: 3}
   winSound: {fileID: 8300000, guid: 75928afdd91ef6f40b8f5d4c68a5da72, type: 3}
@@ -1641,14 +1639,12 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 257c1aa480f3d784ea60abf5911a0bc1, type: 2}
     - target: {fileID: 5866666021909216657, guid: 7c35a2728509b024690e8a0529064480, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
-        'mixamorig:LeftHandThumb2'\n\tTransform 'mixamorig:LeftHandIndex1'\n\tTransform
-        'mixamorig:LeftHandPinky2'\n\tTransform 'mixamorig:RightHandRing2'\n\tTransform
-        'mixamorig:Spine1'\n\tTransform 'mixamorig:LeftToeBase'\n\tTransform 'mixamorig:RightArm'\n\tTransform
-        'mixamorig:LeftLeg'\n\tand more ...\n\tFrom animation clip 'Focus'"
+      value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8417361359673230750, guid: 7c35a2728509b024690e8a0529064480, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d63913f484bd852458c7fed7af7ac63c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1907,6 +1903,10 @@ PrefabInstance:
     - target: {fileID: 5950952859638039196, guid: a0c506b46348c94428a63cdbf7072a23, type: 3}
       propertyPath: m_Name
       value: DayTransitionManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5950952859638039196, guid: a0c506b46348c94428a63cdbf7072a23, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9207440467268152564, guid: a0c506b46348c94428a63cdbf7072a23, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2312,14 +2312,12 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 5192ad7b20fa0db48ac6a59e6e198d48, type: 2}
     - target: {fileID: 5866666021909216657, guid: 7c35a2728509b024690e8a0529064480, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
-        'mixamorig:Spine1'\n\tTransform 'mixamorig:RightArm'\n\tTransform 'mixamorig:LeftLeg'\n\tTransform
-        'mixamorig:LeftShoulder'\n\tTransform 'mixamorig:RightFoot'\n\tTransform
-        'mixamorig:Head'\n\tTransform 'mixamorig:LeftUpLeg'\n\tTransform 'mixamorig:LeftArm'\n\tand
-        more ...\n\tFrom animation clip 'Cheering'"
+      value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8417361359673230750, guid: 7c35a2728509b024690e8a0529064480, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d63913f484bd852458c7fed7af7ac63c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3532,14 +3530,12 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 257c1aa480f3d784ea60abf5911a0bc1, type: 2}
     - target: {fileID: 5866666021909216657, guid: 7c35a2728509b024690e8a0529064480, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
-        'mixamorig:LeftHandThumb2'\n\tTransform 'mixamorig:LeftHandIndex1'\n\tTransform
-        'mixamorig:LeftHandPinky2'\n\tTransform 'mixamorig:RightHandRing2'\n\tTransform
-        'mixamorig:Spine1'\n\tTransform 'mixamorig:LeftToeBase'\n\tTransform 'mixamorig:RightArm'\n\tTransform
-        'mixamorig:LeftLeg'\n\tand more ...\n\tFrom animation clip 'Focus'"
+      value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8417361359673230750, guid: 7c35a2728509b024690e8a0529064480, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d63913f484bd852458c7fed7af7ac63c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3597,7 +3593,7 @@ Transform:
   m_GameObject: {fileID: 1288097090}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -49.57, y: 5.75, z: -6.77}
+  m_LocalPosition: {x: -47.92, y: 5.75, z: 0.34}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3616,7 +3612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 055150c96286277428f2f9a088204c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveSpeed: 4
+  moveSpeed: 5
   mouseSensitivity: 150
   canWalk: 1
   canLook: 1
@@ -4136,14 +4132,12 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 02fa1d0f7cc070449ab059c5a9859d02, type: 2}
     - target: {fileID: 5866666021909216657, guid: 7c35a2728509b024690e8a0529064480, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
-        'mixamorig:LeftHandThumb2'\n\tTransform 'mixamorig:LeftHandIndex1'\n\tTransform
-        'mixamorig:LeftHandPinky2'\n\tTransform 'mixamorig:RightHandRing2'\n\tTransform
-        'mixamorig:Spine1'\n\tTransform 'mixamorig:LeftHandThumb3'\n\tTransform 'mixamorig:RightArm'\n\tTransform
-        'mixamorig:LeftLeg'\n\tand more ...\n\tFrom animation clip 'Shaking Dice'"
+      value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8417361359673230750, guid: 7c35a2728509b024690e8a0529064480, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d63913f484bd852458c7fed7af7ac63c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

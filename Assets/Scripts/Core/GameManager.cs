@@ -43,7 +43,8 @@ public class GameManager : MonoBehaviour
     public int totalSuccessfulScamsAllDays = 0;
     public int policeArrestThreshold = 15;
 
-    public int targetKPI = 3;
+    // ĐÃ FIX: Giảm KPI khởi điểm xuống 2
+    public int targetKPI = 2;
     public int maxAttemptsPerDay = 5;
     public float currentCommissionRate = 0.1f;
     public float typingDifficultyMultiplier = 1.0f;
@@ -145,15 +146,9 @@ public class GameManager : MonoBehaviour
         attemptedScamsToday++;
         consecutiveScamFails++;
 
-        if (consecutiveScamFails >= 2)
-        {
-            TakeShockDamage(50);
-            consecutiveScamFails = 0;
-        }
-        else
-        {
-            TakeShockDamage(10);
-        }
+        // ĐÃ FIX: XÓA CHÍCH ĐIỆN 50 HP TỨC TƯỞI GIỮA NGÀY.
+        // Chỉ phạt cảnh cáo 5 HP (Bị mắng chửi) để người chơi vẫn sống và làm cho hết 5 ca.
+        TakeShockDamage(5);
 
         if (hp > 0 || currentDay >= 6) CheckShiftProgress();
     }
@@ -186,21 +181,38 @@ public class GameManager : MonoBehaviour
     {
         if (successfulScamsToday >= targetKPI)
         {
-            if (targetKPI == 3) { targetKPI = 4; currentCommissionRate = 0.2f; }
-            else if (targetKPI == 4) { targetKPI = 5; currentCommissionRate = 0.3f; }
-            else if (targetKPI == 5 && successfulScamsToday == 5)
-            {
-                typingDifficultyMultiplier = Mathf.Max(0.5f, typingDifficultyMultiplier - 0.15f);
-            }
+            // ĐẠT KPI: Dụ dỗ người chơi lừa thêm bằng cách tăng lương và tăng chỉ tiêu
+            targetKPI++;
+            if (targetKPI > 5) targetKPI = 5; // Tối đa yêu cầu 5/5
+
+            currentCommissionRate += 0.05f; // Tăng % hoa hồng nhận được
+            typingDifficultyMultiplier = Mathf.Max(0.5f, typingDifficultyMultiplier - 0.1f);
         }
         else
         {
+            // KHÔNG ĐẠT KPI: Đây mới là lúc Ban quản lý lôi ra chích điện phạt nặng!
             int shockDamage = (targetKPI - successfulScamsToday) * 30;
             TakeShockDamage(shockDamage);
-            targetKPI = 3;
+
+            // Đưa KPI về lại 2 để ngày hôm sau dễ sống hơn
+            targetKPI = 2;
             currentCommissionRate = 0.1f;
             typingDifficultyMultiplier = 1.0f;
         }
+    }
+
+    // ========================================================
+    // ĐÃ FIX: HÀM DỌN DẸP DỮ LIỆU ĐỂ BẤM NÚT CHƠI LẠI TRƠN TRU
+    // ========================================================
+    public void ResetDayForRetry()
+    {
+        hp = maxHp;
+        currentEnding = EndingType.None;
+        attemptedScamsToday = 0;
+        successfulScamsToday = 0;
+        consecutiveScamFails = 0;
+        caughtCountThisNight = 0;
+        // KHÔNG RESET currentDay để người chơi làm lại đúng ngày đó
     }
 
     public bool CanCollectItems() { return !(currentDay >= 2 && !hasNotebook); }
@@ -313,16 +325,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ========================================================
-    // ĐÃ FIX: HÀM MỚI ĐỂ GỌI MÀN HÌNH CHUYỂN NGÀY VÀO ENDING
-    // ========================================================
     private void TriggerEndingTransition(EndingType ending)
     {
         currentEnding = ending;
         if (DayTransitionManager.instance != null)
         {
-            // Bật màn hình Day Transition (sẽ tự hiện chữ "Ngày 6" vì currentDay đã = 6)
-            // Đợi mờ đi rồi nó mới ném sang EndingScene
             DayTransitionManager.instance.StartTransition("EndingScene");
         }
         else
@@ -348,10 +355,7 @@ public class GameManager : MonoBehaviour
         }
         else if (itemCount == 4 && !failedStealth)
         {
-            // NGOẠI TRỪ 1: Trốn thoát hoàn hảo bằng xe đạp
-            // Đi thẳng sang màn lái xe, không cần vòng vo qua chuyển ngày
             currentEnding = EndingType.TrueEscape;
-            Debug.Log("<color=green>TRỐN THOÁT HOÀN HẢO: LUÂN CHUYỂN QUA MINIGAME ĐUA XE ĐẠP!</color>");
             SceneManager.LoadScene("EscapeCyclingScene");
         }
         else if (itemCount >= 3)
@@ -370,7 +374,6 @@ public class GameManager : MonoBehaviour
 
     private void CheckDeath()
     {
-        // NGOẠI TRỪ 2: Chết dọc đường ở Ngày 1-5 -> Hiện thẳng Ending Death để chơi lại
         if (hp <= 0 && currentDay < 6)
         {
             hp = 0;
@@ -390,8 +393,13 @@ public class GameManager : MonoBehaviour
             case GamePhase.Noon: sceneName = "NoonCanteenScene"; break;
             case GamePhase.Afternoon: sceneName = "ScamScreen"; break;
             case GamePhase.Night:
-                if (currentDay == 1) sceneName = "NightGameScreen";
-                else sceneName = "NightScreen";
+                // ========================================================
+                // ĐÃ FIX: TRẢ NGƯỜI CHƠI VỀ PHÒNG NGỦ 3D VÀO ĐÊM 1
+                // ========================================================
+                if (isBlackCreditActive)
+                    sceneName = "NightGameScreen"; // Bị siết nợ thì ném thẳng vào sới bạc
+                else
+                    sceneName = "NightScreen"; // Bình thường thì luôn về phòng ngủ 3D trước
                 break;
         }
 
@@ -401,11 +409,7 @@ public class GameManager : MonoBehaviour
 
     public void ConfiscateAllItems()
     {
-        if (currentDay >= 5)
-        {
-            Debug.Log("<color=yellow>ĐÊM 5: Giữ nguyên đồ vật để tính toán Ending phân nhánh!</color>");
-            return;
-        }
+        if (currentDay >= 5) return;
 
         hasNotebook = false;
         hasNippers = false;

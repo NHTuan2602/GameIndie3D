@@ -11,11 +11,9 @@ public class PlayerHUD : MonoBehaviour
 
     [Header("Thanh Trạng Thái (Sliders)")]
     public Slider hpSlider;
-    // ĐÃ BỎ STAMINA SLIDER
 
     [Header("Chỉ số (Texts)")]
     public TextMeshProUGUI moneyText;
-    // ĐÃ BỎ KARMA TEXT
     public TextMeshProUGUI kpiText;
 
     // Các biến "Trí nhớ" để so sánh sự thay đổi
@@ -39,8 +37,8 @@ public class PlayerHUD : MonoBehaviour
         if (GameManager.instance.money != lastMoney) { lastMoney = GameManager.instance.money; valueChanged = true; }
         if (GameManager.instance.successfulScamsToday != lastKpi) { lastKpi = GameManager.instance.successfulScamsToday; valueChanged = true; }
 
-        // 2. NẾU BỊ RÚT MÁU / CỘNG TIỀN -> Cập nhật số liệu và Bật đồng hồ đếm ngược 3 giây!
-        if (valueChanged)
+        // 2. KÍCH HOẠT HIỂN THỊ: Bấm TAB hoặc khi có chỉ số thay đổi
+        if (valueChanged || Input.GetKeyDown(KeyCode.Tab))
         {
             displayTimer = showDuration;
             UpdateUIValues();
@@ -52,10 +50,12 @@ public class PlayerHUD : MonoBehaviour
             if (displayTimer > 0)
             {
                 displayTimer -= Time.deltaTime;
+                // Tăng tốc độ hiện lên (Fade In)
                 hudCanvasGroup.alpha = Mathf.MoveTowards(hudCanvasGroup.alpha, 1f, Time.deltaTime * 5f);
             }
             else
             {
+                // Từ từ mờ đi (Fade Out)
                 hudCanvasGroup.alpha = Mathf.MoveTowards(hudCanvasGroup.alpha, 0f, Time.deltaTime * 2f);
             }
         }

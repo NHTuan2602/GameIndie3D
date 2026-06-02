@@ -39,7 +39,7 @@ public class EndingManager : MonoBehaviour
     public AudioSource sfxAudioSource;
     public AudioClip typingSound;
     public AudioClip riotSound;
-
+    public AudioClip restartSound;
     void Start()
     {
         // ========================================================
@@ -213,11 +213,28 @@ public class EndingManager : MonoBehaviour
 
     void RestartCurrentDay()
     {
+        StartCoroutine(PlaySoundAndRestartRoutine());
+    }
+
+    // Luồng trì hoãn để chờ âm thanh phát xong
+    IEnumerator PlaySoundAndRestartRoutine()
+    {
+        if (btnRestartDay != null) btnRestartDay.interactable = false;
+        if (btnReturnMenu != null) btnReturnMenu.interactable = false;
+
+        // Phát âm thanh hồi sinh
+        if (sfxAudioSource != null && restartSound != null)
+        {
+            sfxAudioSource.PlayOneShot(restartSound, 1f);
+            yield return new WaitForSeconds(1.5f);
+        }
+
+        // ĐÃ FIX: Gọi hàm dọn rác dữ liệu để game load lại trơn tru
         if (GameManager.instance != null)
         {
-            GameManager.instance.hp = GameManager.instance.maxHp;
-            GameManager.instance.currentEnding = EndingType.None;
+            GameManager.instance.ResetDayForRetry();
         }
+
         SceneManager.LoadScene(mainGameplaySceneName);
     }
 

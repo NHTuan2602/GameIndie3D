@@ -1519,6 +1519,7 @@ MonoBehaviour:
   sfxAudioSource: {fileID: 0}
   typingSound: {fileID: 0}
   riotSound: {fileID: 0}
+  restartSound: {fileID: 8300000, guid: 2f4bbcedf0687304caf85f061219df13, type: 3}
 --- !u!4 &1923553983
 Transform:
   m_ObjectHideFlags: 0

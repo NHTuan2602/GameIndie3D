@@ -41,9 +41,6 @@ public class TaiXiuManager : MonoBehaviour
     [Header("--- KẾT NỐI VỚI BÀN 3D ---")]
     public MinigameInteract interactPoint;
 
-    // ==========================================
-    // ĐÃ THÊM: Biến quản lý Animator của Nhà cái
-    // ==========================================
     [Header("--- NHÀ CÁI ---")]
     [Tooltip("Kéo con NPC Nhà Cái vào đây để gọi nó xóc đĩa")]
     public Animator dealerAnimator;
@@ -258,7 +255,7 @@ public class TaiXiuManager : MonoBehaviour
 
     public void CloseCasino()
     {
-        if (isIndebted) return; // Bảo hiểm phụ không cho thoát
+        if (isIndebted) return;
         StopAllCoroutines();
         isBettingPhase = false;
         ClearBetCore();
@@ -273,10 +270,8 @@ public class TaiXiuManager : MonoBehaviour
         if (mainGameUI != null) mainGameUI.SetActive(true);
         for (int i = 0; i < diceImages.Length; i++) { if (diceImages[i] != null) diceImages[i].enabled = true; }
 
-        // KIỂM TRA NẾU ĐANG NỢ THÌ TẮT VĨNH VIỄN NÚT X
         if (isIndebted && btnCloseCasino != null) btnCloseCasino.gameObject.SetActive(false);
 
-        // NẾU MANG NỢ MÀ HẾT SẠCH TIỀN TRƯỚC VÁN 15 -> CHẾT LUÔN
         if (isIndebted && GameManager.instance.money <= 0 && gambleCount < deathAtGambleCount)
         {
             TriggerBadEnding();
@@ -296,7 +291,6 @@ public class TaiXiuManager : MonoBehaviour
         if (bowlObject != null) { bowlObject.gameObject.SetActive(true); bowlObject.ResetPosition(); }
         SetButtonsState(true);
 
-        // KỊCH BẢN THOẠI
         if (gambleCount == warnAtGambleCount)
         {
             statusText.text = "<color=yellow>NHÀ CÁI: 'Bạn đang đỏ đấy! Ván này tao cho mày ăn trọn, Tất tay thử xem?'</color>";
@@ -306,7 +300,7 @@ public class TaiXiuManager : MonoBehaviour
             statusText.text = "<color=red>NHÀ CÁI: 'Đã ngồi xuống đây thì ván này BẮT BUỘC TẤT TAY!'</color>";
             KhoaNutNho();
         }
-        else if (gambleCount == deathAtGambleCount) // VÁN 15
+        else if (gambleCount == deathAtGambleCount)
         {
             statusText.text = "<color=red>ĐẠI CA: 'ĐẾN HẠN RỒI! VÁN NÀY MÀY PHẢI CƯỢC BẰNG MẠNG!'</color>";
             KhoaNutNho();
@@ -317,7 +311,15 @@ public class TaiXiuManager : MonoBehaviour
         }
         else
         {
-            statusText.text = "CHỌN TIỀN VÀ CHỐT TÀI/XỈU!";
+            // ĐÃ THÊM: Nếu là Đêm 1, hiển thị số ván đếm ngược để người chơi biết bao giờ được nghỉ
+            if (GameManager.instance != null && GameManager.instance.currentDay == 1)
+            {
+                statusText.text = $"VÁN {gambleCount + 1}/5 CỦA ĐÊM NAY. ĐẶT ĐI!";
+            }
+            else
+            {
+                statusText.text = "CHỌN TIỀN VÀ CHỐT TÀI/XỈU!";
+            }
             statusText.color = Color.white;
         }
     }
@@ -334,7 +336,6 @@ public class TaiXiuManager : MonoBehaviour
     {
         if (!isBettingPhase) return;
 
-        // Ép All-in ván 10 và 15
         if ((gambleCount == trapAtGambleCount || gambleCount == deathAtGambleCount) && GameManager.instance.money > 0)
         {
             statusText.text = "<color=red>PHẢI BẤM 'TẤT TAY' MỚI ĐƯỢC CHỐT KẾT QUẢ!</color>";
@@ -387,9 +388,6 @@ public class TaiXiuManager : MonoBehaviour
         statusText.text = "ĐANG XÓC ĐĨA...";
         statusText.color = Color.red;
 
-        // ==========================================
-        // ĐÃ THÊM: Gọi Nhà cái múa xúc xắc
-        // ==========================================
         if (dealerAnimator != null)
         {
             dealerAnimator.SetTrigger("onShake");
@@ -418,14 +416,20 @@ public class TaiXiuManager : MonoBehaviour
         // ================= KỊCH BẢN THAO TÚNG XÚC XẮC =================
         if (playerChoice != 0)
         {
-            if (gambleCount == warnAtGambleCount)
+            // ĐÃ THÊM: Ma thuật Đêm 1 - Luôn Thắng trong 5 ván đầu tiên
+            if (GameManager.instance != null && GameManager.instance.currentDay == 1 && gambleCount < 5)
+            {
+                if (playerChoice == 1) totalDiceValue = Random.Range(11, 18);
+                else totalDiceValue = Random.Range(3, 11);
+            }
+            else if (gambleCount == warnAtGambleCount)
             {
                 // Ván 9 Dụ dỗ: Auto Thắng
                 if (playerChoice == 1) totalDiceValue = Random.Range(11, 18); else totalDiceValue = Random.Range(3, 11);
             }
             else if (gambleCount == trapAtGambleCount || isIndebted)
             {
-                // Ván 10 Sập hầm HOẶC Đã vay nợ (Ván 11 -> 15): AUTO THUA TRẮNG
+                // Ván 10 Sập hầm HOẶC Đã vay nợ: AUTO THUA TRẮNG
                 if (playerChoice == 1) totalDiceValue = Random.Range(3, 11); else totalDiceValue = Random.Range(11, 18);
             }
         }
@@ -504,7 +508,39 @@ public class TaiXiuManager : MonoBehaviour
         }
 
         UpdateMoneyUI();
-        StartCoroutine(WaitAndRestart());
+
+        // ==============================================================
+        // ĐÃ THÊM: KỊCH BẢN ĐÊM 1 - ĐUỔI VỀ NGỦ SAU 5 VÁN ĐỂ SANG NGÀY 2
+        // ==============================================================
+        if (GameManager.instance != null && GameManager.instance.currentDay == 1 && gambleCount >= 5)
+        {
+            StartCoroutine(ForceSleepRoutine());
+        }
+        else
+        {
+            StartCoroutine(WaitAndRestart());
+        }
+    }
+
+    // ĐÃ THÊM: Luồng hiện hội thoại đuổi về rồi tự động tắt màn hình đi ngủ
+    IEnumerator ForceSleepRoutine()
+    {
+        SetButtonsState(false);
+        if (btnCloseCasino != null) btnCloseCasino.gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(1.5f);
+
+        statusText.text = "<color=yellow>NHÀ CÁI: 'Sới nghỉ! Nay mày đỏ đấy ma mới. Mai mang tiền xuống đây chơi tiếp!'\n<i>Đang về phòng ngủ...</i></color>";
+
+        // Nghỉ 4 giây cho người chơi đọc dòng chữ
+        yield return new WaitForSeconds(4f);
+
+        CloseCasino();
+
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.AdvanceToNextDay();
+        }
     }
 
     void SaveGambleCount()
@@ -526,29 +562,20 @@ public class TaiXiuManager : MonoBehaviour
         if (loanSharkPanel != null) loanSharkPanel.SetActive(true);
     }
 
-    // ==========================================================
-    // LOGIC 1: CHỌN VAY -> TẮT NÚT X, BƠM TIỀN, ĐÁNH TIẾP AUTO THUA
-    // ==========================================================
     public void AcceptLoanEvent()
     {
         if (loanSharkPanel != null) loanSharkPanel.SetActive(false);
 
-        // Xác nhận đã mang nợ
         isIndebted = true;
         PlayerPrefs.SetInt("Casino_IsIndebted", 1);
         PlayerPrefs.Save();
 
-        // Bơm tiền cho chơi tiếp
         GameManager.instance.money += 10000000;
         UpdateMoneyUI();
 
-        // Gọi ván mới (Lúc này hàm StartNewRound sẽ tự động ẩn nút X vì isIndebted = true)
         StartNewRound();
     }
 
-    // ==========================================================
-    // LOGIC 2: CHỌN KHÔNG VAY -> BỊ CẤM CỬA VÀ CHUYỂN NGÀY MỚI
-    // ==========================================================
     public void DeclineLoanEvent()
     {
         StartCoroutine(BanPlayerAndNextDay());
@@ -577,35 +604,27 @@ public class TaiXiuManager : MonoBehaviour
         CloseCasino();
     }
 
-    // ==========================================================
-    // LOGIC 3: KÍCH HOẠT BAD ENDING (KHI ĐẾN VÁN 15 HOẶC HẾT TIỀN TRƯỚC VÁN 15)
-    // ==========================================================
     private void TriggerBadEnding()
     {
         if (bgmSource != null) bgmSource.Stop();
-        if (mainGameUI != null) mainGameUI.SetActive(false); // Dọn sạch bàn cờ
+        if (mainGameUI != null) mainGameUI.SetActive(false);
         if (badEndingPanel != null) badEndingPanel.SetActive(true);
-        Time.timeScale = 0f; // Đóng băng game
+        Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
-    // ==========================================================
-    // LOGIC 4: NÚT CHƠI LẠI (TRÊN BAD ENDING PANEL) -> QUAY VỀ LÚC HỎI VAY
-    // ==========================================================
     public void RestartFromChoice()
     {
         Time.timeScale = 1f;
 
-        // Trả lại trạng thái vừa thua sạch ở ván 10
         isIndebted = false;
         PlayerPrefs.SetInt("Casino_IsIndebted", 0);
-        gambleCount = trapAtGambleCount + 1; // Về lại ván 11 (Lúc hỏi vay)
+        gambleCount = trapAtGambleCount + 1;
         PlayerPrefs.SetInt("Casino_GambleCount", gambleCount);
         GameManager.instance.money = 0;
         UpdateMoneyUI();
 
-        // Đổi qua lại Panel
         if (badEndingPanel != null) badEndingPanel.SetActive(false);
         if (loanSharkPanel != null) loanSharkPanel.SetActive(true);
 

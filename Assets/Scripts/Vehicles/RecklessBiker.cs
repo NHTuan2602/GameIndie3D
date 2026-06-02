@@ -8,8 +8,13 @@ public class RecklessBiker : MonoBehaviour
     public float forwardSpeed = 90f;
     public float weaveFrequency = 4f;
 
-    [Header("Nhân vật NPC")]
-    public GameObject npcModel;
+    [Header("Mô hình 3D (ĐỂ BỐC ĐẦU)")]
+    public Transform bikeModel; // BẠN KÉO OBJECT "Xemay" VÀO ĐÂY NHÉ
+    public GameObject npcModel; // Gã bảo vệ
+
+    [Header("Cài đặt Bốc Đầu")]
+    public float wheelieAngle = -25f; // Góc bốc đầu
+    public float wheelieSpeed = 5f;   // Tốc độ nhấc đầu xe lên (Càng lớn càng nhanh)
 
     [Header("Hệ thống Cảnh báo")]
     public Image warningIcon;
@@ -119,6 +124,22 @@ public class RecklessBiker : MonoBehaviour
         {
             isCatchingUp = false;
         }
+
+        // =========================================================
+        // ĐÃ THÊM: HIỆU ỨNG BỐC ĐẦU MƯỢT MÀ (Không ảnh hưởng hướng chạy)
+        // =========================================================
+        if (bikeModel != null)
+        {
+            Quaternion targetBikeRot = Quaternion.Euler(wheelieAngle, 0, 0);
+            bikeModel.localRotation = Quaternion.Lerp(bikeModel.localRotation, targetBikeRot, Time.deltaTime * wheelieSpeed);
+        }
+
+        if (npcModel != null)
+        {
+            Quaternion targetNpcRot = Quaternion.Euler(wheelieAngle, 0, 0);
+            npcModel.transform.localRotation = Quaternion.Lerp(npcModel.transform.localRotation, targetNpcRot, Time.deltaTime * wheelieSpeed);
+        }
+        // =========================================================
 
         transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
 
