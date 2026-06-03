@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
     public bool isRedAlert = false;
 
     public EndingType currentEnding = EndingType.None;
-
+    public int catchCount = 0;
     void Awake()
     {
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
@@ -226,6 +226,7 @@ public class GameManager : MonoBehaviour
 
     public bool OnPlayerCaught()
     {
+        catchCount++;
         caughtCountThisNight++;
         if (caughtCountThisNight >= maxCaughtBeforeReset)
         {

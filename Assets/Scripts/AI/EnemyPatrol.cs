@@ -6,17 +6,22 @@ public class EnemyPatrol : MonoBehaviour
 {
     public static bool isPlayerHidden = false;
 
+    // MỚI: Biến static đếm tổng số AI đang rượt người chơi
+    public static int totalChasingEnemies = 0;
+
+    [Header("UI Cảnh báo (KÉO UI VÀO ĐÂY)")]
+    public GameObject chaseVignetteUI; // Viền đỏ rượt đuổi
+    public GameObject blurVisionUI;    // Hiệu ứng mờ khi bị thương lần 2
+
     [Header("Cài đặt Tuần tra")]
     public Transform[] waypoints;
     public float waitTime = 2f;
 
-    [Header("Cài đặt Tốc độ & Hụt Hơi (MỚI)")]
+    [Header("Cài đặt Tốc độ & Hụt Hơi")]
     public float patrolSpeed = 3.5f;
     public float chaseSpeed = 7f;
     public float slowSpeed = 1.5f;
-    [Tooltip("Mỗi giây rượt đuổi, tốc độ AI sẽ giảm đi chừng này")]
     public float chaseSpeedDecay = 0.5f;
-    [Tooltip("Tốc độ chậm nhất khi AI bị đuối sức")]
     public float minChaseSpeed = 3.5f;
 
     [Header("Cài đặt Tầm nhìn")]
@@ -33,11 +38,11 @@ public class EnemyPatrol : MonoBehaviour
     public float wallhackChaseTime = 10f;
     private float currentChaseTimer = 0f;
 
-    [Header("Âm thanh (CẬP NHẬT)")]
+    [Header("Âm thanh")]
     public AudioSource footstepSource;
-    public AudioSource sfxSource; // Kéo 1 AudioSource mới vào đây để phát tiếng cắn
-    public AudioClip catchWarningSound; // Kéo tiếng "Xoẹt" (bị thương) 2 lần đầu
-    public AudioClip catchFatalSound;   // Kéo tiếng "Rầm" (chết) lần thứ 3
+    public AudioSource sfxSource;
+    public AudioClip catchWarningSound;
+    public AudioClip catchFatalSound;
 
     public float patrolStepInterval = 0.6f;
     public float chaseStepInterval = 0.3f;
@@ -58,6 +63,10 @@ public class EnemyPatrol : MonoBehaviour
     void Start()
     {
         isPlayerHidden = false;
+        totalChasingEnemies = 0; // Reset khi load map mới
+        if (chaseVignetteUI != null) chaseVignetteUI.SetActive(false);
+        if (blurVisionUI != null) blurVisionUI.SetActive(false);
+
         agent = GetComponentInParent<NavMeshAgent>();
         if (agent == null) agent = GetComponentInChildren<NavMeshAgent>();
 
@@ -79,6 +88,16 @@ public class EnemyPatrol : MonoBehaviour
 
         if (footstepSource == null) footstepSource = GetComponent<AudioSource>();
         if (sfxSource == null) sfxSource = GetComponent<AudioSource>();
+    }
+
+    // CHỐNG RÁC BỘ NHỚ: Nếu AI này bị xóa khỏi map khi đang rượt
+    void OnDestroy()
+    {
+        if (isChasing)
+        {
+            totalChasingEnemies--;
+            UpdateChaseUI();
+        }
     }
 
     void Update()
@@ -106,7 +125,6 @@ public class EnemyPatrol : MonoBehaviour
 
         if (isChasing)
         {
-            // MỚI: AI bị hụt hơi (giảm tốc độ dần)
             if (!isSlowed)
             {
                 agent.speed -= chaseSpeedDecay * Time.deltaTime;
@@ -167,15 +185,22 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (GameManager.instance != null)
         {
+            // Báo cho GameManager biết người chơi bị bắt
             bool isOutForTonight = GameManager.instance.OnPlayerCaught();
 
-            // MỚI: CHỌN ÂM THANH THEO SỐ LẦN BẮT
+            // MỚI: Bật hiệu ứng mờ mắt dựa vào biến đếm số lần bắt trong GameManager
+            // Yêu cầu: Bạn phải vào script GameManager, tạo thêm biến "public int catchCount;"
+            if (!isOutForTonight && GameManager.instance.catchCount == 2)
+            {
+                if (blurVisionUI != null) blurVisionUI.SetActive(true);
+            }
+
             if (sfxSource != null)
             {
                 if (!isOutForTonight && catchWarningSound != null)
-                    sfxSource.PlayOneShot(catchWarningSound); // 2 lần đầu
+                    sfxSource.PlayOneShot(catchWarningSound);
                 else if (isOutForTonight && catchFatalSound != null)
-                    sfxSource.PlayOneShot(catchFatalSound); // Lần 3 chết
+                    sfxSource.PlayOneShot(catchFatalSound);
             }
 
             if (!isOutForTonight) StartCoroutine(ApplySlowPenalty(5f));
@@ -215,6 +240,8 @@ public class EnemyPatrol : MonoBehaviour
                     if (!isChasing)
                     {
                         isChasing = true;
+                        totalChasingEnemies++; // Tăng biến đếm tổng
+                        UpdateChaseUI();
 
                         if (investigateRoutine != null)
                         {
@@ -222,7 +249,6 @@ public class EnemyPatrol : MonoBehaviour
                             isInvestigating = false;
                         }
 
-                        // MỚI: Reset lại tốc độ max khi vừa nhìn thấy người chơi
                         if (!isSlowed) agent.speed = chaseSpeed;
                         if (enemyFlashlight != null && !isSlowed) enemyFlashlight.color = Color.red;
 
@@ -235,7 +261,13 @@ public class EnemyPatrol : MonoBehaviour
 
     void GiveUpChase()
     {
-        isChasing = false;
+        if (isChasing)
+        {
+            isChasing = false;
+            totalChasingEnemies--; // Giảm biến đếm tổng
+            UpdateChaseUI();
+        }
+
         if (!isSlowed)
         {
             agent.speed = patrolSpeed;
@@ -244,6 +276,15 @@ public class EnemyPatrol : MonoBehaviour
         if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
     }
 
+    // MỚI: Hàm quản lý bật tắt viền đỏ an toàn
+    void UpdateChaseUI()
+    {
+        if (chaseVignetteUI != null)
+        {
+            // Chỉ tắt viền đỏ khi KHÔNG CÒN con AI nào rượt
+            chaseVignetteUI.SetActive(totalChasingEnemies > 0);
+        }
+    }
     void PatrolRoutine()
     {
         if (waypoints.Length == 0) return;
@@ -288,4 +329,5 @@ public class EnemyPatrol : MonoBehaviour
         if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
         if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
     }
-}   
+
+}

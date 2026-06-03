@@ -38,7 +38,7 @@ public class RecklessBiker : MonoBehaviour
     private float weaveStartTime;
     private float phaseOffset;
 
-    // BIẾN MỚI: Trạng thái tàng hình khi đuổi theo từ xa
+    // Trạng thái tàng hình khi đuổi theo từ xa
     private bool isCatchingUp = true;
 
     public void SetupLanes(float leftLaneX, float rightLaneX)
@@ -126,17 +126,24 @@ public class RecklessBiker : MonoBehaviour
         }
 
         // =========================================================
-        // ĐÃ THÊM: HIỆU ỨNG BỐC ĐẦU MƯỢT MÀ (Không ảnh hưởng hướng chạy)
+        // CHỈ BỐC ĐẦU KHI ĐÃ VƯỢT QUA MẶT NGƯỜI CHƠI (Tầm 1.5 mét)
         // =========================================================
+        float currentTargetAngle = 0f;
+
+        if (transform.position.z > player.position.z + 1.5f)
+        {
+            currentTargetAngle = wheelieAngle;
+        }
+
         if (bikeModel != null)
         {
-            Quaternion targetBikeRot = Quaternion.Euler(wheelieAngle, 0, 0);
+            Quaternion targetBikeRot = Quaternion.Euler(currentTargetAngle, 0, 0);
             bikeModel.localRotation = Quaternion.Lerp(bikeModel.localRotation, targetBikeRot, Time.deltaTime * wheelieSpeed);
         }
 
         if (npcModel != null)
         {
-            Quaternion targetNpcRot = Quaternion.Euler(wheelieAngle, 0, 0);
+            Quaternion targetNpcRot = Quaternion.Euler(currentTargetAngle, 0, 0);
             npcModel.transform.localRotation = Quaternion.Lerp(npcModel.transform.localRotation, targetNpcRot, Time.deltaTime * wheelieSpeed);
         }
         // =========================================================
@@ -182,7 +189,7 @@ public class RecklessBiker : MonoBehaviour
 
         if (other.CompareTag("Obstacle"))
         {
-            // NẾU ĐANG BẤT TỬ MÀ ĐỤNG TRÚNG XE TẢI -> XUYÊN QUA LUÔN (KHÔNG LÀM GÌ CẢ)
+            // NẾU ĐANG BẤT TỬ MÀ ĐỤNG TRÚNG XE TẢI -> XUYÊN QUA LUÔN
             if (isCatchingUp) return;
 
             isCrashed = true;

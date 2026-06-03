@@ -13,8 +13,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Thời gian lấy đà/hãm phanh để di chuyển mượt hơn")]
     public float movementSmoothTime = 0.1f;
 
-    [Header("Cài đặt Nhảy & Ngồi")]
-    public float jumpHeight = 1.5f;
+    [Header("Cài đặt Ngồi xổm")]
     public float standingHeight = 2f;
     public float crouchHeight = 1f;
     public float crouchTransitionSpeed = 10f;
@@ -29,7 +28,6 @@ public class PlayerController : MonoBehaviour
     public float currentStamina;
     public float staminaDrainRate = 20f;
     public float staminaRegenRate = 15f;
-    public float jumpStaminaCost = 15f;
     public Slider staminaBar;
 
     [Header("Cài đặt Âm thanh Bước chân (MỚI)")]
@@ -192,16 +190,12 @@ public class PlayerController : MonoBehaviour
 
         if (controller.isGrounded)
         {
+            // Ép vận tốc Y âm một chút để CharacterController luôn dán chặt xuống mặt dốc/cầu thang
             verticalVelocity = -2f;
-
-            if (Input.GetKeyDown(KeyCode.Space) && currentStamina >= jumpStaminaCost && !isCrouching)
-            {
-                verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
-                currentStamina -= jumpStaminaCost;
-            }
         }
         else
         {
+            // Trọng lực kéo nhân vật xuống khi đi khỏi mép bục
             verticalVelocity += gravity * Time.deltaTime;
         }
 
@@ -212,7 +206,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // ==========================================
-    // MỚI: XỬ LÝ NHỊP BƯỚC CHÂN
+    // XỬ LÝ NHỊP BƯỚC CHÂN
     // ==========================================
     void HandleFootsteps()
     {

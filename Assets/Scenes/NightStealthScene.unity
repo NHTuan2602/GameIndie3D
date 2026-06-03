@@ -4464,7 +4464,6 @@ MonoBehaviour:
   sprintSpeed: 5
   gravity: -9.81
   movementSmoothTime: 0.1
-  jumpHeight: 1.5
   standingHeight: 2
   crouchHeight: 1
   crouchTransitionSpeed: 10
@@ -4473,7 +4472,6 @@ MonoBehaviour:
   currentStamina: 0
   staminaDrainRate: 20
   staminaRegenRate: 15
-  jumpStaminaCost: 15
   staminaBar: {fileID: 528070908}
   footstepSource: {fileID: 0}
   walkStepInterval: 0.5
@@ -9598,6 +9596,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2cba078cc04454fa306c9e2931e396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPatrol
+  chaseVignetteUI: {fileID: 1769686071}
+  blurVisionUI: {fileID: 1812804223}
   waypoints:
   - {fileID: 1746058606}
   - {fileID: 1209553209}
@@ -21953,6 +21953,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2cba078cc04454fa306c9e2931e396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPatrol
+  chaseVignetteUI: {fileID: 1769686071}
+  blurVisionUI: {fileID: 1812804223}
   waypoints:
   - {fileID: 1093285702}
   - {fileID: 828198722}
@@ -40205,6 +40207,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2cba078cc04454fa306c9e2931e396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPatrol
+  chaseVignetteUI: {fileID: 0}
+  blurVisionUI: {fileID: 0}
   waypoints: []
   waitTime: 2
   patrolSpeed: 3.5
@@ -47070,6 +47074,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1769686071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1769686072}
+  - component: {fileID: 1769686074}
+  - component: {fileID: 1769686073}
+  m_Layer: 5
+  m_Name: ChaseVignette
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1769686072
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769686071}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2033291142}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1769686073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769686071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.46226418, g: 0, b: 0, a: 0.11372549}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1769686074
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769686071}
+  m_CullTransparentMesh: 1
 --- !u!1001 &1769808871
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -48090,6 +48169,81 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b96fc74c65fd9db40bfde7740f7a9d17, type: 3}
+--- !u!1 &1812804223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1812804224}
+  - component: {fileID: 1812804226}
+  - component: {fileID: 1812804225}
+  m_Layer: 5
+  m_Name: BlurVision
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1812804224
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812804223}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2033291142}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1812804225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812804223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.8301887, g: 0.6774653, b: 0.6774653, a: 0.03529412}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1812804226
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812804223}
+  m_CullTransparentMesh: 1
 --- !u!1 &1820076407 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000012855196106, guid: a52d55d99a7b23e42b2d401f956a3e52, type: 3}
@@ -48400,6 +48554,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2cba078cc04454fa306c9e2931e396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPatrol
+  chaseVignetteUI: {fileID: 0}
+  blurVisionUI: {fileID: 0}
   waypoints: []
   waitTime: 2
   patrolSpeed: 3.5
@@ -49145,6 +49301,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2cba078cc04454fa306c9e2931e396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPatrol
+  chaseVignetteUI: {fileID: 0}
+  blurVisionUI: {fileID: 0}
   waypoints: []
   waitTime: 2
   patrolSpeed: 3.5
@@ -53491,6 +53649,109 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &2033291138
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2033291142}
+  - component: {fileID: 2033291141}
+  - component: {fileID: 2033291140}
+  - component: {fileID: 2033291139}
+  m_Layer: 5
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2033291139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033291138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &2033291140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033291138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &2033291141
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033291138}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &2033291142
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033291138}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1769686072}
+  - {fileID: 1812804224}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &2036705643
 GameObject:
   m_ObjectHideFlags: 0
@@ -53744,6 +54005,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2cba078cc04454fa306c9e2931e396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPatrol
+  chaseVignetteUI: {fileID: 1769686071}
+  blurVisionUI: {fileID: 1812804223}
   waypoints:
   - {fileID: 1311728583}
   - {fileID: 1765698196}
@@ -55010,6 +55273,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2cba078cc04454fa306c9e2931e396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPatrol
+  chaseVignetteUI: {fileID: 0}
+  blurVisionUI: {fileID: 0}
   waypoints: []
   waitTime: 2
   patrolSpeed: 3.5
@@ -101811,7 +102076,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5950952859638039196, guid: a0c506b46348c94428a63cdbf7072a23, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8784585548651227462, guid: a0c506b46348c94428a63cdbf7072a23, type: 3}
       propertyPath: m_IsActive
@@ -101921,3 +102186,4 @@ SceneRoots:
   - {fileID: 1518502092}
   - {fileID: 195830650}
   - {fileID: 149687651}
+  - {fileID: 2033291142}
