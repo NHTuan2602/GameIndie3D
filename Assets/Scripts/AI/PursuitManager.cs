@@ -21,9 +21,13 @@ public class PursuitManager : MonoBehaviour
     public GameObject killNotificationUI;
     public TextMeshProUGUI killMessageText;
     public GameObject gameOverPanel;
-    // public GameObject winPanel; // TẠM ẨN: Không dùng panel Win cũ nữa vì đã chuyển sang Ending Screen
+
+    [Header("Âm thanh UI (MỚI)")]
+    public AudioSource uiAudioSource; // Kéo thả AudioSource vào đây
+    public AudioClip retrySound;      // Kéo file âm thanh tiếng Click/Ting vào đây
 
     private bool isGameOver = false;
+    private bool isRetrying = false; // Biến chống spam nút bấm
 
     void Awake() { instance = this; }
 
@@ -34,17 +38,19 @@ public class PursuitManager : MonoBehaviour
             healthBar.maxValue = 10;
             healthBar.value = enemiesRemaining;
         }
+
+        // Tự động tìm AudioSource nếu bạn quên kéo
+        if (uiAudioSource == null) uiAudioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
         if (isGameOver)
         {
-            // Nếu GameOver (Bị bắt/Tông xe), ấn Space để chơi lại màn đua xe
-            if (Input.GetKeyDown(KeyCode.Space) && gameOverPanel.activeSelf)
+            // Nếu GameOver, ấn Space để chơi lại (chỉ nhận lệnh 1 lần duy nhất)
+            if (Input.GetKeyDown(KeyCode.Space) && gameOverPanel.activeSelf && !isRetrying)
             {
-                Time.timeScale = 1f;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                RetryGame();
             }
             return;
         }
@@ -58,7 +64,32 @@ public class PursuitManager : MonoBehaviour
         if (healthBar != null) healthBar.value = enemiesRemaining;
     }
 
-    // ================== COMBO ÂM THANH NÉM GẠCH ==================
+    // ================== HỆ THỐNG CHƠI LẠI (MỚI) ==================
+    // Hàm public này có thể gắn thẳng vào Event OnClick() của UI Button nếu muốn dùng chuột!
+    public void RetryGame()
+    {
+        if (isRetrying) return; // Đã bấm rồi thì không cho bấm chồng lên nữa
+        isRetrying = true;
+
+        if (uiAudioSource != null && retrySound != null)
+        {
+            uiAudioSource.ignoreListenerPause = true; // Cho phép phát tiếng dù game đang pause
+            uiAudioSource.PlayOneShot(retrySound);
+        }
+
+        StartCoroutine(ReloadSceneDelayed());
+    }
+
+    IEnumerator ReloadSceneDelayed()
+    {
+        // Chờ 0.5 giây ĐỜI THỰC (Bỏ qua TimeScale = 0) để âm thanh kịp phát xong
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    // =============================================================
+
     public void UseItemImmediately()
     {
         if (isGameOver) return;
@@ -95,10 +126,8 @@ public class PursuitManager : MonoBehaviour
         int killedIndex = 10 - enemiesRemaining;
         ShowKillNotification($"{pName.ToUpper()} ĐÃ HẠ KẺ ĐỊCH THỨ {killedIndex}!");
 
-        // Khi thanh máu về 0 -> Kích hoạt WinGame
         if (enemiesRemaining <= 0) WinGame();
     }
-    // =============================================================
 
     void ShowKillNotification(string message)
     {
@@ -138,36 +167,27 @@ public class PursuitManager : MonoBehaviour
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
     }
 
-    // =============================================================
-    // ĐÃ FIX: CHUYỂN CẢNH ENDING KHI THẮNG (MÁU ĐỊCH = 0)
-    // =============================================================
     public void WinGame()
     {
         if (isGameOver) return;
         isGameOver = true;
 
-        // 1. Ép GameManager ghi nhận kết cục Tự Do (TrueEscape)
         if (GameManager.instance != null)
         {
             GameManager.instance.currentEnding = EndingType.TrueEscape;
         }
 
-        // 2. Tắt nhạc đua xe dồn dập đi
         if (BikeAudioManager.instance != null && BikeAudioManager.instance.bgmSource != null)
         {
             BikeAudioManager.instance.bgmSource.Stop();
         }
 
-        // 3. Gọi Coroutine để chờ 1.5 giây rồi mới đá sang màn Ending
         StartCoroutine(TransitionToEndingScene());
     }
 
     IEnumerator TransitionToEndingScene()
     {
-        // Đợi 1.5 giây để người chơi nhìn thấy thông báo Hạ kẻ địch thứ 10
         yield return new WaitForSeconds(1.5f);
-
-        // Lưu ý: Tên "EndingScene" trong ngoặc kép phải CHÍNH XÁC với tên file Scene Ending của bạn ngoài thư mục Scenes.
         SceneManager.LoadScene("EndingScene");
     }
 }

@@ -29,7 +29,6 @@ public class BossIntroManager : MonoBehaviour
         }
         else
         {
-            // Các ngày khác hoặc ca Chiều thì dẹp luôn, vào làm việc ngay
             introPanel.SetActive(false);
         }
 
@@ -37,41 +36,61 @@ public class BossIntroManager : MonoBehaviour
             btnStartWork.onClick.AddListener(CloseIntro);
     }
 
+    // =======================================================
+    // ĐÃ FIX: DÙNG UPDATE ĐỂ BẢO VỆ CON CHUỘT VÀ LẮNG NGHE PHÍM
+    // =======================================================
+    void Update()
+    {
+        // Chỉ chạy các lệnh này nếu bảng của Sếp đang mở
+        if (introPanel != null && introPanel.activeSelf)
+        {
+            // 1. LIÊN TỤC ÉP HIỆN CHUỘT (Chống lại các script khác giấu chuột)
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+
+            // 2. CHO PHÉP BẤM ESC HOẶC ENTER ĐỂ TẮT BẢNG (Chỉ hoạt động khi nút đã hiện ra)
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return))
+            {
+                if (btnStartWork != null && btnStartWork.gameObject.activeSelf)
+                {
+                    CloseIntro();
+                }
+            }
+        }
+    }
+
     IEnumerator PlayIntroRoutine()
     {
-        // Đợi màn hình Load xong 0.5s
         yield return new WaitForSeconds(0.5f);
 
-        // Đập bàn / Nẹt điện thị uy
         if (audioSource != null && slamDeskSound != null)
             audioSource.PlayOneShot(slamDeskSound, 1f);
 
-        // Chuẩn bị Text
         txtDialogue.text = bossDialogue;
         txtDialogue.maxVisibleCharacters = 0;
         txtDialogue.ForceMeshUpdate();
         int totalChars = txtDialogue.textInfo.characterCount;
 
-        // Bắt đầu nhả chữ nhanh (Giọng điệu gắt gỏng)
         for (int i = 0; i <= totalChars; i++)
         {
             txtDialogue.maxVisibleCharacters = i;
 
-            // Giảm tần suất tiếng lạch cạch để khỏi chói tai (phát âm thanh ở các ký tự chẵn)
             if (audioSource != null && typingSound != null && i % 2 == 0)
                 audioSource.PlayOneShot(typingSound, 0.3f);
 
-            yield return new WaitForSeconds(0.03f); // Tốc độ gõ khá nhanh
+            yield return new WaitForSeconds(0.03f);
         }
 
-        // Chờ 1 giây sau khi nói xong mới hiện nút chốt
         yield return new WaitForSeconds(1f);
         btnStartWork.gameObject.SetActive(true);
     }
 
     void CloseIntro()
     {
-        // Tắt Panel, trả lại quyền điều khiển để người chơi tương tác với VictimSelection
         introPanel.SetActive(false);
+
+        // Khi đóng bảng thoại, trả lại quyền ẩn chuột cho game chơi bình thường
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 }

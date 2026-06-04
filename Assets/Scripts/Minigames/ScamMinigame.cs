@@ -41,6 +41,8 @@ public class ScamMinigame : MonoBehaviour
     [Header("--- HIỆU ỨNG CĂNG THẲNG (THEME) ---")]
     public Image dangerVignette;
     public AudioSource bgmSource;
+    // MỚI: Nhạc lúc lảng vảng trong văn phòng chưa làm việc
+    public AudioClip bgmOfficeIdle;
     public AudioClip bgmNormal;
     public AudioClip tickTockSound;
     public AudioClip errorKeystrokeSound;
@@ -92,6 +94,16 @@ public class ScamMinigame : MonoBehaviour
         if (closeDistractionButton != null) closeDistractionButton.onClick.AddListener(CloseDistraction);
         if (btnHiddenSkip != null) btnHiddenSkip.onClick.AddListener(CheatSkipMinigame);
         if (btnHiddenFail != null) btnHiddenFail.onClick.AddListener(CheatFailMinigame);
+
+        // ==========================================
+        // ĐÃ FIX: BẬT NHẠC VĂN PHÒNG NGAY LÚC VÀO SCENE
+        // ==========================================
+        if (bgmSource != null && bgmOfficeIdle != null)
+        {
+            bgmSource.clip = bgmOfficeIdle;
+            bgmSource.loop = true;
+            bgmSource.Play();
+        }
     }
 
     void Update()
@@ -215,6 +227,15 @@ public class ScamMinigame : MonoBehaviour
 
         if (timerSlider != null) timerSlider.gameObject.SetActive(!isAutoPlayTroll);
 
+        // ==========================================
+        // ĐÃ FIX: CHUYỂN SANG NHẠC CĂNG THẲNG KHI VÀO GAME
+        // ==========================================
+        if (bgmSource != null && bgmNormal != null)
+        {
+            bgmSource.clip = bgmNormal;
+            bgmSource.Play();
+        }
+
         StartCoroutine(CountdownToStart());
     }
 
@@ -278,10 +299,12 @@ public class ScamMinigame : MonoBehaviour
     {
         isPanicMode = false;
         if (dangerVignette != null) dangerVignette.color = new Color(1, 0, 0, 0);
-        if (bgmSource != null && bgmNormal != null)
+
+        // Chỉ reset lại nhạc lừa đảo nếu đang không phải là bài đó
+        if (bgmSource != null && bgmNormal != null && bgmSource.clip != bgmNormal)
         {
             bgmSource.clip = bgmNormal;
-            if (!bgmSource.isPlaying) bgmSource.Play();
+            bgmSource.Play();
         }
     }
 
@@ -392,9 +415,6 @@ public class ScamMinigame : MonoBehaviour
                 string randomRage = rageQuits[Random.Range(0, rageQuits.Length)];
 
                 typingAreaText.text = $"<color=#FF0000>Hết giờ! Bạn nổi điên chửi luôn:\n\"{randomRage}\"</color>";
-
-                // ĐÃ FIX: XÓA CHÍCH ĐIỆN 30 HP Ở ĐÂY. CUỐI NGÀY MỚI PHẠT!
-                Debug.Log("<color=yellow>Bị block! Báo về GameManager ghi nhận 1 lần Thất Bại.</color>");
 
                 if (audioSource != null && shockSound != null) audioSource.PlayOneShot(shockSound);
                 StartCoroutine(PhoneShakeEffect());
@@ -507,7 +527,6 @@ public class ScamMinigame : MonoBehaviour
         StopAllCoroutines();
         isDistracted = false;
         if (distractionPanel != null) distractionPanel.SetActive(false);
-        Debug.Log("<color=magenta>DEV CHEAT: Bỏ qua và THẮNG!</color>");
         EndGame(true, maxMoneyReward + bossBonus);
     }
 
@@ -515,11 +534,7 @@ public class ScamMinigame : MonoBehaviour
     {
         if (!isTypingPhase) return;
         isTypingPhase = false;
-
-        // ĐÃ FIX: Chặn việc Spam F10 gọi ra nhiều vòng xử lý làm treo game!
         StopAllCoroutines();
-
-        Debug.Log("<color=magenta>DEV CHEAT: Ép THUA ngay lập tức!</color>");
         StartCoroutine(ProcessRoundEnd(false));
     }
 
@@ -528,6 +543,16 @@ public class ScamMinigame : MonoBehaviour
         isTypingPhase = false;
         ResetPanicMode();
         if (phonePanel != null) phonePanel.SetActive(false);
+
+        // ==========================================
+        // ĐÃ FIX: TRẢ LẠI NHẠC VĂN PHÒNG KHI ĐÓNG GIAO DIỆN
+        // ==========================================
+        if (bgmSource != null && bgmOfficeIdle != null)
+        {
+            bgmSource.clip = bgmOfficeIdle;
+            bgmSource.Play();
+        }
+
         if (audioSource != null) { audioSource.Stop(); audioSource.loop = false; }
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

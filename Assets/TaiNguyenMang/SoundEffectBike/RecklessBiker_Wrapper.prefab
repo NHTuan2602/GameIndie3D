@@ -289,6 +289,10 @@ PrefabInstance:
       value: BaoVe (1)@Shaking Dice@Driving
       objectReference: {fileID: 0}
     - target: {fileID: 8417361359673230750, guid: 7629709fd355e5948a8169d494393141, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ce83461c5341a0f4c8fd0949b57ae41d, type: 2}
+    - target: {fileID: 8417361359673230750, guid: 7629709fd355e5948a8169d494393141, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
       value: 
       objectReference: {fileID: 2100000, guid: 416acae5a4512e442bece0ba2e57eeeb, type: 2}
