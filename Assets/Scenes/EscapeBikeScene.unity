@@ -3363,6 +3363,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1262334886}
   - component: {fileID: 1262334887}
+  - component: {fileID: 1262334888}
   m_Layer: 5
   m_Name: ThanhMau_Dich
   m_TagString: Untagged
@@ -3442,6 +3443,24 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1262334888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262334885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c56a9711dfd74d14e9feeb61bd4fde93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossHealthBarIntro
+  healthSlider: {fileID: 1262334887}
+  fillDuration: 2.5
+  maxHealth: 10
+  audioSource: {fileID: 0}
+  chargingSound: {fileID: 0}
+  fullyChargedSound: {fileID: 0}
 --- !u!4 &1301482682 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 186ad8f063dbf430da4d56ebc0cb14e0, type: 3}
@@ -4919,9 +4938,9 @@ MonoBehaviour:
   sfxSource: {fileID: 1831431089}
   throwBrick: {fileID: 8300000, guid: cec388af59fc32a41950bc6f86662f8e, type: 3}
   hitSound: {fileID: 8300000, guid: e357953992aca714f9923a62c0ef4932, type: 3}
-  potholeHit: {fileID: 8300000, guid: 40050ad529ff85643a91d3575d991437, type: 3}
+  potholeHit: {fileID: 8300000, guid: 72fd2aefd013ef34391aa7caaf2dd8ae, type: 3}
   rampJump: {fileID: 8300000, guid: e7521acd66acbe6449fc0bd289b9ef2b, type: 3}
-  pickupItem: {fileID: 8300000, guid: b1cdcdee9dfc42845919eac7dba02cee, type: 3}
+  pickupItem: {fileID: 8300000, guid: 195ca7ec7926e7c46b1eac615d7d542d, type: 3}
   enemyHurt: {fileID: 8300000, guid: abb7ebb240b896f4aa7a3b5f45549d60, type: 3}
 --- !u!1 &1838504235
 GameObject:

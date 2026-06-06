@@ -41,6 +41,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // ==========================================
+        // ĐÃ FIX: NẾU GAME ĐANG PAUSE (THỜI GIAN BẰNG 0) THÌ DỪNG MỌI HOẠT ĐỘNG
+        // TRÁNH VIỆC ĐÁNH LỘN VỚI PAUSE MENU ĐỂ GIÀNH CON CHUỘT
+        // ==========================================
+        if (Time.timeScale == 0f) return;
+
         if (canLook)
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -64,9 +70,7 @@ public class PlayerMovement : MonoBehaviour
 
             transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
 
-            // ==========================================
             // DÙNG NÚT 'E' ĐỂ UỐNG NƯỚC
-            // ==========================================
             if (Input.GetKeyDown(KeyCode.E))
             {
                 InteractWithObject();
@@ -103,16 +107,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (playerCamera == null) return;
 
-        // BƯỚC 1: KIỂM TRA ĐỒ ĐANG CẦM TRÊN TAY TRƯỚC (Không cần bắn laser)
-        // Duyệt qua tất cả các vật thể đang làm "con" của Camera
+        // BƯỚC 1: KIỂM TRA ĐỒ ĐANG CẦM TRÊN TAY TRƯỚC
         foreach (Transform child in playerCamera.transform)
         {
             if (child.CompareTag("WaterBottle") && child.gameObject.activeSelf)
             {
                 Debug.Log("Đã ấn E uống chai nước trên tay! Bắt đầu sập nguồn...");
-                Destroy(child.gameObject); // Vứt chai nước
+                Destroy(child.gameObject);
 
-                // Dọn sạch bóng ma UI
                 if (DialogueManager.instance != null && DialogueManager.instance.dialoguePanel != null)
                 {
                     DialogueManager.instance.dialoguePanel.SetActive(false);
@@ -120,16 +122,14 @@ public class PlayerMovement : MonoBehaviour
                     if (DialogueManager.instance.nameText != null) DialogueManager.instance.nameText.text = "";
                 }
 
-                // Gọi đạo diễn sập màn hình
                 BusEventManager busEvent = FindObjectOfType<BusEventManager>();
                 if (busEvent != null) busEvent.StartBlackout();
 
-                return; // Đã uống xong thì THOÁT HÀM luôn, không chạy xuống code bắn tia bên dưới nữa!
+                return;
             }
         }
 
-        // BƯỚC 2: NẾU KHÔNG CẦM GÌ TRÊN TAY, THÌ MỚI BẮN TIA LASER ĐỂ LẤY ĐỒ DƯỚI ĐẤT
-        // (Giữ lại đoạn này để sau này sang Campuchia còn lượm nhặt đồ vật khác)
+        // BƯỚC 2: NẾU KHÔNG CẦM GÌ TRÊN TAY
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 

@@ -26,7 +26,7 @@ public class MiniGameManager : MonoBehaviour
     public GameObject endingPanel;
     public TextMeshProUGUI endingText;
 
-    // ĐÃ THÊM: Biến lưu trữ đồng hồ đếm ngược tắt game
+    // Biến lưu trữ đồng hồ đếm ngược tắt game
     private Coroutine quitCoroutine;
 
     void Start()
@@ -84,6 +84,17 @@ public class MiniGameManager : MonoBehaviour
             DialogueManager.instance.StartDialogue(outroLines, () =>
             {
                 if (choicePanel != null) choicePanel.SetActive(true);
+
+                // ========================================================
+                // ĐÃ FIX: TƯỚC QUYỀN ĐIỀU KHIỂN CỦA PLAYER TRƯỚC KHI BẬT CHUỘT
+                // ========================================================
+                PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
+                if (player != null)
+                {
+                    player.canWalk = false;
+                    player.canLook = false; // Khóa dòng này thì Player mới nhả chuột ra!
+                }
+
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             });
@@ -142,6 +153,16 @@ public class MiniGameManager : MonoBehaviour
         // 3. Bật lại bảng lựa chọn (Đồng ý / Từ chối)
         if (choicePanel != null) choicePanel.SetActive(true);
 
+        // ========================================================
+        // ĐÃ FIX: ĐẢM BẢO KHÓA PLAYER KHI CHƠI LẠI
+        // ========================================================
+        PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
+        if (player != null)
+        {
+            player.canWalk = false;
+            player.canLook = false;
+        }
+
         // 4. Đảm bảo hiện chuột để chọn lại
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -154,10 +175,7 @@ public class MiniGameManager : MonoBehaviour
     // ==========================================
     public void VeMenuChinh()
     {
-        // Reset thời gian về bình thường (đề phòng bạn có dùng Pause)
         Time.timeScale = 1f;
-
-        // Load lại scene Menu (Hãy đảm bảo tên scene trong ngoặc đúng với tên bạn đặt)
         SceneManager.LoadScene("MainMenu");
     }
 

@@ -33,13 +33,13 @@ public class PursuitManager : MonoBehaviour
 
     void Start()
     {
-        if (healthBar != null)
-        {
-            healthBar.maxValue = 10;
-            healthBar.value = enemiesRemaining;
-        }
-
-        // Tự động tìm AudioSource nếu bạn quên kéo
+          /*  if (healthBar != null)
+            {
+                healthBar.maxValue = 10;
+                healthBar.value = enemiesRemaining;
+            }
+*/
+            // Tự động tìm AudioSource nếu bạn quên kéo
         if (uiAudioSource == null) uiAudioSource = GetComponent<AudioSource>();
     }
 
@@ -61,7 +61,7 @@ public class PursuitManager : MonoBehaviour
 
         if (statusUI != null) statusUI.text = $"{player.forwardSpeed:F0} km/h";
 
-        if (healthBar != null) healthBar.value = enemiesRemaining;
+        //if (healthBar != null) healthBar.value = enemiesRemaining;
     }
 
     // ================== HỆ THỐNG CHƠI LẠI (MỚI) ==================
@@ -117,7 +117,7 @@ public class PursuitManager : MonoBehaviour
     public void EnemyTakeDamage()
     {
         enemiesRemaining--;
-
+        if (healthBar != null) healthBar.value = enemiesRemaining;
         if (BikeAudioManager.instance != null) BikeAudioManager.instance.PlayEnemyHurt();
 
         string pName = "BẠN";

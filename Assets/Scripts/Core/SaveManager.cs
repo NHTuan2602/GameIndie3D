@@ -16,7 +16,6 @@ public class SaveManager : MonoBehaviour
         // =========================================================
         // HỆ THỐNG PHÍM TẮT BÍ MẬT ĐỂ BẠN TRÌNH BÀY KHI VẤN ĐÁP
         // =========================================================
-        // ĐÃ FIX LỖI CHÍNH TẢ: KeyCode.LeftArrow thay vì LeftLeftArrow
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.LeftControl))
         {
             // Bấm Ctrl + F1: Tua nhanh đến màn Đua Xe Máy Vượt Ngục (Có full đồ)
@@ -27,6 +26,11 @@ public class SaveManager : MonoBehaviour
 
             // Bấm Ctrl + F3: Tua nhanh đến Giao diện Scam Máy Tính (Ngày 1)
             if (Input.GetKeyDown(KeyCode.F3)) { WarpToScamScreen(1); }
+
+            // =========================================================
+            // MỚI: Bấm Ctrl + F4: Tua nhanh đến Mini-game Tài Xỉu
+            // =========================================================
+            if (Input.GetKeyDown(KeyCode.F4)) { WarpToTaiXiu(); }
         }
     }
 
@@ -55,7 +59,6 @@ public class SaveManager : MonoBehaviour
         Debug.Log("<color=cyan><b>[Auto-Save]</b> Game đã tự động lưu thành công tại điểm an toàn!</color>");
     }
 
-    // Hàm gọi từ nút "TIẾP TỤC" ngoài Main Menu
     public bool LoadGameData()
     {
         if (PlayerPrefs.GetInt("Saved_HasData", 0) == 0 || GameManager.instance == null) return false;
@@ -73,7 +76,6 @@ public class SaveManager : MonoBehaviour
 
         GameManager.instance.totalSuccessfulScamsAllDays = PlayerPrefs.GetInt("Saved_TotalScams");
 
-        // Đẩy người chơi vào đúng phân đoạn đã lưu
         GameManager.instance.TransitionToPhase(GameManager.instance.currentPhase);
         return true;
     }
@@ -82,43 +84,58 @@ public class SaveManager : MonoBehaviour
     // TRỤC 2: CÁC CỬA SAU WARP DỮ LIỆU ĐỂ TRÌNH BÀY VẤN ĐÁP
     // =========================================================
 
-    // 1. Tua nhanh tới màn đua xe máy
     public void WarpToEscapeBike()
     {
         Debug.Log("<color=orange><b>[WARP]</b> Đang nạp dữ liệu khẩn cấp để vào màn Đua xe máy...</color>");
-        SetupDebugGameManager(6, GamePhase.Night, 100, 500000);
 
-        // Ép có đủ 4 món đồ để kích hoạt True Ending khi thắng màn đua xe
-        GameManager.instance.hasNotebook = true;
-        GameManager.instance.hasNippers = true;
-        GameManager.instance.hasRope = true;
-        GameManager.instance.hasKey = true;
+        // ĐÃ FIX: Chỉ bơm đồ nếu GameManager thực sự tồn tại
+        if (GameManager.instance != null)
+        {
+            SetupDebugGameManager(6, GamePhase.Night, 100, 500000);
+            GameManager.instance.hasNotebook = true;
+            GameManager.instance.hasNippers = true;
+            GameManager.instance.hasRope = true;
+            GameManager.instance.hasKey = true;
+        }
+        else
+        {
+            Debug.LogWarning("Warp không có GameManager! Bạn sẽ chuyển cảnh chay mà không có tiền/đồ.");
+        }
 
         Time.timeScale = 1f;
-        SceneManager.LoadScene("EscapeCyclingScene");
+        SceneManager.LoadScene("EscapeBikeScene"); // Dùng đúng tên màn đua xe
     }
 
-    // 2. Tua nhanh tới đêm thám thính lén lút
     public void WarpToStealthNight(int dayNumber)
     {
         Debug.Log($"<color=orange><b>[WARP]</b> Đang tua tới Đêm stealth lén lút Ngày {dayNumber}...</color>");
-        SetupDebugGameManager(dayNumber, GamePhase.Night, 100, 150000);
+        if (GameManager.instance != null) SetupDebugGameManager(dayNumber, GamePhase.Night, 100, 150000);
 
         Time.timeScale = 1f;
-        SceneManager.LoadScene("NightScreen"); // Tên Scene phòng ngủ 3D ban đêm của bạn
+        SceneManager.LoadScene("NightStealthScene");
     }
 
-    // 3. Tua nhanh tới màn hình làm việc gõ phím lừa đảo
     public void WarpToScamScreen(int dayNumber)
     {
         Debug.Log($"<color=orange><b>[WARP]</b> Đang tua tới Ca làm việc Ngày {dayNumber}...</color>");
-        SetupDebugGameManager(dayNumber, GamePhase.Morning, 100, 0);
+        if (GameManager.instance != null) SetupDebugGameManager(dayNumber, GamePhase.Morning, 100, 0);
 
         Time.timeScale = 1f;
         SceneManager.LoadScene("ScamScreen");
     }
 
-    // Hàm phụ trợ bơm dữ liệu sạch vào GameManager để tránh crash
+    // MỚI: TUA NHANH VÀO SÒNG BẠC TÀI XỈU
+    public void WarpToTaiXiu()
+    {
+        Debug.Log("<color=orange><b>[WARP]</b> Đang tua tới Mini-game Tài Xỉu...</color>");
+
+        // Bơm sẵn 5 triệu VNĐ cho bạn đánh bạc thả ga
+        if (GameManager.instance != null) SetupDebugGameManager(2, GamePhase.Night, 100, 5000000);
+
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("NightGameScreen");
+    }
+
     private void SetupDebugGameManager(int day, GamePhase phase, int hp, float money)
     {
         if (GameManager.instance == null) return;
