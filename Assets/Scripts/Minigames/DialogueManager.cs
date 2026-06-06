@@ -138,30 +138,32 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            // KẾT THÚC HỘI THOẠI
+            // 1. Tắt bảng hội thoại
             dialoguePanel.SetActive(false);
 
-            // =====================================
-            // ĐÃ FIX: CHIA LÀM 2 TRƯỜNG HỢP
-            // =====================================
+            // 2. PHẦN MỚI: TỰ ĐỘNG DỌN DẸP TRẠNG THÁI TRƯỚC KHI GỌI CALLBACK
+            // Dọn dẹp trạng thái điều khiển (Dùng chung cho cả 2 trường hợp)
+            PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
+            if (player != null) { player.canWalk = true; player.canLook = true; }
+
+            CrosshairController crosshair = FindFirstObjectByType<CrosshairController>();
+            if (crosshair != null) crosshair.Show();
+
+            // 3. XỬ LÝ LOGIC RIÊNG
             if (onDialogueCompleteCallback != null)
             {
-                // TRƯỜNG HỢP 1: Có sự kiện nối tiếp (Bật Menu Chọn, Chuyển Scene...)
-                // -> CHỈ gọi sự kiện, KHÔNG trả lại quyền đi lại và KHÔNG khóa chuột!
+                // Gọi sự kiện nối tiếp
                 onDialogueCompleteCallback.Invoke();
+
+                // NẾU CALLBACK CỦA BẠN LÀ CHUYỂN CẢNH, THÌ KHÔNG CẦN KHÓA CHUỘT
+                // NHƯNG NẾU LÀ BẬT MENU TRONG CẢNH, BẠN CẦN CHUỘT.
+                // Ở ĐÂY TÔI KHÔNG KHÓA CHUỘT ĐỂ TRÁNH GÂY LỖI CHO CÁC MENU TƯƠNG TÁC
             }
             else
             {
-                // TRƯỜNG HỢP 2: Hội thoại bình thường xong
-                // -> Mở khóa chân cẳng, giấu chuột đi để chơi tiếp
-                PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
-                if (player != null) { player.canWalk = true; player.canLook = true; }
-
+                // Chỉ khóa chuột khi là hội thoại bình thường không cần tương tác gì thêm
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-
-                CrosshairController crosshair = FindFirstObjectByType<CrosshairController>();
-                if (crosshair != null) crosshair.Show();
             }
         }
     }

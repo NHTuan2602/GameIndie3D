@@ -324,6 +324,7 @@ public class GameManager : MonoBehaviour
             currentPhase = GamePhase.Morning;
             TransitionToPhase(GamePhase.Morning, true);
         }
+        if (SaveManager.instance != null) SaveManager.instance.AutoSaveGameData();
     }
 
     private void TriggerEndingTransition(EndingType ending)
@@ -406,6 +407,8 @@ public class GameManager : MonoBehaviour
 
         if (isNewDay && DayTransitionManager.instance != null) DayTransitionManager.instance.StartTransition(sceneName);
         else SceneManager.LoadScene(sceneName);
+        // Tự động lưu game khi chuyển ca làm việc an toàn
+        if (SaveManager.instance != null) SaveManager.instance.AutoSaveGameData();
     }
 
     public void ConfiscateAllItems()
