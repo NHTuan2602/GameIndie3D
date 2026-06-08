@@ -5834,7 +5834,7 @@ Transform:
   m_GameObject: {fileID: 453426720}
   serializedVersion: 2
   m_LocalRotation: {x: -0.70710677, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 46.567665, y: -47.400005, z: 11.699623}
+  m_LocalPosition: {x: 47.5, y: -47.400005, z: 11.699623}
   m_LocalScale: {x: 763.8, y: 469, z: 63.40001}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12779,6 +12779,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: c12421a6bd8ef0d489630ec194996ac3, type: 2}
+    - target: {fileID: -4169742592441055757, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0415
+      objectReference: {fileID: 0}
+    - target: {fileID: -4169742592441055757, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
       propertyPath: m_Name
       value: etalon_a079
@@ -12791,6 +12799,7 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: -8700617353114198275, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
     - {fileID: 65702495048144492, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
+    - {fileID: 6263907957347626358, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 157bb5e8236f63a44bd5d468ce452bb9, type: 3}
       insertIndex: -1

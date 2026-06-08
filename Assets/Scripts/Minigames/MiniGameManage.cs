@@ -26,8 +26,7 @@ public class MiniGameManager : MonoBehaviour
     public GameObject endingPanel;
     public TextMeshProUGUI endingText;
 
-    // Biến lưu trữ đồng hồ đếm ngược tắt game
-    private Coroutine quitCoroutine;
+    // ĐÃ XÓA BIẾN COROUTINE VÌ KHÔNG CÒN DÙNG ĐẾN ĐẾM NGƯỢC NỮA
 
     void Start()
     {
@@ -122,40 +121,26 @@ public class MiniGameManager : MonoBehaviour
         {
             endingPanel.SetActive(true);
             if (endingText != null)
-                endingText.text = "Bạn đã từ chối lời đề nghị. Cuộc sống sinh viên nghèo vẫn tiếp diễn, nhưng ít ra bạn được bình yên.\n\n<color=#FF0000>ENDING 1: BẠN SỢ RỒI!</color>";
+                endingText.text = "Bạn đã từ chối lời đề nghị. Cuộc sống sinh viên nghèo vẫn tiếp diễn, nhưng ít ra bạn được bình yên.\n\n<color=#FF0000>ENDING 1: Lựa chọn đúng đắn!</color>";
         }
 
-        // Ghi nhớ đồng hồ đếm ngược vào biến quitCoroutine
-        quitCoroutine = StartCoroutine(EndGameSequence());
+        // ĐÃ XÓA QUẢ BOM ĐẾM NGƯỢC 5 GIÂY TẮT GAME Ở ĐÂY
     }
 
-    IEnumerator EndGameSequence()
-    {
-        yield return new WaitForSeconds(5f);
-        Application.Quit();
-    }
+    // ĐÃ XÓA HÀM IEnumerator EndGameSequence() VÌ KHÔNG CÒN DÙNG NỮA
 
     // ==========================================
     // NÚT 1: CHƠI LẠI (QUAY LẠI ĐOẠN LỰA CHỌN)
     // ==========================================
     public void QuayLaiLuaChon()
     {
-        // 1. GỠ MÌN: Hủy đếm ngược tắt game ngay lập tức!
-        if (quitCoroutine != null)
-        {
-            StopCoroutine(quitCoroutine);
-            quitCoroutine = null;
-        }
-
-        // 2. Tắt màn hình Ending đi
+        // 1. Tắt màn hình Ending đi
         if (endingPanel != null) endingPanel.SetActive(false);
 
-        // 3. Bật lại bảng lựa chọn (Đồng ý / Từ chối)
+        // 2. Bật lại bảng lựa chọn (Đồng ý / Từ chối)
         if (choicePanel != null) choicePanel.SetActive(true);
 
-        // ========================================================
-        // ĐÃ FIX: ĐẢM BẢO KHÓA PLAYER KHI CHƠI LẠI
-        // ========================================================
+        // 3. Đảm bảo khóa Player khi chọn lại
         PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
         if (player != null)
         {

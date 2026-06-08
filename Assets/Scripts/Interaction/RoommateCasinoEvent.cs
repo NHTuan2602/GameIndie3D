@@ -6,11 +6,18 @@ using UnityEngine.SceneManagement;
 
 public class RoommateCasinoEvent : MonoBehaviour
 {
+    [Header("--- KẾT NỐI MENU 3 NÚT (ĐỂ ẨN ĐI VÀ CHẶN LỆNH) ---")]
+    [Tooltip("Kéo object chứa chữ '22:00...' và 3 nút vào đây để tắt nó đi")]
+    public GameObject nightMenuUI;
+    public Button btnNgu;
+    public Button btnDanhBac;
+    public Button btnThamThinh;
+
     [Header("--- UI HỘI THOẠI RỦ RÊ ---")]
-    public GameObject dialoguePanel; // Khung đen mờ chứa hội thoại
+    public GameObject dialoguePanel;
     public TextMeshProUGUI txtDialogue;
-    public Button btnJoinCasino; // Nút: "Ngồi vào sới"
-    public Button btnRefuse; // Nút: "Từ chối"
+    public Button btnJoinCasino;
+    public Button btnRefuse;
 
     [Header("--- ÂM THANH ---")]
     public AudioSource audioSource;
@@ -25,19 +32,35 @@ public class RoommateCasinoEvent : MonoBehaviour
     {
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
 
-        // KỊCH BẢN NÀY CHỈ ĐƯỢC KÍCH HOẠT VÀO ĐÚNG ĐÊM NGÀY 1
+        // KIỂM TRA: KỊCH BẢN NÀY CHỈ CÓ TÁC DỤNG VÀO ĐÚNG ĐÊM 1
         if (GameManager.instance != null && GameManager.instance.currentDay == 1)
         {
-            StartCoroutine(TriggerEventRoutine());
+            // ĐÃ FIX: Không tự động chạy Coroutine nữa. Chuyển sang "Cướp cò" 3 nút bấm.
+            HijackNightMenuButtons();
         }
+    }
+
+    void HijackNightMenuButtons()
+    {
+        // Xóa sạch lệnh cũ của 3 nút, ép nó chạy hàm OnAnyActionClicked của chúng ta
+        if (btnNgu != null) { btnNgu.onClick.RemoveAllListeners(); btnNgu.onClick.AddListener(OnAnyActionClicked); }
+        if (btnDanhBac != null) { btnDanhBac.onClick.RemoveAllListeners(); btnDanhBac.onClick.AddListener(OnAnyActionClicked); }
+        if (btnThamThinh != null) { btnThamThinh.onClick.RemoveAllListeners(); btnThamThinh.onClick.AddListener(OnAnyActionClicked); }
+    }
+
+    // Hàm này sẽ chạy khi người chơi bấm BẤT KỲ nút nào trong 3 nút vào Đêm 1
+    public void OnAnyActionClicked()
+    {
+        // 1. TẮT menu 3 nút đi để bảng hội thoại không bị đè lên nhau (Chuẩn ý cô giáo)
+        if (nightMenuUI != null) nightMenuUI.SetActive(false);
+
+        // 2. Kích hoạt bảng rủ rê
+        StartCoroutine(TriggerEventRoutine());
     }
 
     IEnumerator TriggerEventRoutine()
     {
-        // 1. Đợi 4 giây cho hệ thống WakeUpManager mở mắt người chơi xong hoàn toàn
-        yield return new WaitForSeconds(4.0f);
-
-        // 2. Khóa không cho người chơi di chuyển hay xoay chuột đi chỗ khác
+        // ĐÃ XÓA thời gian chờ 4 giây. Bấm nút là hiện bảng rủ rê ngay lập tức.
         PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
         if (player != null)
         {
@@ -45,16 +68,13 @@ public class RoommateCasinoEvent : MonoBehaviour
             player.canLook = false;
         }
 
-        // Mở khóa chuột để bấm nút
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // 3. Bật Panel hội thoại lên
         if (dialoguePanel != null) dialoguePanel.SetActive(true);
         if (btnJoinCasino != null) btnJoinCasino.gameObject.SetActive(false);
         if (btnRefuse != null) btnRefuse.gameObject.SetActive(false);
 
-        // 4. Bắt đầu gõ chữ mồi chài
         txtDialogue.text = "";
         foreach (char letter in inviteText.ToCharArray())
         {
@@ -65,7 +85,6 @@ public class RoommateCasinoEvent : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        // Hiện nút bấm
         if (btnJoinCasino != null)
         {
             btnJoinCasino.gameObject.SetActive(true);
@@ -82,7 +101,6 @@ public class RoommateCasinoEvent : MonoBehaviour
 
     void OnRefuseClicked()
     {
-        // Nếu người chơi cứng đầu bấm "Từ chối" -> Ép buộc phải chơi
         StopAllCoroutines();
         StartCoroutine(ForcePlayRoutine());
     }
@@ -93,7 +111,7 @@ public class RoommateCasinoEvent : MonoBehaviour
         if (btnJoinCasino != null) btnJoinCasino.gameObject.SetActive(false);
 
         txtDialogue.text = "";
-        txtDialogue.color = Color.red; // Chữ chuyển sang màu đỏ máu đe dọa
+        txtDialogue.color = Color.red;
 
         if (audioSource != null && laughSound != null) audioSource.PlayOneShot(laughSound, 0.8f);
 
@@ -107,7 +125,6 @@ public class RoommateCasinoEvent : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         if (btnJoinCasino != null)
         {
-            // Thay đổi Text của nút thành sự ép buộc
             btnJoinCasino.GetComponentInChildren<TextMeshProUGUI>().text = "Bấm để bước tới sới bạc...";
             btnJoinCasino.gameObject.SetActive(true);
         }
@@ -115,7 +132,6 @@ public class RoommateCasinoEvent : MonoBehaviour
 
     void GoToCasinoScene()
     {
-        // Chuyển thẳng sang phân cảnh Minigame Tài Xỉu
         if (DayTransitionManager.instance != null)
         {
             DayTransitionManager.instance.StartTransition("NightGameScreen");

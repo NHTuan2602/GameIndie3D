@@ -5172,7 +5172,7 @@ PrefabInstance:
       objectReference: {fileID: 330585546}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
       propertyPath: testStartDay
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
       propertyPath: caughtPanelUI
@@ -5180,7 +5180,7 @@ PrefabInstance:
       objectReference: {fileID: 1634420519}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
       propertyPath: enableDevMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7083276678700242597, guid: b76a671d78ebf55458da4a7d24005088, type: 3}
       propertyPath: testHasNippers
