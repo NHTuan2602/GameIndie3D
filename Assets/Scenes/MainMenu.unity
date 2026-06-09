@@ -2055,7 +2055,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Gi\u1EA3 l\u1EADp l\xE0m Scamer "
+  m_text: "Gi\u1EA3 l\u1EADp l\xE0m Scammer "
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 58d945b52c2b18c4fbe8e5e2f73c6310, type: 2}
   m_sharedMaterial: {fileID: -4271833636130163228, guid: 58d945b52c2b18c4fbe8e5e2f73c6310, type: 2}
