@@ -109,7 +109,8 @@ public class PauseMenuManager : MonoBehaviour
 
         if (mouseSenseSlider != null)
         {
-            mouseSenseSlider.value = PlayerPrefs.GetFloat("MouseSensitivity", 2f);
+            // SỬA SỐ 2f thành 300f CHO ĐỒNG BỘ VỚI PLAYER MOVEMENT
+            mouseSenseSlider.value = PlayerPrefs.GetFloat("MouseSensitivity", 300f);
             mouseSenseSlider.onValueChanged.AddListener(SetMouseSensitivity);
         }
     }

@@ -3,7 +3,7 @@ using UnityEngine;
 public class MouseLook : MonoBehaviour
 {
     [Header("Mouse Settings")]
-    public float mouseSensitivity = 100f;
+    public float mouseSensitivity = 300f; // Chỉnh mặc định về 300f cho đồng bộ với file kia
     public Transform playerBody;
 
     private float xRotation = 0f;
@@ -26,9 +26,14 @@ public class MouseLook : MonoBehaviour
         // 2. CHẶN LỖI: Nếu game đang bị dừng (TimeScale = 0), không tính toán chuột nữa
         if (Time.timeScale == 0f) return;
 
-        // Lấy thông tin chuột di chuyển (trên trục X và Y)
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        // ==========================================
+        // ĐÃ THÊM: LIÊN KẾT THANH TRƯỢT TỐC ĐỘ CHUỘT TỪ MENU SETTING
+        // ==========================================
+        float currentSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", mouseSensitivity);
+
+        // Lấy thông tin chuột di chuyển (trên trục X và Y) nhân với tốc độ từ cài đặt
+        float mouseX = Input.GetAxis("Mouse X") * currentSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * currentSensitivity * Time.deltaTime;
 
         // Tính toán góc xoay lên/xuống (xoay quanh trục X của Camera)
         xRotation -= mouseY;

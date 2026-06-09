@@ -5,7 +5,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Cài đặt Di chuyển & Góc nhìn")]
     public float moveSpeed = 5f;
-    public float mouseSensitivity = 300f;
+    public float mouseSensitivity = 300f; // Vẫn giữ biến này để làm thông số dự phòng
 
     [Header("Trạng thái Hoạt động")]
     public bool canWalk = false;
@@ -41,10 +41,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // ==========================================
-        // ĐÃ FIX: NẾU GAME ĐANG PAUSE (THỜI GIAN BẰNG 0) THÌ DỪNG MỌI HOẠT ĐỘNG
-        // TRÁNH VIỆC ĐÁNH LỘN VỚI PAUSE MENU ĐỂ GIÀNH CON CHUỘT
-        // ==========================================
+        // Tạm dừng mọi thứ nếu mở Pause Menu
         if (Time.timeScale == 0f) return;
 
         if (canLook)
@@ -52,8 +49,13 @@ public class PlayerMovement : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+            // ==========================================
+            // ĐÃ THÊM: LIÊN KẾT THANH TRƯỢT TỐC ĐỘ CHUỘT
+            // ==========================================
+            float currentSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", mouseSensitivity);
+
+            float mouseX = Input.GetAxis("Mouse X") * currentSensitivity * Time.deltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * currentSensitivity * Time.deltaTime;
 
             yRotation += mouseX;
 
@@ -82,6 +84,9 @@ public class PlayerMovement : MonoBehaviour
             Cursor.visible = true;
         }
 
+        // ==========================================
+        // GIỮ NGUYÊN HOÀN TOÀN CODE DI CHUYỂN (WASD) CỦA BẠN
+        // ==========================================
         if (controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
@@ -101,13 +106,12 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // ==========================================
-    // 4. HÀM TƯƠNG TÁC (CHỈ BẮT ĐÚNG CHAI NƯỚC, BỎ QUA HỘP HÀNG)
+    // HÀM TƯƠNG TÁC
     // ==========================================
     void InteractWithObject()
     {
         if (playerCamera == null) return;
 
-        // BƯỚC 1: KIỂM TRA ĐỒ ĐANG CẦM TRÊN TAY TRƯỚC
         foreach (Transform child in playerCamera.transform)
         {
             if (child.CompareTag("WaterBottle") && child.gameObject.activeSelf)
@@ -129,7 +133,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // BƯỚC 2: NẾU KHÔNG CẦM GÌ TRÊN TAY
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
