@@ -124,6 +124,12 @@ public class TaiXiuManager : MonoBehaviour
         {
             if (anim.CompareTag("NPC_Gambler")) casinoCrowd.Add(anim);
         }
+
+        // ==========================================
+        // ĐÃ FIX: ÉP GAME CẬP NHẬT UI VÀ BẮT ĐẦU VÁN MỚI NGAY KHI LOAD XONG SCENE
+        // ==========================================
+        UpdateMoneyUI();
+        OpenCasino(); // Dùng hàm này để nó tự động bật luôn nhạc nền (BGM)
     }
 
     public void OpenCasino()
@@ -311,7 +317,6 @@ public class TaiXiuManager : MonoBehaviour
         }
         else
         {
-            // ĐÃ THÊM: Nếu là Đêm 1, hiển thị số ván đếm ngược để người chơi biết bao giờ được nghỉ
             if (GameManager.instance != null && GameManager.instance.currentDay == 1)
             {
                 statusText.text = $"VÁN {gambleCount + 1}/5 CỦA ĐÊM NAY. ĐẶT ĐI!";
@@ -416,7 +421,6 @@ public class TaiXiuManager : MonoBehaviour
         // ================= KỊCH BẢN THAO TÚNG XÚC XẮC =================
         if (playerChoice != 0)
         {
-            // ĐÃ THÊM: Ma thuật Đêm 1 - Luôn Thắng trong 5 ván đầu tiên
             if (GameManager.instance != null && GameManager.instance.currentDay == 1 && gambleCount < 5)
             {
                 if (playerChoice == 1) totalDiceValue = Random.Range(11, 18);
@@ -424,12 +428,10 @@ public class TaiXiuManager : MonoBehaviour
             }
             else if (gambleCount == warnAtGambleCount)
             {
-                // Ván 9 Dụ dỗ: Auto Thắng
                 if (playerChoice == 1) totalDiceValue = Random.Range(11, 18); else totalDiceValue = Random.Range(3, 11);
             }
             else if (gambleCount == trapAtGambleCount || isIndebted)
             {
-                // Ván 10 Sập hầm HOẶC Đã vay nợ: AUTO THUA TRẮNG
                 if (playerChoice == 1) totalDiceValue = Random.Range(3, 11); else totalDiceValue = Random.Range(11, 18);
             }
         }
@@ -481,7 +483,10 @@ public class TaiXiuManager : MonoBehaviour
         else if (playerChoice == winningChoice)
         {
             GameManager.instance.money += betAmount * 2;
-            statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>THẮNG {betAmount:N0} VNĐ</color>";
+            // ==========================================
+            // ĐÃ SỬA: LỜI CHÚC MỪNG MỚI ĐÂY NHÉ!
+            // ==========================================
+            statusText.text = $"KẾT QUẢ: {totalDiceValue} - {resultName}!\n<color=#00FF00>CHÚC MỪNG THẮNG LỚN: {betAmount:N0} VNĐ</color>";
             PlaySound(winSound);
             UpdateCrowdReaction(true);
             SaveGambleCount();
@@ -509,9 +514,6 @@ public class TaiXiuManager : MonoBehaviour
 
         UpdateMoneyUI();
 
-        // ==============================================================
-        // ĐÃ THÊM: KỊCH BẢN ĐÊM 1 - ĐUỔI VỀ NGỦ SAU 5 VÁN ĐỂ SANG NGÀY 2
-        // ==============================================================
         if (GameManager.instance != null && GameManager.instance.currentDay == 1 && gambleCount >= 5)
         {
             StartCoroutine(ForceSleepRoutine());
@@ -522,7 +524,6 @@ public class TaiXiuManager : MonoBehaviour
         }
     }
 
-    // ĐÃ THÊM: Luồng hiện hội thoại đuổi về rồi tự động tắt màn hình đi ngủ
     IEnumerator ForceSleepRoutine()
     {
         SetButtonsState(false);
@@ -532,7 +533,6 @@ public class TaiXiuManager : MonoBehaviour
 
         statusText.text = "<color=yellow>NHÀ CÁI: 'Sới nghỉ! Nay mày đỏ đấy ma mới. Mai mang tiền xuống đây chơi tiếp!'\n<i>Đang về phòng ngủ...</i></color>";
 
-        // Nghỉ 4 giây cho người chơi đọc dòng chữ
         yield return new WaitForSeconds(4f);
 
         CloseCasino();

@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     public bool testHasKey = true;
 
     [Header("Thông định Nhân vật")]
-    public string playerName = "Tuấn";
+    public string playerName = "Người chơi";
 
     [Header("Chỉ số Sinh tồn")]
     public int hp = 100;
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Chỉ số Tiến trình & Tiền Bạc")]
     public float money = 0f;
-
+    public float pendingMoneyToday = 0f; // ĐÃ THÊM: Tiền lừa được trong ngày nhưng chưa được chia
     [Header("Hệ thống Lương & KPI")]
     public int currentDay = 1;
     public int maxDays = 6;
@@ -137,7 +137,9 @@ public class GameManager : MonoBehaviour
         totalSuccessfulScamsAllDays++;
         consecutiveScamFails = 0;
 
-        money += (rawVNDEarned * currentCommissionRate);
+        // ĐÃ SỬA: Không cộng thẳng vào ví (money) nữa, mà cộng vào "két tạm"
+        pendingMoneyToday += rawVNDEarned;
+
         CheckShiftProgress();
     }
 
@@ -179,31 +181,46 @@ public class GameManager : MonoBehaviour
 
     public void EndDaySummary()
     {
-        if (successfulScamsToday >= targetKPI)
-        {
-            // ĐẠT KPI: Dụ dỗ người chơi lừa thêm bằng cách tăng lương và tăng chỉ tiêu
-            targetKPI++;
-            if (targetKPI > 5) targetKPI = 5; // Tối đa yêu cầu 5/5
+        int baseKPI = 2; // Chỉ tiêu sinh tồn cơ bản không bao giờ đổi
 
-            currentCommissionRate += 0.05f; // Tăng % hoa hồng nhận được
-            typingDifficultyMultiplier = Mathf.Max(0.5f, typingDifficultyMultiplier - 0.1f);
+        if (successfulScamsToday >= baseKPI)
+        {
+            // ==========================================
+            // VÙNG AN TOÀN: LỪA ĐƯỢC >= 2 NGƯỜI (KHÔNG BỊ CHÍCH ĐIỆN)
+            // ==========================================
+            if (successfulScamsToday >= targetKPI && successfulScamsToday > baseKPI)
+            {
+                // NỔ HŨ: Cố tình lừa nhiều hơn mức cơ bản để bú tiền thưởng
+                targetKPI = successfulScamsToday + 1;
+                if (targetKPI > 5) targetKPI = 5;
+
+                currentCommissionRate += 0.05f; // Tăng hoa hồng
+                typingDifficultyMultiplier = Mathf.Max(0.5f, typingDifficultyMultiplier - 0.1f);
+            }
+            else if (successfulScamsToday < targetKPI)
+            {
+                // RỚT HẠNG: Lừa đủ sống (>= 2) nhưng không giữ được phong độ cao
+                // Phạt: Cắt hoa hồng thưởng, đưa KPI về lại mức cơ bản (Bạn sẽ sửa lại số 4 ở đây nếu muốn giữ KPI khó)
+                targetKPI = 2;
+                currentCommissionRate = 0.1f;
+                typingDifficultyMultiplier = 1.0f;
+            }
         }
         else
         {
-            // KHÔNG ĐẠT KPI: Đây mới là lúc Ban quản lý lôi ra chích điện phạt nặng!
-            int shockDamage = (targetKPI - successfulScamsToday) * 30;
+            // ==========================================
+            // VÙNG CHẾT CHÓC: LỪA DƯỚI 2 NGƯỜI
+            // ==========================================
+            int shockDamage = (baseKPI - successfulScamsToday) * 30;
             TakeShockDamage(shockDamage);
 
-            // Đưa KPI về lại 2 để ngày hôm sau dễ sống hơn
+            // Đánh đập xong thì reset lại mọi thứ về cơ bản
             targetKPI = 2;
             currentCommissionRate = 0.1f;
             typingDifficultyMultiplier = 1.0f;
         }
     }
 
-    // ========================================================
-    // ĐÃ FIX: HÀM DỌN DẸP DỮ LIỆU ĐỂ BẤM NÚT CHƠI LẠI TRƠN TRU
-    // ========================================================
     public void ResetDayForRetry()
     {
         hp = maxHp;
@@ -212,7 +229,7 @@ public class GameManager : MonoBehaviour
         successfulScamsToday = 0;
         consecutiveScamFails = 0;
         caughtCountThisNight = 0;
-        // KHÔNG RESET currentDay để người chơi làm lại đúng ngày đó
+        pendingMoneyToday = 0f; // ĐÃ THÊM: Chơi lại ngày thì mất sạch tiền vừa lừa
     }
 
     public bool CanCollectItems() { return !(currentDay >= 2 && !hasNotebook); }
@@ -279,7 +296,8 @@ public class GameManager : MonoBehaviour
 
         if (currentDay < maxDays - 1)
         {
-            hp = maxHp;
+            hp += 40;
+            if (hp > maxHp) hp = maxHp;
         }
 
         AdvanceToNextDay();

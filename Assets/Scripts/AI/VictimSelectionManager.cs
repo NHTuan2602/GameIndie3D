@@ -37,6 +37,27 @@ public class VictimSelectionManager : MonoBehaviour
     public void ShowSelectionUI(int currentDay)
     {
         selectionPanel.SetActive(true);
+
+        // ==========================================
+        // ĐÃ FIX: TRÓI NHÂN VẬT VÀ MỞ KHÓA CHUỘT CHO UI
+        // ==========================================
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        PlayerMovement playerMove = FindFirstObjectByType<PlayerMovement>();
+        if (playerMove != null)
+        {
+            playerMove.canLook = false;
+            playerMove.canWalk = false;
+        }
+
+        MouseLook mouseLook = FindFirstObjectByType<MouseLook>();
+        if (mouseLook != null)
+        {
+            mouseLook.enabled = false;
+        }
+        // ==========================================
+
         List<VictimProfile> tempChoices = new List<VictimProfile>();
 
         if (currentDay == 1 || trollPool.Count == 0)
@@ -126,9 +147,7 @@ public class VictimSelectionManager : MonoBehaviour
         minigameController.maxMoneyReward = chosenVictim.potentialReward;
         minigameController.karmaPenalty = chosenVictim.karmaPenalty;
 
-        // ==========================================
-        // ĐÃ FIX: TRUYỀN THÊM isTroll VÀO HỆ THỐNG
-        // ==========================================
+        // Bắt đầu minigame với thông tin của nạn nhân
         minigameController.StartMiniGame(chosenVictim.rounds, chosenVictim.victimName, chosenVictim.avatar, chosenVictim.isTroll);
     }
 }

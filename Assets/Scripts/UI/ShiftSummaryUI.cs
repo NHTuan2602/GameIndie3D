@@ -29,38 +29,53 @@ public class ShiftSummaryUI : MonoBehaviour
         summaryPanel.SetActive(true);
         titleText.text = "KẾT THÚC CA LÀM!";
 
-        // Lấy dữ liệu từ GameManager
         int success = GameManager.instance.successfulScamsToday;
         int target = GameManager.instance.targetKPI;
         float money = GameManager.instance.money;
+        int baseKPI = 2; // Chỉ tiêu sinh tồn
 
-        // Xử lý màu sắc KPI
-        string kpiColor = (success >= target) ? "#00FF00" : "#FF0000";
         string performanceMessage = "";
 
-        if (success == 5)
+        if (success >= baseKPI)
         {
-            performanceMessage = "Xuất sắc! Bạn đã lừa hoàn hảo 5/5 người. Tổ chức rất hài lòng!\n<color=#FFFF00>Cơ hội thăng chức đang tới. Chú ý: KPI ngày mai sẽ tăng lên!</color>";
-        }
-        else if (success >= target)
-        {
-            performanceMessage = "Tốt lắm! Bạn đã đạt đủ chỉ tiêu KPI hôm nay.\nHãy giữ vững phong độ này để bảo toàn mạng sống.";
+            if (success >= target && success > baseKPI)
+            {
+                int nextTarget = Mathf.Min(success + 1, 5);
+                float nextCommission = (GameManager.instance.currentCommissionRate + 0.05f) * 100f;
+
+                performanceMessage = $"<color=#00FF00>VƯỢT CHỈ TIÊU SINH TỒN!</color>\n" +
+                                     $"Bạn đang làm việc rất chăm chỉ để kiếm thêm tiền.\n" +
+                                     $"<color=#00FFFF>+ THƯỞNG:</color> Hoa hồng ngày mai tăng lên {nextCommission}%.\n" +
+                                     $"<color=#FF9900>- ÁP LỰC:</color> Quản lý nâng KPI thưởng ngày mai lên {nextTarget} người!";
+            }
+            else if (success < target)
+            {
+                performanceMessage = $"<color=#FFFF00>ĐẠT CHỈ TIÊU CƠ BẢN (An toàn)</color>\n" +
+                                     $"Bạn không bị chích điện, nhưng do không giữ được phong độ xuất sắc...\n" +
+                                     $"<color=#FF0000>- MẤT THƯỞNG:</color> Hoa hồng bị cắt giảm, KPI reset về mức cơ bản (2 người)!";
+            }
+            else
+            {
+                performanceMessage = $"<color=#FFFF00>ĐẠT CHỈ TIÊU CƠ BẢN (An toàn)</color>\n" +
+                                     $"Bạn đã hoàn thành đủ số lượng tối thiểu để giữ mạng sống.";
+            }
         }
         else
         {
-            performanceMessage = "<color=#FF0000>TỆ HẠI! Bạn không đạt đủ KPI hôm nay.</color>\nHãy chuẩn bị tinh thần đón nhận hình phạt điện giật từ quản lý!";
+            performanceMessage = $"<color=#FF0000>TỆ HẠI! Không đạt KPI sinh tồn ({baseKPI} người).</color>\n\n" +
+                                 "Bạn sẽ bị <color=#FF0000>CHÍCH ĐIỆN PHẠT NẶNG</color> ngay bây giờ!\n" +
+                                 "Mọi mốc thưởng đều bị hủy bỏ.";
         }
 
+        string displayTarget = (target > baseKPI) ? $"{baseKPI} (Thưởng: {target})" : $"{baseKPI}";
+
         statsText.text = $"Bạn đã kết thúc ca làm việc hôm nay.\n\n" +
-                         $"KPI Đạt được: <color={kpiColor}>{success}/{target}</color>\n" +
+                         $"Đã lừa được: <color=#00FF00>{success}</color> / Chỉ tiêu: {displayTarget}\n" +
                          $"Tổng tiền hiện có: <color=#FFFF00>{money.ToString("N0")} VNĐ</color>\n\n" +
                          performanceMessage;
 
-        stopButton.GetComponentInChildren<TextMeshProUGUI>().text = "Tổng kết & Nghỉ ngơi";
+        stopButton.GetComponentInChildren<TextMeshProUGUI>().text = "Tổng kết & Trở về buồng giam";
 
-        // ==========================================
-        // ĐÃ FIX: CHUYỂN SANG NHẠC TỔNG KẾT
-        // ==========================================
         if (bgmSource != null && endShiftBgm != null)
         {
             bgmSource.clip = endShiftBgm;

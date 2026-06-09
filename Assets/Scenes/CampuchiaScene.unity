@@ -16899,15 +16899,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1413313184378079401, guid: bd445a53867418746bf65d87ec08cccd, type: 3}
       propertyPath: m_Value
-      value: 50
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1413313184378079401, guid: bd445a53867418746bf65d87ec08cccd, type: 3}
       propertyPath: m_MaxValue
-      value: 1000
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1413313184378079401, guid: bd445a53867418746bf65d87ec08cccd, type: 3}
       propertyPath: m_MinValue
-      value: 50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5395788124724586306, guid: bd445a53867418746bf65d87ec08cccd, type: 3}
       propertyPath: m_Pivot.x

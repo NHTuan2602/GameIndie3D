@@ -41,7 +41,6 @@ public class ScamMinigame : MonoBehaviour
     [Header("--- HIỆU ỨNG CĂNG THẲNG (THEME) ---")]
     public Image dangerVignette;
     public AudioSource bgmSource;
-    // MỚI: Nhạc lúc lảng vảng trong văn phòng chưa làm việc
     public AudioClip bgmOfficeIdle;
     public AudioClip bgmNormal;
     public AudioClip tickTockSound;
@@ -95,9 +94,6 @@ public class ScamMinigame : MonoBehaviour
         if (btnHiddenSkip != null) btnHiddenSkip.onClick.AddListener(CheatSkipMinigame);
         if (btnHiddenFail != null) btnHiddenFail.onClick.AddListener(CheatFailMinigame);
 
-        // ==========================================
-        // ĐÃ FIX: BẬT NHẠC VĂN PHÒNG NGAY LÚC VÀO SCENE
-        // ==========================================
         if (bgmSource != null && bgmOfficeIdle != null)
         {
             bgmSource.clip = bgmOfficeIdle;
@@ -108,13 +104,24 @@ public class ScamMinigame : MonoBehaviour
 
     void Update()
     {
+        // ==========================================
+        // GÓC KHUẤT 3: CHẶN GÕ PHÍM KHI ĐANG TẠM DỪNG GAME
+        // ==========================================
+        if (Time.timeScale == 0f) return;
+
         if (phonePanel != null && phonePanel.activeSelf)
         {
             if (Input.GetKeyDown(KeyCode.F9)) { CheatSkipMinigame(); return; }
             if (Input.GetKeyDown(KeyCode.F10)) { CheatFailMinigame(); return; }
         }
 
-        if (isDistracted && Input.GetKeyDown(KeyCode.Escape)) CloseDistraction();
+        // ==========================================
+        // GÓC KHUẤT 2: ĐỔI PHÍM TẮT POP-UP THÀNH ENTER ĐỂ NHƯỜNG PHÍM ESC CHO MENU PAUSE
+        // ==========================================
+        if (isDistracted && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
+        {
+            CloseDistraction();
+        }
 
         if (!isTypingPhase || isResting || isAutoPlayTroll) return;
 
@@ -227,9 +234,6 @@ public class ScamMinigame : MonoBehaviour
 
         if (timerSlider != null) timerSlider.gameObject.SetActive(!isAutoPlayTroll);
 
-        // ==========================================
-        // ĐÃ FIX: CHUYỂN SANG NHẠC CĂNG THẲNG KHI VÀO GAME
-        // ==========================================
         if (bgmSource != null && bgmNormal != null)
         {
             bgmSource.clip = bgmNormal;
@@ -300,7 +304,6 @@ public class ScamMinigame : MonoBehaviour
         isPanicMode = false;
         if (dangerVignette != null) dangerVignette.color = new Color(1, 0, 0, 0);
 
-        // Chỉ reset lại nhạc lừa đảo nếu đang không phải là bài đó
         if (bgmSource != null && bgmNormal != null && bgmSource.clip != bgmNormal)
         {
             bgmSource.clip = bgmNormal;
@@ -544,9 +547,6 @@ public class ScamMinigame : MonoBehaviour
         ResetPanicMode();
         if (phonePanel != null) phonePanel.SetActive(false);
 
-        // ==========================================
-        // ĐÃ FIX: TRẢ LẠI NHẠC VĂN PHÒNG KHI ĐÓNG GIAO DIỆN
-        // ==========================================
         if (bgmSource != null && bgmOfficeIdle != null)
         {
             bgmSource.clip = bgmOfficeIdle;

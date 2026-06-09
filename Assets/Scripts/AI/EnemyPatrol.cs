@@ -90,7 +90,6 @@ public class EnemyPatrol : MonoBehaviour
         if (sfxSource == null) sfxSource = GetComponent<AudioSource>();
     }
 
-    // CHỐNG RÁC BỘ NHỚ: Nếu AI này bị xóa khỏi map khi đang rượt
     void OnDestroy()
     {
         if (isChasing)
@@ -185,11 +184,20 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (GameManager.instance != null)
         {
-            // Báo cho GameManager biết người chơi bị bắt
             bool isOutForTonight = GameManager.instance.OnPlayerCaught();
 
-            // MỚI: Bật hiệu ứng mờ mắt dựa vào biến đếm số lần bắt trong GameManager
-            // Yêu cầu: Bạn phải vào script GameManager, tạo thêm biến "public int catchCount;"
+            // ==========================================
+            // KHÓA DI CHUYỂN MÀN THÁM THÍNH (CHỈ CÓ BẢN NÀY MỚI CÓ)
+            // ==========================================
+            if (isOutForTonight)
+            {
+                PlayerController playerMove = FindFirstObjectByType<PlayerController>();
+                if (playerMove != null) playerMove.enabled = false;
+
+                MouseLook mouseLook = FindFirstObjectByType<MouseLook>();
+                if (mouseLook != null) mouseLook.enabled = false;
+            }
+
             if (!isOutForTonight && GameManager.instance.catchCount == 2)
             {
                 if (blurVisionUI != null) blurVisionUI.SetActive(true);
@@ -240,7 +248,7 @@ public class EnemyPatrol : MonoBehaviour
                     if (!isChasing)
                     {
                         isChasing = true;
-                        totalChasingEnemies++; // Tăng biến đếm tổng
+                        totalChasingEnemies++;
                         UpdateChaseUI();
 
                         if (investigateRoutine != null)
@@ -264,7 +272,7 @@ public class EnemyPatrol : MonoBehaviour
         if (isChasing)
         {
             isChasing = false;
-            totalChasingEnemies--; // Giảm biến đếm tổng
+            totalChasingEnemies--;
             UpdateChaseUI();
         }
 
@@ -276,15 +284,14 @@ public class EnemyPatrol : MonoBehaviour
         if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
     }
 
-    // MỚI: Hàm quản lý bật tắt viền đỏ an toàn
     void UpdateChaseUI()
     {
         if (chaseVignetteUI != null)
         {
-            // Chỉ tắt viền đỏ khi KHÔNG CÒN con AI nào rượt
             chaseVignetteUI.SetActive(totalChasingEnemies > 0);
         }
     }
+
     void PatrolRoutine()
     {
         if (waypoints.Length == 0) return;
@@ -329,5 +336,4 @@ public class EnemyPatrol : MonoBehaviour
         if (enemyFlashlight != null) enemyFlashlight.color = Color.white;
         if (waypoints.Length > 0) agent.SetDestination(waypoints[currentWaypointIndex].position);
     }
-
 }

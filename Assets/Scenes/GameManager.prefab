@@ -44,20 +44,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b229a4c4fdefa3340b00e004014d6fbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  caughtPanelUI: {fileID: 0}
+  enableDevMode: 0
+  testStartDay: 1
+  testStartPhase: 3
+  testHasNotebook: 0
+  testHasRope: 0
+  testHasNippers: 0
+  testHasKey: 0
   playerName: '[Player]'
   hp: 100
   maxHp: 100
-  stamina: 100
-  maxStamina: 100
   hasAskedToContinue: 0
-  money: 0
-  karma: 100
-  escapeProgress: 0
-  hasCarInfo: 0
-  gamblingAddictionLevel: 0
+  money: 5000000
+  pendingMoneyToday: 0
   currentDay: 1
   maxDays: 5
   attemptedScamsToday: 0
   successfulScamsToday: 0
+  totalSuccessfulScamsAllDays: 0
+  policeArrestThreshold: 15
   targetKPI: 3
   maxAttemptsPerDay: 5
+  currentCommissionRate: 0.1
+  typingDifficultyMultiplier: 1
+  exchangeRateVND: 25000
+  consecutiveScamFails: 0
+  hasNotebook: 0
+  hasNippers: 0
+  hasRope: 0
+  hasKey: 0
+  caughtCountThisNight: 0
+  maxCaughtBeforeReset: 3
+  playerCamera: {fileID: 0}
+  sfxSource: {fileID: 0}
+  shockSound: {fileID: 0}
+  currentPhase: 0
+  hasTalkedToNPC: 0
+  unlockedScouting: 0
+  isCasinoLocked: 0
+  isBlackCreditActive: 0
+  isEscapeStart: 0
+  escapeProgress: 0
+  isRedAlert: 0
+  currentEnding: 0
+  catchCount: 0
