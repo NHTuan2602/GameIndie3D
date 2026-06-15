@@ -18,20 +18,25 @@ public class NightMenuManager : MonoBehaviour
 
     void Start()
     {
-        // Lấy dữ liệu Ngày từ Vị Thần GameManager để in ra màn hình
         if (txtTieuDe != null && GameManager.instance != null)
         {
             txtTieuDe.text = $"ĐÊM THỨ {GameManager.instance.currentDay}\n22:00 - BẠN MUỐN LÀM GÌ?";
         }
 
-        // Đảm bảo chuột luôn hiển thị và tự do ở Menu này
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Tự động cắm dây cho các nút
         if (btnNgu != null) btnNgu.onClick.AddListener(ChonNgu);
         if (btnDanhBac != null) btnDanhBac.onClick.AddListener(ChonDanhBac);
         if (btnThamThinh != null) btnThamThinh.onClick.AddListener(ChonThamThinh);
+
+        // ==========================================
+        // ĐÃ FIX: ẨN NÚT ĐÁNH BẠC NẾU CỜ ISCASINOLOCKED ĐƯỢC BẬT
+        // ==========================================
+        if (GameManager.instance != null && GameManager.instance.isCasinoLocked)
+        {
+            if (btnDanhBac != null) btnDanhBac.gameObject.SetActive(false);
+        }
 
         OpenNightMenu();
     }
@@ -44,20 +49,18 @@ public class NightMenuManager : MonoBehaviour
     private void CloseNightMenu()
     {
         if (nightMenuPanel != null) nightMenuPanel.SetActive(false);
-        // ĐÃ XÓA DÒNG KHÓA CHUỘT: Để chuột còn sống mà chơi game ngày hôm sau!
     }
 
     private void ChonNgu()
     {
         CloseNightMenu();
-        // ĐÃ XÓA DÒNG CAMPUCHIA: Chỉ giao việc cho GameManager. GameManager sẽ tự gọi Màn Đen!
         if (GameManager.instance != null) GameManager.instance.SleepThroughNight();
     }
 
     private void ChonDanhBac()
     {
         CloseNightMenu();
-        SceneManager.LoadScene("NightGameScreen"); // Đổi đúng tên Scene đánh bạc
+        SceneManager.LoadScene("NightGameScreen");
     }
 
     private void ChonThamThinh()

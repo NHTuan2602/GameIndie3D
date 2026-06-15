@@ -129,7 +129,6 @@ public class TaiXiuManager : MonoBehaviour
         // ĐÃ FIX: ÉP GAME CẬP NHẬT UI VÀ BẮT ĐẦU VÁN MỚI NGAY KHI LOAD XONG SCENE
         // ==========================================
         UpdateMoneyUI();
-        OpenCasino(); // Dùng hàm này để nó tự động bật luôn nhạc nền (BGM)
     }
 
     public void OpenCasino()
@@ -401,6 +400,7 @@ public class TaiXiuManager : MonoBehaviour
         float rollTime = rollDuration;
         float soundTimer = 0f;
 
+        // Hiệu ứng xúc xắc nhảy loạn xạ khi đang xóc
         while (rollTime > 0)
         {
             if (soundTimer <= 0f) { PlaySound(shakeSound); soundTimer = shakeSound != null ? shakeSound.length : 1f; }
@@ -409,31 +409,61 @@ public class TaiXiuManager : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
 
+        // ==========================================
+        // ĐÃ FIX: TÍNH TOÁN ĐIỂM VÀ THAO TÚNG HÌNH ẢNH
+        // ==========================================
         totalDiceValue = 0;
-        for (int i = 0; i < diceImages.Length; i++)
+        int[] finalFaces = new int[3];
+
+        // 1. Đổ xúc xắc ngẫu nhiên (Người lương thiện)
+        for (int i = 0; i < 3; i++)
         {
-            int finalFace = Random.Range(0, 6);
-            diceImages[i].sprite = diceFaces[finalFace];
-            totalDiceValue += (finalFace + 1);
-            diceImages[i].rectTransform.anchoredPosition = originalDicePos[i] + new Vector2(Random.Range(-spawnRadius, spawnRadius), Random.Range(-spawnRadius, spawnRadius));
+            finalFaces[i] = Random.Range(1, 7);
+            totalDiceValue += finalFaces[i];
         }
 
-        // ================= KỊCH BẢN THAO TÚNG XÚC XẮC =================
+        // 2. Kích hoạt bẫy nhà cái (Kiểm tra xem có bịp không)
+        bool isManipulated = false;
+        int forcedTotal = totalDiceValue;
+
         if (playerChoice != 0)
         {
             if (GameManager.instance != null && GameManager.instance.currentDay == 1 && gambleCount < 5)
             {
-                if (playerChoice == 1) totalDiceValue = Random.Range(11, 18);
-                else totalDiceValue = Random.Range(3, 11);
+                isManipulated = true;
+                forcedTotal = (playerChoice == 1) ? Random.Range(11, 18) : Random.Range(3, 11);
             }
             else if (gambleCount == warnAtGambleCount)
             {
-                if (playerChoice == 1) totalDiceValue = Random.Range(11, 18); else totalDiceValue = Random.Range(3, 11);
+                isManipulated = true;
+                forcedTotal = (playerChoice == 1) ? Random.Range(11, 18) : Random.Range(3, 11);
             }
             else if (gambleCount == trapAtGambleCount || isIndebted)
             {
-                if (playerChoice == 1) totalDiceValue = Random.Range(3, 11); else totalDiceValue = Random.Range(11, 18);
+                isManipulated = true;
+                forcedTotal = (playerChoice == 1) ? Random.Range(3, 11) : Random.Range(11, 18);
             }
+        }
+
+        // 3. Nếu bịp, phải "phù phép" lại 3 mặt xúc xắc cho khớp với điểm ảo
+        if (isManipulated)
+        {
+            totalDiceValue = forcedTotal;
+
+            // Thuật toán chia kẹo: Chia tổng điểm cho 3 viên, mỗi viên từ 1 đến 6
+            do
+            {
+                finalFaces[0] = Random.Range(1, 7);
+                finalFaces[1] = Random.Range(1, 7);
+                finalFaces[2] = totalDiceValue - finalFaces[0] - finalFaces[1];
+            } while (finalFaces[2] < 1 || finalFaces[2] > 6);
+        }
+
+        // 4. In hình ảnh ĐÃ BỊP LÊN MÀN HÌNH
+        for (int i = 0; i < diceImages.Length; i++)
+        {
+            diceImages[i].sprite = diceFaces[finalFaces[i] - 1]; // -1 vì index mảng từ 0 đến 5
+            diceImages[i].rectTransform.anchoredPosition = originalDicePos[i] + new Vector2(Random.Range(-spawnRadius, spawnRadius), Random.Range(-spawnRadius, spawnRadius));
         }
         // ==============================================================
 

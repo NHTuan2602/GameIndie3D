@@ -1509,7 +1509,7 @@ MonoBehaviour:
   imgEndingCard: {fileID: 1793549935}
   sprArrested: {fileID: 21300000, guid: e84b8ac23146318488833cad1afd980a, type: 3}
   sprRiotSurvivor: {fileID: 21300000, guid: 2443d82159fb22a43977debfdba19d3a, type: 3}
-  sprDeath: {fileID: 0}
+  sprDeath: {fileID: 21300000, guid: 98ee7a7c67f039d429532167d2cecac1, type: 3}
   sprTrueEscape: {fileID: 21300000, guid: 0c5605e590cb178468e798b7d6939660, type: 3}
   bgmArrested: {fileID: 0}
   bgmRiotSurvivor: {fileID: 0}

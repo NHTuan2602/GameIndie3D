@@ -40,18 +40,20 @@ public class EndingManager : MonoBehaviour
     public AudioClip typingSound;
     public AudioClip riotSound;
     public AudioClip restartSound;
+
     void Start()
     {
         // ========================================================
-        // ĐÃ FIX: ÉP MỞ KHÓA VÀ HIỆN CON TRỎ CHUỘT KHI LOAD ENDING
-        // ========================================================
+        // ĐÃ FIX: RÃ ĐÔNG THỜI GIAN ĐỂ NÚT BẤM HOẠT ĐỘNG
+        // ==========================================
+        Time.timeScale = 1f;
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         if (btnReturnMenu != null) btnReturnMenu.gameObject.SetActive(false);
         if (btnRestartDay != null) btnRestartDay.gameObject.SetActive(false);
 
-        // Tạm thời tắt các UI chữ lúc mới Load Scene
         if (txtDayLabel != null) txtDayLabel.gameObject.SetActive(false);
         if (txtDialogue != null) txtDialogue.gameObject.SetActive(false);
 
@@ -162,19 +164,14 @@ public class EndingManager : MonoBehaviour
         StartCoroutine(TypeDialogue(finalDialogue, dayLabel, ending));
     }
 
-    // ========================================================
-    // ĐÃ FIX: TRÌNH TỰ XUẤT HIỆN MƯỢT MÀ KHÔNG BỊ ĐÈ UI
-    // ========================================================
     IEnumerator TypeDialogue(string dialogue, string dayLabel, EndingType ending)
     {
-        // 1. Bật Tiêu đề lên ngay lập tức để người chơi biết chuyện gì xảy ra
         if (txtDayLabel != null)
         {
             txtDayLabel.text = dayLabel;
             txtDayLabel.gameObject.SetActive(true);
         }
 
-        // 2. Chạy hiệu ứng máy chữ
         txtDialogue.text = "";
         txtDialogue.gameObject.SetActive(true);
 
@@ -185,25 +182,21 @@ public class EndingManager : MonoBehaviour
             {
                 sfxAudioSource.PlayOneShot(typingSound, 0.2f);
             }
-            yield return new WaitForSeconds(0.04f); // Tốc độ gõ
+            yield return new WaitForSeconds(0.04f);
         }
 
-        // 3. Chờ 3 giây để người chơi đọc xong dòng text
         yield return new WaitForSeconds(3f);
 
-        // 4. TẮT đoạn text đi để nhường chỗ trống ở giữa màn hình cho các nút bấm
         if (txtDialogue != null)
         {
             txtDialogue.gameObject.SetActive(false);
         }
 
-        // 5. Hiện nút Về Menu
         if (btnReturnMenu != null)
         {
             btnReturnMenu.gameObject.SetActive(true);
         }
 
-        // 6. Hiện nút Chơi Lại (Nếu đủ điều kiện chết ngày 1-5)
         int currentDay = GameManager.instance != null ? GameManager.instance.currentDay : 1;
         if (btnRestartDay != null && ending == EndingType.Death && currentDay < 6)
         {
@@ -216,20 +209,17 @@ public class EndingManager : MonoBehaviour
         StartCoroutine(PlaySoundAndRestartRoutine());
     }
 
-    // Luồng trì hoãn để chờ âm thanh phát xong
     IEnumerator PlaySoundAndRestartRoutine()
     {
         if (btnRestartDay != null) btnRestartDay.interactable = false;
         if (btnReturnMenu != null) btnReturnMenu.interactable = false;
 
-        // Phát âm thanh hồi sinh
         if (sfxAudioSource != null && restartSound != null)
         {
             sfxAudioSource.PlayOneShot(restartSound, 1f);
             yield return new WaitForSeconds(1.5f);
         }
 
-        // ĐÃ FIX: Gọi hàm dọn rác dữ liệu để game load lại trơn tru
         if (GameManager.instance != null)
         {
             GameManager.instance.ResetDayForRetry();

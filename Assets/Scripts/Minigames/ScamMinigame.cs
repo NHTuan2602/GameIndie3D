@@ -104,9 +104,6 @@ public class ScamMinigame : MonoBehaviour
 
     void Update()
     {
-        // ==========================================
-        // GÓC KHUẤT 3: CHẶN GÕ PHÍM KHI ĐANG TẠM DỪNG GAME
-        // ==========================================
         if (Time.timeScale == 0f) return;
 
         if (phonePanel != null && phonePanel.activeSelf)
@@ -115,9 +112,6 @@ public class ScamMinigame : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.F10)) { CheatFailMinigame(); return; }
         }
 
-        // ==========================================
-        // GÓC KHUẤT 2: ĐỔI PHÍM TẮT POP-UP THÀNH ENTER ĐỂ NHƯỜNG PHÍM ESC CHO MENU PAUSE
-        // ==========================================
         if (isDistracted && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
         {
             CloseDistraction();
@@ -466,6 +460,9 @@ public class ScamMinigame : MonoBehaviour
         isResting = false; LoadRound(currentRoundIndex);
     }
 
+    // ==========================================
+    // ĐÃ FIX: IN TIỀN VỪA LỪA ĐƯỢC RÕ RÀNG TRÊN MÀN HÌNH
+    // ==========================================
     void CalculateFinalReward()
     {
         float finalMoney = 0f;
@@ -474,12 +471,12 @@ public class ScamMinigame : MonoBehaviour
         if (successfulRounds == currentRounds.Length)
         {
             finalMoney = maxMoneyReward + bossBonus;
-            message = isAutoPlayTroll ? "KỊCH BẢN KẾT THÚC! Bạn đã troll thành công!" : "LỪA ĐẢO HOÀN HẢO! Nạn nhân đã sập bẫy hoàn toàn. Chuyển khoản thành công!";
+            message = isAutoPlayTroll ? "KỊCH BẢN KẾT THÚC! Bạn đã troll thành công!" : $"LỪA ĐẢO HOÀN HẢO!\nNạn nhân đã sập bẫy và chuyển <color=#FFFF00>{finalMoney:N0} VNĐ</color>!";
         }
         else if (successfulRounds >= currentRounds.Length / 2)
         {
             finalMoney = maxMoneyReward * 0.5f;
-            message = "LỪA ĐẢO TẠM ỔN. Nạn nhân có chút nghi ngờ nhưng vẫn chuyển một nửa số tiền.";
+            message = $"LỪA ĐẢO TẠM ỔN. Nạn nhân hơi nghi ngờ nhưng vẫn chuyển <color=#FFFF00>{finalMoney:N0} VNĐ</color>!";
         }
         else
         {
@@ -496,8 +493,9 @@ public class ScamMinigame : MonoBehaviour
     {
         if (playerChatBubble != null) playerChatBubble.SetActive(false);
 
-        string hintText = isAutoPlayTroll ? "Troll xong rồi! Hãy bấm [CHẶN] để kết thúc màn kịch!" : "Lừa xong rồi! Hãy bấm nút [CHẶN] để thu tiền!";
-        chatHistoryText.text = "<color=#00FF00>" + message + "</color>\n<color=#FFFF00>" + hintText + "</color>";
+        // ĐÃ FIX: Thông báo cho người chơi biết tiền đang ở đâu
+        string hintText = isAutoPlayTroll ? "Hãy bấm [CHẶN] để kết thúc màn kịch!" : "Tiền đã được Quản lý thu giữ!\nBấm [CHẶN] để nộp doanh thu!";
+        chatHistoryText.text = "<color=#00FF00>" + message + "</color>\n<color=#00FFFF><i>" + hintText + "</i></color>";
 
         if (btnBlockVictim != null)
         {

@@ -4934,7 +4934,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.567
+  m_Volume: 0.794
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -5038,7 +5038,7 @@ MonoBehaviour:
   potholeHit: {fileID: 8300000, guid: 72fd2aefd013ef34391aa7caaf2dd8ae, type: 3}
   rampJump: {fileID: 8300000, guid: e7521acd66acbe6449fc0bd289b9ef2b, type: 3}
   pickupItem: {fileID: 8300000, guid: 195ca7ec7926e7c46b1eac615d7d542d, type: 3}
-  enemyHurt: {fileID: 8300000, guid: abb7ebb240b896f4aa7a3b5f45549d60, type: 3}
+  enemyHurt: {fileID: 8300000, guid: 1932f1fcbb333d447ab5f46a961be7ae, type: 3}
 --- !u!1 &1838504235
 GameObject:
   m_ObjectHideFlags: 0
