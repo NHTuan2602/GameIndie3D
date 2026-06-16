@@ -9,12 +9,12 @@ public class RecklessBiker : MonoBehaviour
     public float weaveFrequency = 4f;
 
     [Header("Mô hình 3D (ĐỂ BỐC ĐẦU)")]
-    public Transform bikeModel; // BẠN KÉO OBJECT "Xemay" VÀO ĐÂY NHÉ
-    public GameObject npcModel; // Gã bảo vệ
+    public Transform bikeModel;
+    public GameObject npcModel;
 
     [Header("Cài đặt Bốc Đầu")]
-    public float wheelieAngle = -25f; // Góc bốc đầu
-    public float wheelieSpeed = 5f;   // Tốc độ nhấc đầu xe lên (Càng lớn càng nhanh)
+    public float wheelieAngle = -25f;
+    public float wheelieSpeed = 5f;
 
     [Header("Hệ thống Cảnh báo")]
     public Image warningIcon;
@@ -38,8 +38,32 @@ public class RecklessBiker : MonoBehaviour
     private float weaveStartTime;
     private float phaseOffset;
 
-    // Trạng thái tàng hình khi đuổi theo từ xa
     private bool isCatchingUp = true;
+
+    // ==========================================
+    // ĐÃ FIX: LƯU VẾT THỜI GIAN CỦA BÀI NHẠC
+    // ==========================================
+    private static float savedBgmTime = 0f;
+
+    void OnEnable()
+    {
+        // Khi xe xuất hiện, tiếp tục bài nhạc từ giây đã lưu
+        if (sirenSource != null && warningBeep != null)
+        {
+            sirenSource.clip = warningBeep;
+            sirenSource.time = savedBgmTime;
+            sirenSource.Play();
+        }
+    }
+
+    void OnDisable()
+    {
+        // Khi xe chết (bị hủy), lưu lại số giây của bài nhạc
+        if (sirenSource != null)
+        {
+            savedBgmTime = sirenSource.time;
+        }
+    }
 
     public void SetupLanes(float leftLaneX, float rightLaneX)
     {
@@ -70,12 +94,6 @@ public class RecklessBiker : MonoBehaviour
 
     IEnumerator WarningRoutine()
     {
-        if (sirenSource != null && warningBeep != null && !isCrashed)
-        {
-            sirenSource.clip = warningBeep;
-            sirenSource.Play();
-        }
-
         float timer = 0;
         bool isIconVisible = false;
 
@@ -119,15 +137,11 @@ public class RecklessBiker : MonoBehaviour
 
         if (player == null || !isReady) return;
 
-        // KIỂM TRA BẤT TỬ: Nếu đã tiến sát lưng người chơi ở khoảng cách 15m, Tắt bất tử!
         if (isCatchingUp && transform.position.z >= player.position.z - 15f)
         {
             isCatchingUp = false;
         }
 
-        // =========================================================
-        // CHỈ BỐC ĐẦU KHI ĐÃ VƯỢT QUA MẶT NGƯỜI CHƠI (Tầm 1.5 mét)
-        // =========================================================
         float currentTargetAngle = 0f;
 
         if (transform.position.z > player.position.z + 1.5f)
@@ -146,7 +160,6 @@ public class RecklessBiker : MonoBehaviour
             Quaternion targetNpcRot = Quaternion.Euler(currentTargetAngle, 0, 0);
             npcModel.transform.localRotation = Quaternion.Lerp(npcModel.transform.localRotation, targetNpcRot, Time.deltaTime * wheelieSpeed);
         }
-        // =========================================================
 
         transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
 
@@ -189,7 +202,6 @@ public class RecklessBiker : MonoBehaviour
 
         if (other.CompareTag("Obstacle"))
         {
-            // NẾU ĐANG BẤT TỬ MÀ ĐỤNG TRÚNG XE TẢI -> XUYÊN QUA LUÔN
             if (isCatchingUp) return;
 
             isCrashed = true;

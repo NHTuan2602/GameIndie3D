@@ -267,9 +267,12 @@ MonoBehaviour:
       m\xEC t\xF4m h\u1EBFt date n\xE0y, t\u1EF1 nhi\xEAn th\u1EA5y t\u01B0\u01A1ng
       lai m\xECnh c\u0169ng y chang."
   - speakerName: '[PLAYER]'
-    sentence: "Ca \u0111\xEAm th\u1EE9 ba trong tu\u1EA7n... Nh\xECn c\xE1i \u0111\u1ED1ng
-      m\xEC t\xF4m h\u1EBFt date n\xE0y, t\u1EF1 nhi\xEAn th\u1EA5y t\u01B0\u01A1ng
-      lai m\xECnh c\u0169ng y chang."
+    sentence: "Kh\xF4ng bi\u1EBFt c\xF3 c\xE1i ngh\u1EC1 n\xE0o m\xE0 c\xF3 th\u1EC3
+      ki\u1EBFm \u0111\u01B0\u1EE3c nhi\u1EC1u ti\u1EC1n m\xE0 kh\xF4ng c\u1EA7n
+      d\xF9ng nhi\u1EC1u s\u1EE9c kh\xF4ng"
+  - speakerName: "[H\u01B0\u1EDBng d\u1EABn]"
+    sentence: "Nhi\u1EC7m v\u1EE5 1: \u0110\u1EB7t h\u1EBFt \u0111\u1ED3 d\u01B0\u1EDBi
+      \u0111\u1EA5t l\xEAn k\u1EC7"
 --- !u!4 &51976490
 Transform:
   m_ObjectHideFlags: 0
@@ -2255,7 +2258,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 988264906}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1417092287}
+        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+        m_MethodName: BamNutChoiMoi
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &993747553
 GameObject:
   m_ObjectHideFlags: 0
@@ -3285,6 +3300,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1417092286}
   - component: {fileID: 1417092285}
+  - component: {fileID: 1417092287}
   m_Layer: 0
   m_Name: MainMenuManager
   m_TagString: Untagged
@@ -3329,6 +3345,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1417092287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417092284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56b719759a52b5244ace4d9ed875e50d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
 --- !u!1 &1444951116
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,29 +1,9 @@
 fileFormatVersion: 2
-guid: 38414f9e1fd13a74e9356c66d0ac3391
+guid: b3445e29d243ee444a5a6bc5143f671b
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Ao
-    second: {fileID: 2100000, guid: 2f66daa7b893cba41807f1c7dd6e8228, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Da
-    second: {fileID: 2100000, guid: 3b7ae940d735c8c46866b8f8ae538718, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Mattuan
-    second: {fileID: 2100000, guid: 2f48b3c6d4342584789b73be11db39ae, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Quan
-    second: {fileID: 2100000, guid: 4981a27692605744ab1cfc5f0a7df5fb, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -114,7 +94,7 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1

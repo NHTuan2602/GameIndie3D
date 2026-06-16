@@ -33,7 +33,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Chỉ số Tiến trình & Tiền Bạc")]
     public float money = 0f;
-    public float pendingMoneyToday = 0f; // ĐÃ THÊM: Tiền lừa được trong ngày nhưng chưa được chia
+    public float pendingMoneyToday = 0f; // Tiền nộp cho tổ chức (Sau khi đã rút hoa hồng)
+
     [Header("Hệ thống Lương & KPI")]
     public int currentDay = 1;
     public int maxDays = 6;
@@ -43,7 +44,6 @@ public class GameManager : MonoBehaviour
     public int totalSuccessfulScamsAllDays = 0;
     public int policeArrestThreshold = 15;
 
-    // ĐÃ FIX: Giảm KPI khởi điểm xuống 2
     public int targetKPI = 2;
     public int maxAttemptsPerDay = 5;
     public float currentCommissionRate = 0.1f;
@@ -82,6 +82,7 @@ public class GameManager : MonoBehaviour
 
     public EndingType currentEnding = EndingType.None;
     public int catchCount = 0;
+
     void Awake()
     {
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
@@ -137,8 +138,12 @@ public class GameManager : MonoBehaviour
         totalSuccessfulScamsAllDays++;
         consecutiveScamFails = 0;
 
-        // ĐÃ SỬA: Không cộng thẳng vào ví (money) nữa, mà cộng vào "két tạm"
-        pendingMoneyToday += rawVNDEarned;
+        // ==========================================
+        // ĐÃ FIX: CHIA HOA HỒNG VÀ BỎ TÚI NGAY LẬP TỨC
+        // ==========================================
+        float tienCuaMinh = rawVNDEarned * currentCommissionRate;
+        money += tienCuaMinh; // Tiền của mình bay thẳng vào ví
+        pendingMoneyToday += (rawVNDEarned - tienCuaMinh); // Tiền nộp cho Boss
 
         CheckShiftProgress();
     }
@@ -148,9 +153,7 @@ public class GameManager : MonoBehaviour
         attemptedScamsToday++;
         consecutiveScamFails++;
 
-        // ĐÃ FIX: XÓA CHÍCH ĐIỆN 50 HP TỨC TƯỞI GIỮA NGÀY.
-        // Chỉ phạt cảnh cáo 5 HP (Bị mắng chửi) để người chơi vẫn sống và làm cho hết 5 ca.
-        TakeShockDamage(5);
+        TakeShockDamage(5); // Phạt cảnh cáo
 
         if (hp > 0 || currentDay >= 6) CheckShiftProgress();
     }
@@ -181,26 +184,20 @@ public class GameManager : MonoBehaviour
 
     public void EndDaySummary()
     {
-        int baseKPI = 2; // Chỉ tiêu sinh tồn cơ bản không bao giờ đổi
+        int baseKPI = 2;
 
         if (successfulScamsToday >= baseKPI)
         {
-            // ==========================================
-            // VÙNG AN TOÀN: LỪA ĐƯỢC >= 2 NGƯỜI (KHÔNG BỊ CHÍCH ĐIỆN)
-            // ==========================================
             if (successfulScamsToday >= targetKPI && successfulScamsToday > baseKPI)
             {
-                // NỔ HŨ: Cố tình lừa nhiều hơn mức cơ bản để bú tiền thưởng
                 targetKPI = successfulScamsToday + 1;
                 if (targetKPI > 5) targetKPI = 5;
 
-                currentCommissionRate += 0.05f; // Tăng hoa hồng
+                currentCommissionRate += 0.05f;
                 typingDifficultyMultiplier = Mathf.Max(0.5f, typingDifficultyMultiplier - 0.1f);
             }
             else if (successfulScamsToday < targetKPI)
             {
-                // RỚT HẠNG: Lừa đủ sống (>= 2) nhưng không giữ được phong độ cao
-                // Phạt: Cắt hoa hồng thưởng, đưa KPI về lại mức cơ bản (Bạn sẽ sửa lại số 4 ở đây nếu muốn giữ KPI khó)
                 targetKPI = 2;
                 currentCommissionRate = 0.1f;
                 typingDifficultyMultiplier = 1.0f;
@@ -208,19 +205,18 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // ==========================================
-            // VÙNG CHẾT CHÓC: LỪA DƯỚI 2 NGƯỜI
-            // ==========================================
             int shockDamage = (baseKPI - successfulScamsToday) * 30;
             TakeShockDamage(shockDamage);
 
-            // Đánh đập xong thì reset lại mọi thứ về cơ bản
             targetKPI = 2;
             currentCommissionRate = 0.1f;
             typingDifficultyMultiplier = 1.0f;
         }
     }
 
+    // ==========================================
+    // ĐÃ FIX: DỌN RÁC SẠCH SẼ KHI CHƠI LẠI NGÀY
+    // ==========================================
     public void ResetDayForRetry()
     {
         hp = maxHp;
@@ -228,8 +224,12 @@ public class GameManager : MonoBehaviour
         attemptedScamsToday = 0;
         successfulScamsToday = 0;
         consecutiveScamFails = 0;
-        caughtCountThisNight = 0;
-        pendingMoneyToday = 0f; // ĐÃ THÊM: Chơi lại ngày thì mất sạch tiền vừa lừa
+        caughtCountThisNight = 0; // Xóa án tích đêm nay
+        catchCount = 0;           // Xóa tổng án tích
+        pendingMoneyToday = 0f;   // Trả lại tiền cho chủ
+        isRedAlert = false;
+        isEscapeStart = false;
+        Time.timeScale = 1f;      // Đảm bảo thời gian chạy lại bình thường
     }
 
     public bool CanCollectItems() { return !(currentDay >= 2 && !hasNotebook); }
@@ -413,19 +413,16 @@ public class GameManager : MonoBehaviour
             case GamePhase.Noon: sceneName = "NoonCanteenScene"; break;
             case GamePhase.Afternoon: sceneName = "ScamScreen"; break;
             case GamePhase.Night:
-                // ========================================================
-                // ĐÃ FIX: TRẢ NGƯỜI CHƠI VỀ PHÒNG NGỦ 3D VÀO ĐÊM 1
-                // ========================================================
                 if (isBlackCreditActive)
-                    sceneName = "NightGameScreen"; // Bị siết nợ thì ném thẳng vào sới bạc
+                    sceneName = "NightGameScreen";
                 else
-                    sceneName = "NightScreen"; // Bình thường thì luôn về phòng ngủ 3D trước
+                    sceneName = "NightScreen";
                 break;
         }
 
         if (isNewDay && DayTransitionManager.instance != null) DayTransitionManager.instance.StartTransition(sceneName);
         else SceneManager.LoadScene(sceneName);
-        // Tự động lưu game khi chuyển ca làm việc an toàn
+
         if (SaveManager.instance != null) SaveManager.instance.AutoSaveGameData();
     }
 

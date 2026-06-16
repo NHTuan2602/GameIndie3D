@@ -10,6 +10,11 @@ public class BusEventManager : MonoBehaviour
     public Transform seatTarget;
     public float walkSpeed = 1.5f;
 
+    // ==========================================
+    // ĐÃ THÊM: Kết nối với bộ điều khiển Hoạt ảnh
+    // ==========================================
+    public Animator friendAnimator;
+
     [Header("Vật phẩm & Màn hình")]
     public GameObject waterBottle;
     public Image blackScreenFade;
@@ -19,7 +24,7 @@ public class BusEventManager : MonoBehaviour
     public Camera playerCamera;
 
     [Header("--- KỊCH BẢN HỘI THOẠI TRÊN XE ---")]
-    public DialogueLine[] introLines; // ĐÃ THÊM: Biến này để chứa kịch bản nói chuyện trên xe
+    public DialogueLine[] introLines;
 
     private bool hasReachedSeat = false;
 
@@ -35,17 +40,37 @@ public class BusEventManager : MonoBehaviour
 
         PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
         if (player != null) player.canWalk = false;
+
+        // Bật animation đi bộ ngay khi mới vào Scene
+        if (friendAnimator != null) friendAnimator.SetBool("isWalking", true);
     }
 
     void Update()
     {
         if (!hasReachedSeat)
         {
+            // Ép thằng bạn phải nhìn về phía cái ghế khi đang đi
+            friendBody.LookAt(new Vector3(seatTarget.position.x, friendBody.position.y, seatTarget.position.z));
+
+            // Di chuyển từ từ đến ghế
             friendBody.position = Vector3.MoveTowards(friendBody.position, seatTarget.position, walkSpeed * Time.deltaTime);
 
             if (Vector3.Distance(friendBody.position, seatTarget.position) < 0.05f)
             {
                 hasReachedSeat = true;
+
+                // ==========================================
+                // ĐÃ FIX: ÉP GÓC XOAY ĐỂ NGỒI ĐÚNG HƯỚNG
+                // ==========================================
+                friendBody.position = seatTarget.position; // Khóa chặt vị trí vào ghế
+                friendBody.rotation = seatTarget.rotation; // Bẻ lưng lại cho khớp với hướng ghế
+
+                if (friendAnimator != null)
+                {
+                    friendAnimator.SetBool("isWalking", false); // Tắt đi bộ
+                    friendAnimator.SetTrigger("Sit"); // Kích hoạt hoạt ảnh ngồi
+                }
+
                 StartCoroutine(DialogueAndWaterSequence());
             }
         }
@@ -57,9 +82,6 @@ public class BusEventManager : MonoBehaviour
 
         if (DialogueManager.instance != null)
         {
-            // =========================================================
-            // ĐÃ FIX: Đút kịch bản vào Tivi vạn năng để nó chạy
-            // =========================================================
             DialogueManager.instance.StartDialogue(introLines, null);
 
             while (DialogueManager.instance.dialoguePanel.activeSelf)
@@ -71,34 +93,23 @@ public class BusEventManager : MonoBehaviour
         PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
         if (player != null) player.canWalk = false;
 
-        // =========================================================
-        // PHÉP THUẬT: ĐIỂM HUYỆT VÀ ỐP TỌA ĐỘ VÀNG
-        // =========================================================
         if (playerCamera != null)
         {
-            // 1. KHÓA VẬT LÝ TRƯỚC TIÊN để chai nước không giãy giụa
             Rigidbody rb = waterBottle.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 rb.isKinematic = true;
             }
 
-            // 2. ÉP LÀM CON CAMERA (Tham số 'false' chặn Unity tự tính toán lệch tọa độ)
             waterBottle.transform.SetParent(playerCamera.transform, false);
-
-            // 3. ỐP CHÍNH XÁC CÁC CON SỐ CỦA TUẤN (Đã sửa lỗi)
             waterBottle.transform.localPosition = new Vector3(0.7f, -0.72f, 1.29f);
             waterBottle.transform.localRotation = Quaternion.Euler(-8.7f, -18.57f, 10f);
             waterBottle.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
         }
 
         waterBottle.SetActive(true);
-        Debug.Log("Chai nước đã xuất hiện đúng góc đẹp! Hãy ấn E.");
     }
 
-    // ==========================================
-    // CƠ CHẾ NHẤY MẮT BỊ ĐÁNH THUỐC MÊ
-    // ==========================================
     public void StartBlackout()
     {
         if (blackScreenFade == null) return;
