@@ -9,30 +9,47 @@ public class Obstacle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Chỉ kích hoạt khi người chơi đụng vào
-        if (other.CompareTag("Player"))
+        // GÓC KHUẤT 1 FIX: Kiểm tra tag trên cả object va chạm trực tiếp VÀ object cha ngoài cùng (root).
+        // Đảm bảo không bị miss nếu collider va chạm nằm ở object con (như bánh xe) không được gắn tag.
+        if (other.CompareTag("Player") || other.transform.root.CompareTag("Player"))
         {
-            EscapeBikeController bike = other.GetComponent<EscapeBikeController>();
+            // Lấy component từ Parent/Root thay vì chính object đó.
+            EscapeBikeController bike = other.GetComponentInParent<EscapeBikeController>();
+
+            // Nếu vì lý do nào đó không tìm thấy script, thoát luôn để tránh gãy code báo lỗi Null.
+            if (bike == null)
+            {
+                Debug.LogWarning("Va chạm với Player nhưng không tìm thấy EscapeBikeController!");
+                return;
+            }
 
             switch (type)
             {
                 // 1. TÔNG XE ĐỊCH
                 case ObstacleType.InstantDeath:
-                    // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
                     if (BikeAudioManager.instance != null) BikeAudioManager.instance.PlayHit();
-                    PursuitManager.instance.GameOver("TỬ VONG DO VA CHẠM MẠNH!");
+
+                    // GÓC KHUẤT 4 FIX: Bọc null check cho Manager để tránh Silent Error
+                    if (PursuitManager.instance != null)
+                    {
+                        PursuitManager.instance.GameOver("TỬ VONG DO VA CHẠM MẠNH!");
+                    }
+                    else
+                    {
+                        Debug.LogError("LỖI NGHIÊM TRỌNG: PursuitManager.instance bị NULL!");
+                    }
                     break;
 
                 // 2. VẤP Ổ GÀ
                 case ObstacleType.Pothole:
-                    // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
                     if (BikeAudioManager.instance != null) BikeAudioManager.instance.PlayPothole();
                     bike.forwardSpeed -= speedChange; // Trừ tốc độ
 
                     // CHỐT CHẶN: Nếu trừ xong mà tốc độ tụt xuống 15 thì bắt luôn
                     if (bike.forwardSpeed <= 15f)
                     {
-                        PursuitManager.instance.GameOver("BỊ BẮT DO CHẠY QUÁ CHẬM!");
+                        if (PursuitManager.instance != null)
+                            PursuitManager.instance.GameOver("BỊ BẮT DO CHẠY QUÁ CHẬM!");
                     }
                     else
                     {
@@ -43,15 +60,14 @@ public class Obstacle : MonoBehaviour
 
                 // 3. BAY LÊN DỐC
                 case ObstacleType.Ramp:
-                    // ĐÃ FIX: Chuyển sang gọi BikeAudioManager
                     if (BikeAudioManager.instance != null) BikeAudioManager.instance.PlayJump();
                     bike.forwardSpeed += speedChange; // Cộng tốc độ
                     break;
 
                 // 4. NHẶT GẠCH / VẬT PHẨM
                 case ObstacleType.ItemPickup:
-                    // Đã tách biệt hoàn toàn trong PursuitManager
-                    PursuitManager.instance.UseItemImmediately();
+                    if (PursuitManager.instance != null)
+                        PursuitManager.instance.UseItemImmediately();
                     Destroy(gameObject);
                     break;
             }

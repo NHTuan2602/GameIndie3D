@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour
         }
 
         SyncCasinoData();
+        this.playerName = PlayerPrefs.GetString("PlayerName", "Người chơi");
     }
 
     public void SyncCasinoData()

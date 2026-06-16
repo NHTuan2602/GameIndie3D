@@ -3,6 +3,7 @@ using TMPro;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PursuitManager : MonoBehaviour
 {
@@ -22,24 +23,17 @@ public class PursuitManager : MonoBehaviour
     public TextMeshProUGUI killMessageText;
     public GameObject gameOverPanel;
 
-    [Header("Âm thanh UI (MỚI)")]
-    public AudioSource uiAudioSource; // Kéo thả AudioSource vào đây
-    public AudioClip retrySound;      // Kéo file âm thanh tiếng Click/Ting vào đây
+    [Header("Âm thanh UI")]
+    public AudioSource uiAudioSource;
+    public AudioClip retrySound;
 
     private bool isGameOver = false;
-    private bool isRetrying = false; // Biến chống spam nút bấm
+    private bool isRetrying = false;
 
     void Awake() { instance = this; }
 
     void Start()
     {
-          /*  if (healthBar != null)
-            {
-                healthBar.maxValue = 10;
-                healthBar.value = enemiesRemaining;
-            }
-*/
-            // Tự động tìm AudioSource nếu bạn quên kéo
         if (uiAudioSource == null) uiAudioSource = GetComponent<AudioSource>();
     }
 
@@ -47,10 +41,12 @@ public class PursuitManager : MonoBehaviour
     {
         if (isGameOver)
         {
-            // Nếu GameOver, ấn Space để chơi lại (chỉ nhận lệnh 1 lần duy nhất)
-            if (Input.GetKeyDown(KeyCode.Space) && gameOverPanel.activeSelf && !isRetrying)
+            if (gameOverPanel != null && gameOverPanel.activeSelf && !isRetrying)
             {
-                RetryGame();
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    RetryGame();
+                }
             }
             return;
         }
@@ -60,20 +56,21 @@ public class PursuitManager : MonoBehaviour
         if (player.forwardSpeed <= 10f) GameOver("BỊ BẮT DO TỐC ĐỘ QUÁ THẤP!");
 
         if (statusUI != null) statusUI.text = $"{player.forwardSpeed:F0} km/h";
-
-        //if (healthBar != null) healthBar.value = enemiesRemaining;
     }
 
-    // ================== HỆ THỐNG CHƠI LẠI (MỚI) ==================
-    // Hàm public này có thể gắn thẳng vào Event OnClick() của UI Button nếu muốn dùng chuột!
     public void RetryGame()
     {
-        if (isRetrying) return; // Đã bấm rồi thì không cho bấm chồng lên nữa
+        if (isRetrying) return;
         isRetrying = true;
+
+        if (BikeAudioManager.instance != null)
+        {
+            BikeAudioManager.instance.StopAllSounds();
+        }
 
         if (uiAudioSource != null && retrySound != null)
         {
-            uiAudioSource.ignoreListenerPause = true; // Cho phép phát tiếng dù game đang pause
+            uiAudioSource.ignoreListenerPause = true;
             uiAudioSource.PlayOneShot(retrySound);
         }
 
@@ -82,13 +79,10 @@ public class PursuitManager : MonoBehaviour
 
     IEnumerator ReloadSceneDelayed()
     {
-        // Chờ 0.5 giây ĐỜI THỰC (Bỏ qua TimeScale = 0) để âm thanh kịp phát xong
         yield return new WaitForSecondsRealtime(0.5f);
-
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    // =============================================================
 
     public void UseItemImmediately()
     {
@@ -146,14 +140,17 @@ public class PursuitManager : MonoBehaviour
         if (killNotificationUI != null) killNotificationUI.SetActive(false);
     }
 
+    // ========================================================
+    // 1. GAME OVER DO ĐÂM XE (ĐÓNG BĂNG NGAY LẬP TỨC)
+    // ========================================================
     public void GameOver(string r)
     {
         if (isGameOver) return;
         isGameOver = true;
 
-        if (BikeAudioManager.instance != null && BikeAudioManager.instance.bgmSource != null)
+        if (BikeAudioManager.instance != null)
         {
-            BikeAudioManager.instance.bgmSource.Stop();
+            if (BikeAudioManager.instance.bgmSource != null) BikeAudioManager.instance.bgmSource.Stop();
             BikeAudioManager.instance.PlayHit();
         }
 
@@ -162,9 +159,48 @@ public class PursuitManager : MonoBehaviour
 
     IEnumerator ShowGameOverDelayed()
     {
-        Time.timeScale = 0;
+        Time.timeScale = 0; // Đóng băng TỨC THÌ
         yield return new WaitForSecondsRealtime(1.5f);
-        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+        }
+    }
+
+    // ========================================================
+    // 2. GAME OVER DO RỚT VỰC (ĐỢI RƠI XONG MỚI ĐÓNG BĂNG)
+    // ========================================================
+    public void FallGameOver(string r)
+    {
+        if (isGameOver) return; // Chống spam lỗi Double Trigger
+        isGameOver = true;
+
+        if (BikeAudioManager.instance != null)
+        {
+            if (BikeAudioManager.instance.bgmSource != null) BikeAudioManager.instance.bgmSource.Stop();
+            // Có thể thêm âm thanh la hét lúc rớt vực ở đây nếu có
+        }
+
+        StartCoroutine(ShowFallGameOverDelayed());
+    }
+
+    IEnumerator ShowFallGameOverDelayed()
+    {
+        // KHÔNG đóng băng Time.timeScale ở đây để xe có thời gian rớt xuống bởi trọng lực
+
+        // Chờ 1.5 giây thời gian trong game cho xe rớt khuất màn hình
+        yield return new WaitForSeconds(1.5f);
+
+        // Lúc này mới đóng băng thời gian và hiện bảng Game Over
+        Time.timeScale = 0;
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     public void WinGame()

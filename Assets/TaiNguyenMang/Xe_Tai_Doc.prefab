@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Obstacle
   type: 2
-  speedChange: 5
+  speedChange: 15
 --- !u!1001 &1413676848402204418
 PrefabInstance:
   m_ObjectHideFlags: 0

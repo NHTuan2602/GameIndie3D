@@ -1,26 +1,32 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro; // ĐÃ THÊM: Để đọc được khung gõ chữ
 
 public class MainMenuController : MonoBehaviour
 {
+    // ĐÃ THÊM: Kéo cái khung gõ tên (TMP_InputField) ngoài màn hình vào đây
+    public TMP_InputField nameInputField;
+
     public void BamNutChoiMoi()
     {
-        // 1. ĐỐT SẠCH SỔ NỢ: Xóa toàn bộ dữ liệu (Tiền, Máu, Số ván bạc, Vị trí...)
+        // 1. ĐỐT SẠCH SỔ NỢ CŨ
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
-        // 2. TIÊU DIỆT ÔNG TRÙM CŨ: Xóa GameManager của ván trước (nếu nó còn sót lại)
-        if (GameManager.instance != null)
+        // 2. LƯU TÊN NGƯỜI CHƠI VÀO BỘ NHỚ
+        string tenDaNhap = "Người chơi ";
+        if (nameInputField != null && !string.IsNullOrEmpty(nameInputField.text))
         {
-            Destroy(GameManager.instance.gameObject);
+            tenDaNhap = nameInputField.text;
         }
+        // Lưu thẳng vào Registry của máy tính để gọi mọi lúc mọi nơi
+        PlayerPrefs.SetString("PlayerName", tenDaNhap);
+        PlayerPrefs.Save();
 
-        // 3. BẮT ĐẦU GAME MỚI (Sửa lại tên Scene mở đầu game của bạn cho đúng)
+        // 3. TIÊU DIỆT ÔNG TRÙM CŨ
+        if (GameManager.instance != null) Destroy(GameManager.instance.gameObject);
+
+        // 4. BẮT ĐẦU GAME MỚI
         SceneManager.LoadScene("SampleScene");
-    }
-
-    public void BamNutThoat()
-    {
-        Application.Quit();
     }
 }

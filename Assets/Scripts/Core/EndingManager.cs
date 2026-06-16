@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System;
 
 public class EndingManager : MonoBehaviour
 {
@@ -43,11 +44,10 @@ public class EndingManager : MonoBehaviour
 
     void Start()
     {
-        // ========================================================
-        // ĐÃ FIX: RÃ ĐÔNG THỜI GIAN ĐỂ NÚT BẤM HOẠT ĐỘNG
-        // ==========================================
+        // Rã đông thời gian
         Time.timeScale = 1f;
 
+        // Hiện chuột
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -66,11 +66,18 @@ public class EndingManager : MonoBehaviour
 
         SetupEnding(endingToPlay);
 
+        // Gán sự kiện click (Xoá cái cũ trước để chống click đúp)
         if (btnReturnMenu != null)
+        {
+            btnReturnMenu.onClick.RemoveAllListeners();
             btnReturnMenu.onClick.AddListener(ReturnToMainMenu);
+        }
 
         if (btnRestartDay != null)
+        {
+            btnRestartDay.onClick.RemoveAllListeners();
             btnRestartDay.onClick.AddListener(RestartCurrentDay);
+        }
     }
 
     void SetupEnding(EndingType ending)
@@ -195,12 +202,14 @@ public class EndingManager : MonoBehaviour
         if (btnReturnMenu != null)
         {
             btnReturnMenu.gameObject.SetActive(true);
+            btnReturnMenu.interactable = true;
         }
 
         int currentDay = GameManager.instance != null ? GameManager.instance.currentDay : 1;
         if (btnRestartDay != null && ending == EndingType.Death && currentDay < 6)
         {
             btnRestartDay.gameObject.SetActive(true);
+            btnRestartDay.interactable = true;
         }
     }
 
@@ -225,11 +234,26 @@ public class EndingManager : MonoBehaviour
             GameManager.instance.ResetDayForRetry();
         }
 
-        SceneManager.LoadScene(mainGameplaySceneName);
+        try
+        {
+            SceneManager.LoadScene(mainGameplaySceneName);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[LỖI CHƯA ADD SCENE]: Bạn chưa kéo file Scene '{mainGameplaySceneName}' vào File -> Build Settings! Lỗi gốc: {e.Message}");
+        }
     }
 
     void ReturnToMainMenu()
     {
-        SceneManager.LoadScene("MainMenuScene");
+        Debug.Log("---> Đã bấm nút! Đang tải Scene: MainMenu");
+        try
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[LỖI CHƯA ADD SCENE]: Bạn chưa kéo file Scene 'MainMenu' vào File -> Build Settings! Hãy ấn Ctrl + Shift + B để kéo vào. Lỗi gốc: {e.Message}");
+        }
     }
 }

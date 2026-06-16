@@ -7,7 +7,7 @@ public class BikeAudioManager : MonoBehaviour
 
     [Header("Nhạc Nền (BGM)")]
     public AudioSource bgmSource;
-    public AudioClip mainBGM; // ĐÃ SỬA: Chỉ dùng 1 bài duy nhất
+    public AudioClip mainBGM;
 
     [Header("Hiệu ứng SFX (Loa phát)")]
     public AudioSource sfxSource;
@@ -24,20 +24,26 @@ public class BikeAudioManager : MonoBehaviour
 
     void Start()
     {
-        // Phát đúng 1 bài nhạc và lặp lại liên tục
         if (mainBGM != null && bgmSource != null)
         {
             bgmSource.clip = mainBGM;
-            bgmSource.loop = true; // Bật chế độ lặp
+            bgmSource.loop = true;
             bgmSource.Play();
         }
     }
 
-    // Các kênh gọi âm thanh (Đã thêm check an toàn chống lỗi đỏ)
+    // Các kênh gọi âm thanh 
     public void PlayThrow() { if (throwBrick != null && sfxSource != null) sfxSource.PlayOneShot(throwBrick); }
     public void PlayHit() { if (hitSound != null && sfxSource != null) sfxSource.PlayOneShot(hitSound); }
     public void PlayPothole() { if (potholeHit != null && sfxSource != null) sfxSource.PlayOneShot(potholeHit); }
     public void PlayJump() { if (rampJump != null && sfxSource != null) sfxSource.PlayOneShot(rampJump); }
     public void PlayPickup() { if (pickupItem != null && sfxSource != null) sfxSource.PlayOneShot(pickupItem); }
     public void PlayEnemyHurt() { if (enemyHurt != null && sfxSource != null) sfxSource.PlayOneShot(enemyHurt); }
+
+    // GÓC KHUẤT 4 FIX: Thêm hàm này để PursuitManager có thể ra lệnh "Im Lặng Chơi Lại"
+    public void StopAllSounds()
+    {
+        if (bgmSource != null) bgmSource.Stop();
+        if (sfxSource != null) sfxSource.Stop();
+    }
 }

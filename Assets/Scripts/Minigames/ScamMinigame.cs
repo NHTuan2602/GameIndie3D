@@ -104,17 +104,33 @@ public class ScamMinigame : MonoBehaviour
 
     void Update()
     {
+        // Chặn gõ phím khi đang tạm dừng game
         if (Time.timeScale == 0f) return;
 
+        // ==========================================
+        // 1. CƯỠNG CHẾ BẢO VỆ CHUỘT (Khắc phục lỗi mất chuột)
+        // ==========================================
         if (phonePanel != null && phonePanel.activeSelf)
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
             if (Input.GetKeyDown(KeyCode.F9)) { CheatSkipMinigame(); return; }
             if (Input.GetKeyDown(KeyCode.F10)) { CheatFailMinigame(); return; }
         }
 
-        if (isDistracted && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
+        // ==========================================
+        // 2. CHO PHÉP DÙNG CHUỘT HOẶC PHÍM ĐỂ ĐUỔI SẾP
+        // ==========================================
+        if (isDistracted)
         {
-            CloseDistraction();
+            // Nếu ấn Enter, Numpad Enter hoặc ESC -> Tắt bảng cản trở
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Escape))
+            {
+                CloseDistraction();
+                return; // Ngắt lệnh luôn để không bị dính chữ Enter vào khung gõ phím
+            }
+            return; // Nếu bảng sếp vẫn đang hiện, KHÓA KHÔNG CHO GÕ PHÍM Ở DƯỚI!
         }
 
         if (!isTypingPhase || isResting || isAutoPlayTroll) return;
@@ -143,8 +159,6 @@ public class ScamMinigame : MonoBehaviour
             StartCoroutine(ProcessRoundEnd(false));
             return;
         }
-
-        if (isDistracted) return;
 
         foreach (char c in Input.inputString)
         {
