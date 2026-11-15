@@ -72,10 +72,10 @@ public class DayTransitionManager : MonoBehaviour
         }
         if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 1f;
 
-        // BƯỚC 2: Hiện chữ Ngày
+        // BƯỚC 2: Hiện chữ Ngày điện ảnh
         if (GameManager.instance != null && dayText != null)
         {
-            dayText.text = "NGÀY THỨ " + GameManager.instance.currentDay;
+            dayText.text = $"<b><color=#E63946>NGÀY THỨ {GameManager.instance.currentDay}</color></b>\n<size=50%><color=#A8DADC>— KHU COMPOUND —</color></size>";
         }
 
         yield return new WaitForSecondsRealtime(0.5f);

@@ -31,6 +31,9 @@ public class VictimSelectionManager : MonoBehaviour
             else normalPool.Add(victim);
         }
 
+        // Tự động thêm hiệu ứng Juice cho 4 thẻ bấm
+        UIButtonJuice.EnhanceAllButtonsIn(gameObject);
+
         ShowSelectionUI(1);
     }
 
@@ -38,9 +41,6 @@ public class VictimSelectionManager : MonoBehaviour
     {
         selectionPanel.SetActive(true);
 
-        // ==========================================
-        // ĐÃ FIX: TRÓI NHÂN VẬT VÀ MỞ KHÓA CHUỘT CHO UI
-        // ==========================================
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -56,7 +56,6 @@ public class VictimSelectionManager : MonoBehaviour
         {
             mouseLook.enabled = false;
         }
-        // ==========================================
 
         List<VictimProfile> tempChoices = new List<VictimProfile>();
 
@@ -77,11 +76,13 @@ public class VictimSelectionManager : MonoBehaviour
             if (i < tempChoices.Count)
             {
                 currentChoices[i] = tempChoices[i];
-                nameTexts[i].text = tempChoices[i].victimName;
-                jobTexts[i].text = tempChoices[i].jobOrAge;
+                nameTexts[i].text = $"<b>{tempChoices[i].victimName}</b>";
+                jobTexts[i].text = $"<color=#CCCCCC>{tempChoices[i].jobOrAge}</color>";
 
-                string diffVN = GetDifficultyString(tempChoices[i].difficultyLevel);
-                rewardTexts[i].text = $"Độ khó: <color=#FFFF00>{diffVN}</color>";
+                string diffBadge = GetDifficultyBadge(tempChoices[i].difficultyLevel, tempChoices[i].isTroll);
+                string rewardStr = tempChoices[i].potentialReward.ToString("N0") + " VNĐ";
+
+                rewardTexts[i].text = $"Tiềm năng: <color=#FFD166><b>{rewardStr}</b></color>\n{diffBadge}";
 
                 if (avatarImages != null && avatarImages.Length > i && tempChoices[i].avatar != null)
                 {
@@ -98,14 +99,20 @@ public class VictimSelectionManager : MonoBehaviour
         }
     }
 
-    private string GetDifficultyString(VictimProfile.Difficulty diff)
+    private string GetDifficultyBadge(VictimProfile.Difficulty diff, bool isTroll)
     {
+        if (isTroll) return "<color=#C77DFF><b>[ ⚠ NHÂN VẬT ĐẶC BIỆT ]</b></color>";
+
         switch (diff)
         {
-            case VictimProfile.Difficulty.De: return "Dễ";
-            case VictimProfile.Difficulty.TrungBinh: return "Trung Bình";
-            case VictimProfile.Difficulty.Kho: return "Khó";
-            default: return "Chưa rõ";
+            case VictimProfile.Difficulty.De:
+                return "<color=#06D6A0><b>[ ĐỘ KHÓ: DỄ ]</b></color>";
+            case VictimProfile.Difficulty.TrungBinh:
+                return "<color=#FFD166><b>[ ĐỘ KHÓ: TRUNG BÌNH ]</b></color>";
+            case VictimProfile.Difficulty.Kho:
+                return "<color=#EF476F><b>[ ĐỘ KHÓ: CAO ]</b></color>";
+            default:
+                return "<color=#AAAAAA><b>[ CHƯA XÁC ĐỊNH ]</b></color>";
         }
     }
 
@@ -147,7 +154,6 @@ public class VictimSelectionManager : MonoBehaviour
         minigameController.maxMoneyReward = chosenVictim.potentialReward;
         minigameController.karmaPenalty = chosenVictim.karmaPenalty;
 
-        // Bắt đầu minigame với thông tin của nạn nhân
         minigameController.StartMiniGame(chosenVictim.rounds, chosenVictim.victimName, chosenVictim.avatar, chosenVictim.isTroll);
     }
 }

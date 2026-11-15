@@ -125,6 +125,9 @@ public class TaiXiuManager : MonoBehaviour
             if (anim.CompareTag("NPC_Gambler")) casinoCrowd.Add(anim);
         }
 
+        // Tự động thêm hiệu ứng Juice nút bấm
+        UIButtonJuice.EnhanceAllButtonsIn(gameObject);
+
         // ==========================================
         // ĐÃ FIX: ÉP GAME CẬP NHẬT UI VÀ BẮT ĐẦU VÁN MỚI NGAY KHI LOAD XONG SCENE
         // ==========================================
@@ -190,8 +193,8 @@ public class TaiXiuManager : MonoBehaviour
 
     void UpdateMoneyUI()
     {
-        if (txtPlayerMoney != null) txtPlayerMoney.text = $"Ví tiền: {GameManager.instance.money:N0} VNĐ";
-        if (txtBetAmount != null) txtBetAmount.text = $"Đang cược: {betAmount:N0} VNĐ";
+        if (txtPlayerMoney != null) txtPlayerMoney.text = $"<color=#FFD166>💰 Ví: {GameManager.instance.money:N0} VNĐ</color>";
+        if (txtBetAmount != null) txtBetAmount.text = $"<color=#00F5D4>🎲 Cược: {betAmount:N0} VNĐ</color>";
     }
 
     public void AddMoneyToTable(int amount, int spriteIndex)

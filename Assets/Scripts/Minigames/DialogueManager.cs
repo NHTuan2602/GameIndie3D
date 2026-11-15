@@ -19,6 +19,8 @@ public class DialogueManager : MonoBehaviour
     public GameObject dialoguePanel;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI dialogueText;
+    [Tooltip("Gợi ý tiếp tục (Nhấn SPACE/Click)")]
+    public TextMeshProUGUI continuePromptText;
 
     [Header("Âm thanh Typewriter")]
     public AudioSource audioSource;
@@ -27,12 +29,13 @@ public class DialogueManager : MonoBehaviour
     [Range(0.8f, 1.2f)] public float maxPitch = 1.1f;
 
     [Header("Cài đặt Hiệu ứng")]
-    public float typingSpeed = 0.05f;
+    public float typingSpeed = 0.04f;
 
     private DialogueLine[] currentLines;
     private int currentIndex = 0;
     private bool isTyping = false;
     private Coroutine typingCoroutine;
+    private Coroutine promptPulseCoroutine;
 
     private System.Action onDialogueCompleteCallback;
 
@@ -43,21 +46,23 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
-        dialoguePanel.SetActive(false);
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
+        if (continuePromptText != null) continuePromptText.gameObject.SetActive(false);
     }
 
     void Update()
     {
-        if (!dialoguePanel.activeSelf) return;
+        if (dialoguePanel == null || !dialoguePanel.activeSelf) return;
 
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E))
         {
             if (isTyping)
             {
-                StopCoroutine(typingCoroutine);
+                if (typingCoroutine != null) StopCoroutine(typingCoroutine);
                 string pName = GetPlayerName();
                 dialogueText.text = currentLines[currentIndex].sentence.Replace("[PLAYER]", pName);
                 isTyping = false;
+                ShowContinuePrompt();
             }
             else
             {
@@ -81,7 +86,7 @@ public class DialogueManager : MonoBehaviour
         onDialogueCompleteCallback = onComplete;
         currentIndex = 0;
 
-        dialoguePanel.SetActive(true);
+        if (dialoguePanel != null) dialoguePanel.SetActive(true);
         ShowLine();
     }
 
@@ -99,10 +104,18 @@ public class DialogueManager : MonoBehaviour
 
     private void ShowLine()
     {
+        if (continuePromptText != null) continuePromptText.gameObject.SetActive(false);
+
         DialogueLine line = currentLines[currentIndex];
         string pName = GetPlayerName();
 
-        nameText.text = (line.speakerName == "[PLAYER]") ? pName : line.speakerName;
+        string resolvedSpeaker = (line.speakerName == "[PLAYER]") ? pName : line.speakerName;
+        if (nameText != null)
+        {
+            // Thiết kế huy hiệu tên người nói sắc nét
+            nameText.text = $"<b><color=#FFD166>◆ {resolvedSpeaker} ◆</color></b>";
+        }
+
         string finalSentence = line.sentence.Replace("[PLAYER]", pName);
 
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
@@ -114,8 +127,9 @@ public class DialogueManager : MonoBehaviour
         dialogueText.text = "";
         isTyping = true;
 
-        foreach (char letter in sentence.ToCharArray())
+        for (int i = 0; i < sentence.Length; i++)
         {
+            char letter = sentence[i];
             dialogueText.text += letter;
 
             if (letter != ' ' && audioSource != null && typeSound != null)
@@ -124,13 +138,51 @@ public class DialogueManager : MonoBehaviour
                 audioSource.PlayOneShot(typeSound);
             }
 
-            yield return new WaitForSeconds(typingSpeed);
+            // Nghỉ nhịp tự nhiên tại dấu câu để tăng cảm xúc kịch tính
+            if (letter == '.' || letter == '!' || letter == '?')
+            {
+                yield return new WaitForSeconds(typingSpeed * 4.5f);
+            }
+            else if (letter == ',' || letter == ';' || letter == ':')
+            {
+                yield return new WaitForSeconds(typingSpeed * 2.2f);
+            }
+            else
+            {
+                yield return new WaitForSeconds(typingSpeed);
+            }
         }
+
         isTyping = false;
+        ShowContinuePrompt();
+    }
+
+    private void ShowContinuePrompt()
+    {
+        if (continuePromptText != null)
+        {
+            continuePromptText.gameObject.SetActive(true);
+            continuePromptText.text = "<size=80%><color=#A8DADC>▼ Nhấn [SPACE] hoặc [CLICK] để tiếp tục</color></size>";
+            if (promptPulseCoroutine != null) StopCoroutine(promptPulseCoroutine);
+            promptPulseCoroutine = StartCoroutine(PromptPulseRoutine());
+        }
+    }
+
+    IEnumerator PromptPulseRoutine()
+    {
+        while (continuePromptText != null && continuePromptText.gameObject.activeSelf)
+        {
+            float alpha = Mathf.PingPong(Time.time * 2.5f, 0.6f) + 0.4f;
+            Color c = continuePromptText.color;
+            continuePromptText.color = new Color(c.r, c.g, c.b, alpha);
+            yield return null;
+        }
     }
 
     private void NextDialogueLine()
     {
+        if (continuePromptText != null) continuePromptText.gameObject.SetActive(false);
+
         currentIndex++;
         if (currentIndex < currentLines.Length)
         {
@@ -138,30 +190,20 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            // 1. Tắt bảng hội thoại
-            dialoguePanel.SetActive(false);
+            if (dialoguePanel != null) dialoguePanel.SetActive(false);
 
-            // 2. PHẦN MỚI: TỰ ĐỘNG DỌN DẸP TRẠNG THÁI TRƯỚC KHI GỌI CALLBACK
-            // Dọn dẹp trạng thái điều khiển (Dùng chung cho cả 2 trường hợp)
             PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
             if (player != null) { player.canWalk = true; player.canLook = true; }
 
             CrosshairController crosshair = FindFirstObjectByType<CrosshairController>();
             if (crosshair != null) crosshair.Show();
 
-            // 3. XỬ LÝ LOGIC RIÊNG
             if (onDialogueCompleteCallback != null)
             {
-                // Gọi sự kiện nối tiếp
                 onDialogueCompleteCallback.Invoke();
-
-                // NẾU CALLBACK CỦA BẠN LÀ CHUYỂN CẢNH, THÌ KHÔNG CẦN KHÓA CHUỘT
-                // NHƯNG NẾU LÀ BẬT MENU TRONG CẢNH, BẠN CẦN CHUỘT.
-                // Ở ĐÂY TÔI KHÔNG KHÓA CHUỘT ĐỂ TRÁNH GÂY LỖI CHO CÁC MENU TƯƠNG TÁC
             }
             else
             {
-                // Chỉ khóa chuột khi là hội thoại bình thường không cần tương tác gì thêm
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
