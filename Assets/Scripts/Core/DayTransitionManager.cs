@@ -75,7 +75,9 @@ public class DayTransitionManager : MonoBehaviour
         // BƯỚC 2: Hiện chữ Ngày điện ảnh
         if (GameManager.instance != null && dayText != null)
         {
-            dayText.text = $"<b><color=#E63946>NGÀY THỨ {GameManager.instance.currentDay}</color></b>\n<size=50%><color=#A8DADC>— KHU COMPOUND —</color></size>";
+            int day = GameManager.instance.currentDay;
+            string subtitle = GetDaySubtitle(day);
+            dayText.text = $"<b><color=#E63946>NGÀY THỨ {day}</color></b>\n<size=50%><color=#A8DADC>— {subtitle} —</color></size>";
         }
 
         yield return new WaitForSecondsRealtime(0.5f);
@@ -125,6 +127,19 @@ public class DayTransitionManager : MonoBehaviour
         {
             fadeCanvasGroup.alpha = 0f;
             fadeCanvasGroup.blocksRaycasts = false;
+        }
+    }
+
+    private string GetDaySubtitle(int day)
+    {
+        switch (day)
+        {
+            case 1: return "TAM GIÁC VÀNG — NGÀY NHẬP TRẠI";
+            case 2: return "TAM GIÁC VÀNG — CUỘC SĂN KPI";
+            case 3: return "TAM GIÁC VÀNG — VÒNG VÂY THÉP GAI";
+            case 4: return "TAM GIÁC VÀNG — LỜI TRĂN TRỐI";
+            case 5: return "TAM GIÁC VÀNG — HẠN CHÓT THANH TRỪNG";
+            default: return "TAM GIÁC VÀNG — BÌNH MINH ĐẪM MÁU";
         }
     }
 }

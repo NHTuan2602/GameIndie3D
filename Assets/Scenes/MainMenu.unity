@@ -262,17 +262,14 @@ MonoBehaviour:
   dialoguePanel: {fileID: 0}
   fadeDuration: 1.5
   introLines:
-  - speakerName: "(Ti\u1EBFng th\u1EDF d\xE0i)"
-    sentence: "Ca \u0111\xEAm th\u1EE9 ba trong tu\u1EA7n... Nh\xECn c\xE1i \u0111\u1ED1ng
-      m\xEC t\xF4m h\u1EBFt date n\xE0y, t\u1EF1 nhi\xEAn th\u1EA5y t\u01B0\u01A1ng
-      lai m\xECnh c\u0169ng y chang."
-  - speakerName: '[PLAYER]'
-    sentence: "Kh\xF4ng bi\u1EBFt c\xF3 c\xE1i ngh\u1EC1 n\xE0o m\xE0 c\xF3 th\u1EC3
-      ki\u1EBFm \u0111\u01B0\u1EE3c nhi\u1EC1u ti\u1EC1n m\xE0 kh\xF4ng c\u1EA7n
-      d\xF9ng nhi\u1EC1u s\u1EE9c kh\xF4ng"
-  - speakerName: "[H\u01B0\u1EDBng d\u1EABn]"
-    sentence: "Nhi\u1EC7m v\u1EE5 1: \u0110\u1EB7t h\u1EBFt \u0111\u1ED3 d\u01B0\u1EDBi
-      \u0111\u1EA5t l\xEAn k\u1EC7"
+  - speakerName: "(Ti\u1ebfng th\u1edf d\xE0i n\u1eb7ng n\u1ec1)"
+    sentence: "Sinh vi\xEAn n\u0103m nh\u1ea5t, r\u1eddi c\u0103n nh\xE0 \u0111\u1ea7y ti\u1ebfng \u0111\u1eadp ph\xE1 c\u1ee7a \xF4ng b\u1ed1 n\xE1t r\u01b0\u1ee3u... M\xECnh ch\u1ea1y ca \u0111\xEAm \u1edf si\xEAu th\u1ecb ti\u1ec7n l\u1ee3i n\xE0y c\u0169ng tr\xF2n m\u1ed9t th\xE1ng r\u1ed3i."
+  - speakerName: "[PLAYER]"
+    sentence: "Tin nh\u1eafn b\xE1o \u0111\xF3ng t\u1ea1m \u1ee9ng vi\u1ec7n ph\xED cho m\u1eb9 l\u1ea1i r\xE9o tr\xEAn m\xE0n h\xECnh, trong khi l\u01b0\u01a1ng th\xE1ng c\xF2n xa. Nh\xECn \u0111\u1ed1ng m\xEC t\xF4m h\u1ebft h\u1ea1n tr\u01b0\u1edbc m\u1eb7t, m\xECnh th\u1eadt s\u1ef1 b\u1ea5t l\u1ef1c..."
+  - speakerName: "[\u0110i\u1ec7n tho\u1ea1i rung - S\u1ed1 B\u1ed1]"
+    sentence: "Kh\xF4ng d\xE1m nghe m\xE1y... L\u1ea1i say x\u1ec9n ch\u1eedi b\u1edbi \u0111\xF2i ti\u1ec1n n\u1eefa r\u1ed3i. Gi\xE1 m\xE0 c\xF3 c\xF4ng vi\u1ec7c n\xE0o ki\u1ebfm ti\u1ec1n nhanh \u0111\u1ec3 c\u1ee9u m\u1eb9 v\xE0 tho\xE1t kh\u1ecfi c\u0103n nh\xE0 \u0111\xF3."
+  - speakerName: "[H\u01b0\u1edbng d\u1eabn]"
+    sentence: "Nhi\u1ec7m v\u1ee5 1: \u0110\u1eb7t h\u1ebft h\xE0ng h\xF3a d\u01b0\u1edbi \u0111\u1ea5t l\xEAn k\u1ec7 \u0111\u1ec3 ho\xE0n th\xE0nh ca l\xE0m \u0111\xEAm."
 --- !u!4 &51976490
 Transform:
   m_ObjectHideFlags: 0

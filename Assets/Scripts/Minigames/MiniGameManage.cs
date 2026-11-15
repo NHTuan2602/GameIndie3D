@@ -121,7 +121,7 @@ public class MiniGameManager : MonoBehaviour
         {
             endingPanel.SetActive(true);
             if (endingText != null)
-                endingText.text = "Bạn đã từ chối lời đề nghị. Cuộc sống sinh viên nghèo vẫn tiếp diễn, nhưng ít ra bạn được bình yên.\n\n<color=#FF0000>ENDING 1: Lựa chọn đúng đắn!</color>";
+                endingText.text = "Bạn đã kịp thời giữ lại lý trí và từ chối chiếc bánh vẽ 'việc nhẹ lương cao' của thằng cốt.\nCuộc sống sinh viên năm nhất vẫn còn đó những đêm chạy ca siêu thị rã rời để gom tiền viện phí cho mẹ, vẫn còn nỗi ám ảnh từ người bố vũ phu — nhưng bạn đã bảo vệ được tự do và mạng sống của chính mình.\n\n<color=#06D6A0>ENDING 1: LỰA CHỌN ĐÚNG ĐẮN!</color>";
         }
 
         // ĐÃ XÓA QUẢ BOM ĐẾM NGƯỢC 5 GIÂY TẮT GAME Ở ĐÂY

@@ -4074,11 +4074,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   typingSound: {fileID: 0}
   laughSound: {fileID: 0}
-  inviteText: "\xCA ma m\u1EDBi! L\xE0m vi\u1EC7c c\u1EA3 ng\xE0y m\u1EC7t r\xE3
-    r\u1EDDi r\u1ED3i \u0111\xFAng kh\xF4ng? L\u1EA1i \u0111\xE2y, m\u1EA5y anh em
-    \u0111ang m\u1EDF s\u1EDBi T\xE0i X\u1EC9u gi\u1EA3i tr\xED. V\xE0o l\xE0m v\xE0i
-    v\xE1n bi\u1EBFt \u0111\xE2u g\u1EE1 l\u1EA1i ti\u1EC1n chu\u1ED9c th\xE2n, \u0111\u1ED5i
-    \u0111\u1EDDi lu\xF4n! V\xE0o \u0111\xE2y!"
+  inviteText: "\xCA th\u1eb1ng sinh vi\xEAn m\u1edbi v\xE0o! Nghe n\xF3i m\u1eb9 m\xE0y \u0111ang n\u1eb1m vi\u1ec7n ch\u1edd \u0111\xF3ng ti\u1ec1n \u0111\xFAng kh\xF4ng? Ng\u1ed3i g\xF5 l\u1eeba c\u1ea3 ng\xE0y ch\u1eafc \u0111\u1ee7 \u0103n c\u01a1m thiu th\xF4i. L\u1ea1i \u0111\xE2y l\xE0m v\xE0i v\xE1n T\xE0i X\u1ec9u v\u1edbi anh em, th\u1eafng \u0111\u1eadm l\xE0 c\xF3 ti\u1ec1n chu\u1ed9c th\xE2n g\u1eedi v\u1ec1 b\u1ec7nh vi\u1ec7n ngay!"
 --- !u!4 &1965433249
 Transform:
   m_ObjectHideFlags: 0

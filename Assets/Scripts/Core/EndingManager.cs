@@ -90,8 +90,8 @@ public class EndingManager : MonoBehaviour
         switch (ending)
         {
             case EndingType.Arrested:
-                dayLabel = "LƯỚI TRỜI";
-                finalDialogue = "Bạn đã sống sót khỏi cuộc bạo loạn và được thăng chức, trong lúc về quê ăn tết thì đã bị lực lượng chức năng bắt. Lưới trời lồng lộng, thưa nhưng khó thoát.";
+                dayLabel = "SA LƯỚI PHÁP LUẬT";
+                finalDialogue = "Qua 5 ngày đêm ở Khu tự trị Tam Giác Vàng, để sinh tồn và gom tiền viện phí cho mẹ, bạn đã trót lừa quá nhiều nạn nhân nhẹ dạ và dần bán rẻ lương tâm cho tổ chức. Ngày trốn thoát khỏi trại cũng là lúc lực lượng cảnh sát ập vào bắt giữ bạn vì tội lừa đảo xuyên quốc gia. Thoát được roi điện, nhưng còng số 8 đã khép lại tuổi 18 của cậu sinh viên năm nhất.";
                 finalSprite = sprArrested;
                 finalBgm = bgmArrested;
                 break;
@@ -109,14 +109,14 @@ public class EndingManager : MonoBehaviour
                 if (itemCollected >= 3)
                 {
                     dayLabel = "BẠO LOẠN TẨU THOÁT";
-                    finalDialogue = "Khu trại xảy ra bạo loạn lớn! Dù đêm trước đó bị lính gác phát hiện, nhưng nhờ giữ được đủ công cụ sinh tồn cốt lõi, bạn đã lợi dụng trận hỗn chiến để tự cắt rào, bẻ khóa và trốn thoát thành công khỏi địa ngục!";
+                    finalDialogue = "Đêm thanh trừng thứ 5 bùng phát thành cuộc bạo loạn đẫm máu khắp Khu tự trị Tam Giác Vàng! Nhờ bí mật gom được phần lớn đồ nghề vượt ngục trong các đêm qua, bạn đã liều mình cắt hàng rào thép gai giữa làn khói lửa, thoát thân về biên giới trong gang tấc để kịp trở về bên giường bệnh của mẹ.";
                     finalSprite = sprTrueEscape;
                     finalBgm = bgmTrueEscape;
                 }
                 else
                 {
-                    dayLabel = "KẾT CỤC BI THẢM";
-                    finalDialogue = "Khu trại xảy ra bạo loạn lớn... Vì chỉ gom được quá ít vật dụng phòng thân, bạn đã không thể sống sót qua cuộc hỗn chiến. BẠN ĐÃ BIẾN MẤT KHÔNG ĐỂ LẠI DẤU VẾT...";
+                    dayLabel = "GỤC NGÃ TRONG ĐÊM THANH TRỪNG";
+                    finalDialogue = "Cuộc bạo loạn rạng sáng Ngày thứ 6 nhấn chìm Khu tự trị Tam Giác Vàng trong tiếng súng và roi điện... Do chuẩn bị quá thiếu thốn và bị lộ hành tung từ trước, cậu sinh viên năm nhất tay không tấc sắt đã gục ngã ngay sát hàng rào thép gai. Giấc mơ trả viện phí cứu mẹ mãi mãi khép lại nơi đất khách.";
                     finalSprite = sprDeath;
                     finalBgm = bgmDeath;
                 }
@@ -129,13 +129,13 @@ public class EndingManager : MonoBehaviour
 
                 if (currentDay < 6)
                 {
-                    dayLabel = $"GỤC NGÃ TẠI NGÀY {currentDay}";
-                    finalDialogue = "Những trận đòn roi, cú chích điện và áp lực chỉ tiêu đã rút cạn sinh lực của bạn. Bạn đã kiệt sức (Máu = 0) và gục ngã xuống sàn lạnh lẽo...";
+                    dayLabel = $"CHẾT TẠI TAM GIÁC VÀNG — NGÀY {currentDay}";
+                    finalDialogue = "Những cú chích điện cao áp từ tên Quản lý khi không đạt KPI và các đòn tra tấn ban đêm đã rút cạn hơi thở cuối cùng của bạn. Cậu sinh viên năm nhất gục xuống sàn bê tông lạnh lẽo của Tam Giác Vàng, không bao giờ còn có thể gửi tiền viện phí về cho mẹ nữa...";
                 }
                 else
                 {
-                    dayLabel = "KẾT CỤC BI THẢM";
-                    finalDialogue = "Khu trại xảy ra bạo loạn lớn... Do thể lực của bạn lúc này quá yếu (Máu < 20), bạn đã không chịu đựng nổi những cú giẫm đạp và đã bỏ mạng trong biển người hỗn loạn. BẠN ĐÃ BIẾN MẤT KHÔNG ĐỂ LẠI DẤU VẾT...";
+                    dayLabel = "TAN XÁC NGÀY THANH TRỪNG";
+                    finalDialogue = "Rạng sáng Ngày thứ 6, cuộc thanh trừng và bạo loạn nổ ra. Với cơ thể kiệt quệ sau 5 ngày đêm bị chích điện tra tấn (Máu < 20), bạn không thể gượng dậy nổi giữa biển người hỗn loạn. Tên bạn bị xóa vĩnh viễn khỏi Khu tự trị Tam Giác Vàng...";
                 }
 
                 finalSprite = sprDeath;
@@ -143,15 +143,15 @@ public class EndingManager : MonoBehaviour
                 break;
 
             case EndingType.TrueEscape:
-                dayLabel = "TỰ DO MANG TÊN BẠN";
-                finalDialogue = "Kế hoạch vượt ngục hoàn hảo! Bạn đã trốn thoát thành công khỏi bầy quỷ dữ và báo ngay cho cảnh sát.";
+                dayLabel = "ĐÀO THOÁT HOÀN HẢO — TRUE ENDING";
+                finalDialogue = "Sau 5 ngày đêm cắn răng lừa gạt qua KPI để giữ mạng và lặng lẽ thu thập trọn vẹn Sổ tay, Kềm, Dây thừng, Chìa khóa theo chỉ dẫn của ông lão tiền nhiệm, bạn đã cắt xích vượt rào thoát khỏi Khu tự trị Tam Giác Vàng và phóng xuyên truy sát tới đồn biên phòng! Mọi tội ác của đường dây bị vạch trần — bạn sống sót trở về bệnh viện nắm tay mẹ và vĩnh viễn thoát khỏi bóng ma bạo hành.";
                 finalSprite = sprTrueEscape;
                 finalBgm = bgmTrueEscape;
                 break;
 
             case EndingType.BadCredit:
-                dayLabel = "CON NỢ";
-                finalDialogue = "Bị cuốn vào vòng xoáy cờ bạc, bạn đã bán mình cho tổ chức tín dụng đen và bị chuyển đi nơi khác...";
+                dayLabel = "NÔ LỆ TÍN DỤNG ĐEN";
+                finalDialogue = "Vì quá nóng vội kiếm tiền trả viện phí cho mẹ ngay Đêm thứ 1, bạn sa vào sới Tài Xỉu rồi gánh món nợ lãi mẹ đẻ lãi con không đáy. Khu tự trị Tam Giác Vàng tước sạch mọi quyền chuộc thân — biến bạn thành cỗ máy gõ lừa đảo khổ sai vĩnh viễn cho tới khi kiệt sức.";
                 finalSprite = sprDeath;
                 break;
         }

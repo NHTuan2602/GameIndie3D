@@ -16,7 +16,7 @@ public class BossIntroManager : MonoBehaviour
     public AudioClip typingSound;
 
     [TextArea(3, 5)]
-    public string bossDialogue = "Chào mừng đến với địa ngục, ma mới! Ở cái xưởng này không có chỗ cho kẻ vô dụng phế thải.\nMỗi ngày mày phải lừa được ít nhất <color=red>2 con mồi</color>. Làm tốt thì có cơm ăn, còn không đạt KPI thì chuẩn bị tinh thần nếm mùi roi điện đi!\nNGỒI VÀO MÁY VÀ BẮT ĐẦU LÀM VIỆC!";
+    public string bossDialogue = "Tỉnh lại rồi hả, thằng sinh viên năm nhất? Chào mừng tới <color=#FFD166>Khu tự trị Tam Giác Vàng</color>!\nThằng cốt của mày cầm tiền hoa hồng bán đứng mày rồi cút thẳng về nước rồi. Đừng mơ tới trường học hay tiền viện phí nữa — ở đây, mạng mày thuộc về bọn tao.\nMỗi ngày mày phải gõ lừa đủ ít nhất <color=red>2 con mồi</color>. Đủ KPI thì có cơm ăn mà sống qua <color=red>5 ngày đêm</color>, còn lười biếng hoặc từ chối mục tiêu? Đừng trách tao chích cây roi điện này tới chết!\nNGỒI VÀO MÁY VÀ BẮT ĐẦU LÀM VIỆC!";
 
     void Start()
     {

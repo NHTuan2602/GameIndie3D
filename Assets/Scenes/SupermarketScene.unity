@@ -43389,36 +43389,18 @@ MonoBehaviour:
   crosshairController: {fileID: 0}
   phoneMessagePanel: {fileID: 0}
   outroLines:
-  - speakerName: "Anh B\u1EA3nh"
-    sentence: "\xCA [PLAYER]! Gi\u1EDD n\xE0y c\xF2n \u0111\u1EE9ng x\u1EBFp m\xEC
-      t\xF4m v\u1EDBi check m\xE3 v\u1EA1ch \xE0? L\u01B0\u01A1ng b\xE8o nh\xE8o
-      20 c\xE0nh m\u1ED9t gi\u1EDD th\xEC bao gi\u1EDD m\u1EDBi mua \u0111\u01B0\u1EE3c
-      M\u1EB9c h\u1EA3 em?"
-  - speakerName: '[PLAYER]'
-    sentence: "\u1EE6a anh B\u1EA3nh? D\u1EA1o n\xE0y \u0111\xF3ng qu\u1EA3 vest
-      b\u1EA3nh t\u1ECFn th\u1EBF, m\u01B0\u1EDBn \u1EDF ti\u1EC7m n\xE0o \u0111\u1EA5y?
-      \u0110\u1EEBng b\u1EA3o anh l\u1EA1i \u0111i l\xF9a g\xE0 \xFAp s\u1ECDt anh
-      em nh\xE9."
-  - speakerName: "Anh B\u1EA3nh"
-    sentence: "L\xF9a g\xE0 l\xE0 d\u1EDF r\u1ED3i! Anh m\xE0y gi\u1EDD l\xE0m 'chuy\xEAn
-      vi\xEAn t\u01B0 v\u1EA5n t\xE0i ch\xEDnh' cho t\u1EADp \u0111o\xE0n c\xF4ng
-      ngh\u1EC7 4.0 b\xEAn kia bi\xEAn gi\u1EDBi. Tr\xFAng qu\u1EA3 'vi\u1EC7c nh\u1EB9
-      l\u01B0\u01A1ng cao', ng\u1ED3i \u0111i\u1EC1u h\xF2a g\xF5 ph\xEDm."
-  - speakerName: "Anh B\u1EA3nh"
-    sentence: "C\xF4ng vi\u1EC7c ch\u1EE7 y\u1EBFu l\xE0 l\xEAn m\u1EA1ng 'ch\u1EEFa
-      l\xE0nh' n\u1ED7i \u0111au t\xE0i ch\xEDnh cho kh\xE1ch, g\u1EEDi v\xE0i c\xE1i
-      link l\xE0 ti\u1EC1n 'ting ting'. Anh s\u1EAFp x\xE2y bi\u1EC7t th\u1EF1 cho
-      \xF4ng b\xE0 b\xF4 \u1EDF qu\xEA r\u1ED3i, \u0111\xE9o \u0111\xF9a \u0111\xE2u."
-  - speakerName: '[PLAYER]'
-    sentence: "Nghe s\u1EB7c m\xF9i ph\xF4ng b\u1EA1t b\xE1nh v\u1EBD th\u1EBF? K\xE8o
-      th\u01A1m nh\u01B0 s\u1EA7u ri\xEAng sao anh kh\xF4ng r\u1EE7 h\u1ECD h\xE0ng
-      \u0111i m\xE0 m\xF2 v\xE0o c\xE1i si\xEAu th\u1ECB n\xE0y t\xECm em?"
-  - speakerName: "Anh B\u1EA3nh"
-    sentence: "H\u1ECD h\xE0ng anh to\xE0n m\u1EA5y \xF4ng gi\xE0 m\xF9 c\xF4ng ngh\u1EC7!
-      T\u1EADp \u0111o\xE0n \u0111ang kh\xE1t nh\xE2n s\u1EF1 IT nh\u1EA1y b\xE9n
-      nh\u01B0 m\xE0y. Xe c\xF4ng ty \u0111\xF3n t\u1EADn b\u1EBFn, bao \u0103n \u1EDF
-      100%. C\u1EDFi c\xE1i t\u1EA1p d\u1EC1 ra, x\xE1ch balo l\xEAn \u0111i \u0111\u1ED5i
-      \u0111\u1EDDi v\u1EDBi anh!"
+  - speakerName: "Th\u1eb1ng C\u1ed1t (Anh B\u1ea3nh)"
+    sentence: "\xCA [PLAYER]! M\u1ed9t th\xE1ng c\u1eafm m\u1eb7t ch\u1ea1y ca \u0111\xEAm \u1edf si\xEAu th\u1ecb nh\xECn th\u1eb1ng b\u1ea1n th\xE2n tao h\u1ed1c h\xE1c t\u1edbi m\u1ee9c n\xE0y r\u1ed3i \xE0? M\u1edbi sinh vi\xEAn n\u0103m nh\u1ea5t m\xE0 v\u1eeba g\xE1nh vi\u1ec7n ph\xED cho b\xE1c g\xE1i v\u1eeba ch\u1ecbu c\u1ea3nh \xF4ng b\u1ed1 b\u1ea1o h\xE0nh th\xEC tr\u1ee5 sao n\u1ed5i?"
+  - speakerName: "[PLAYER]"
+    sentence: "B\u1ea3nh? L\xE2u r\u1ed3i kh\xF4ng g\u1eb7p, sao nay \u0103n m\u1eb7c b\u1ea3nh bao m\xF2 v\xE0o si\xEAu th\u1ecb t\xECm tao th\u1ebf? \u0110\u1eebng x\xE1t mu\u1ed1i n\u1eefa... s\xE1ng nay b\u1ec7nh vi\u1ec7n m\u1edbi b\xE1o t\u0103ng ti\u1ec1n thu\u1ed1c cho m\u1eb9 tao."
+  - speakerName: "Th\u1eb1ng C\u1ed1t (Anh B\u1ea3nh)"
+    sentence: "Th\u1ebf tao m\u1edbi t\u1edbi k\xE9o th\u1eb1ng c\u1ed1t l\xEAn \u0111\xE2y! Tao v\u1eeba nh\u1eadn ch\xE2n qu\u1ea3n l\xFD cho t\u1eadp \u0111o\xE0n c\xF4ng ngh\u1ec7 b\xEAn kia bi\xEAn gi\u1edbi. Vi\u1ec7c nh\u1eb9 l\u01b0\u01a1ng cao \u0111\xFAng ngh\u0129a: ng\u1ed3i ph\xF2ng l\u1ea1nh g\xF5 m\xE1y t\xEDnh h\u1ed7 tr\u1ee3 kh\xE1ch, l\u01b0\u01a1ng 30 c\u1ee7 ch\u01b0a t\xEDnh th\u01b0\u1edfng!"
+  - speakerName: "[PLAYER]"
+    sentence: "Ba ch\u1ee5c tri\u1ec7u m\u1ed9t th\xE1ng c\u01a1 \xE1?! Nghe h\u01a1i \u1ea3o... Ch\u1ec9 ng\u1ed3i g\xF5 m\xE1y t\xEDnh th\xF4i m\xE0 l\u01b0\u01a1ng cao v\u1eady sao? Sao k\xE8o th\u01a1m th\u1ebf m\xE0y l\u1ea1i m\xF2 t\xECm tao?"
+  - speakerName: "Th\u1eb1ng C\u1ed1t (Anh B\u1ea3nh)"
+    sentence: "Th\u1eb1ng c\u1ed1t ch\xED thi\u1ebft bao n\u0103m tao l\u1eeba m\xE0y l\xE0m g\xEC! C\xF4ng ty \u0111ang thi\u1ebfu g\u1ea5p sinh vi\xEAn r\xE0nh m\xE1y t\xEDnh, bao \u0103n \u1edf, \u0111\xEAm nay c\xF3 xe bus \u0111\xF3n \u0111i lu\xF4n. L\xE0m v\xE0i th\xE1ng l\xE0 d\u01b0 ti\u1ec1n m\u1ed5 cho m\u1eb9 v\u1edbi d\u1ecdn ra \u1edf ri\xEAng kh\u1ecfi \xF4ng b\u1ed1 v\u0169 phu nh\xE0 m\xE0y!"
+  - speakerName: "[PLAYER]"
+    sentence: "...Ba ch\u1ee5c tri\u1ec7u. \u0110\xFAng l\xE0 l\xFAc n\xE0y m\xECnh kh\xF4ng c\xF2n \u0111\u01b0\u1eddng n\xE0o kh\xE1c \u0111\u1ec3 c\u1ee9u m\u1eb9 n\u1eefa r\u1ed3i. \u0110\u01b0\u1ee3c... n\xF3i r\xF5 h\u01a1n xem sao?"
   choicePanel: {fileID: 754223984}
   agreeButton: {fileID: 2076010900}
   refuseButton: {fileID: 927441759}

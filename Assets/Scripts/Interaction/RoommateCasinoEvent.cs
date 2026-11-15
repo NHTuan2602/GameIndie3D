@@ -25,8 +25,8 @@ public class RoommateCasinoEvent : MonoBehaviour
     public AudioClip laughSound;
 
     [TextArea(3, 5)]
-    public string inviteText = "Ê ma mới! Làm việc cả ngày mệt rã rời rồi đúng không? Lại đây, mấy anh em đang mở sới Tài Xỉu giải trí. Vào làm vài ván biết đâu gỡ lại tiền chuộc thân, đổi đời luôn! Vào đây!";
-    private string refuseText = "Mày khinh anh em à? Ở cái trại này không có luật từ chối đâu. LẠI ĐÂY NGỒI XUỐNG!";
+    public string inviteText = "Ê thằng sinh viên mới vào! Nghe nói mẹ mày đang nằm viện chờ đóng tiền đúng không? Ngồi gõ lừa cả ngày chắc đủ ăn cơm thiu thôi. Lại đây làm vài ván Tài Xỉu với anh em, thắng đậm là có tiền chuộc thân gửi về bệnh viện ngay!";
+    private string refuseText = "Mày tưởng từ chối là yên thân à? Ở cái khu Tam Giác Vàng này không ai được phép đứng ngoài cuộc chơi đâu. NGỒI XUỐNG CHƠI NGAY!";
 
     void Start()
     {

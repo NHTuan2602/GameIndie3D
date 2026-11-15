@@ -377,7 +377,7 @@ public class GameManager : MonoBehaviour
         else if (itemCount == 4 && !failedStealth)
         {
             currentEnding = EndingType.TrueEscape;
-            SceneManager.LoadScene("EscapeCyclingScene");
+            SceneManager.LoadScene("EscapeBikeScene");
         }
         else if (itemCount >= 3)
         {

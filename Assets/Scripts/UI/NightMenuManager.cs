@@ -59,8 +59,8 @@ public class NightMenuManager : MonoBehaviour
 
         if (txtTieuDe != null)
         {
-            txtTieuDe.text = $"<size=75%><color=#A8DADC>22:00 ĐÊM TẠI KHU compound</color></size>\n" +
-                             $"<b><color=#EF476F>ĐÊM THỨ {day}</color></b> - BẠN MUỐN LÀM GÌ?";
+            txtTieuDe.text = $"<size=75%><color=#A8DADC>22:00 ĐÊM — KHU TỰ TRỊ TAM GIÁC VÀNG</color></size>\n" +
+                             $"<b><color=#EF476F>ĐÊM THỨ {day}/5</color></b> - BẠN MUỐN LÀM GÌ?";
         }
 
         if (txtThongTinNhanVat != null)

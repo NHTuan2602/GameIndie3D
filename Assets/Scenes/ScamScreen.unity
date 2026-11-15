@@ -6371,13 +6371,7 @@ MonoBehaviour:
   audioSource: {fileID: 612965103}
   slamDeskSound: {fileID: 8300000, guid: f61465487e35f8147bdb41a97e89c91c, type: 3}
   typingSound: {fileID: 8300000, guid: 7efc2c4bfb169ba49aab75c5d2fb43a4, type: 3}
-  bossDialogue: "Ch\xE0o m\u1EEBng \u0111\u1EBFn v\u1EDBi \u0111\u1ECBa ng\u1EE5c,
-    ma m\u1EDBi! \u1EDE c\xE1i x\u01B0\u1EDFng n\xE0y kh\xF4ng c\xF3 ch\u1ED7 cho
-    k\u1EBB v\xF4 d\u1EE5ng ph\u1EBF th\u1EA3i.\nM\u1ED7i ng\xE0y m\xE0y ph\u1EA3i
-    l\u1EEBa \u0111\u01B0\u1EE3c \xEDt nh\u1EA5t <color=red>2 con m\u1ED3i</color>.
-    L\xE0m t\u1ED1t th\xEC c\xF3 c\u01A1m \u0103n, c\xF2n kh\xF4ng \u0111\u1EA1t
-    KPI th\xEC chu\u1EA9n b\u1ECB tinh th\u1EA7n n\u1EBFm m\xF9i roi \u0111i\u1EC7n
-    \u0111i!\nNG\u1ED2I V\xC0O M\xC1Y V\xC0 B\u1EAET \u0110\u1EA6U L\xC0M VI\u1EC6C!"
+  bossDialogue: "T\u1ec9nh l\u1ea1i r\u1ed3i h\u1ea3, th\u1eb1ng sinh vi\xEAn n\u0103m nh\u1ea5t? Ch\xE0o m\u1eebng t\u1edbi <color=#FFD166>Khu t\u1ef1 tr\u1ecb Tam Gi\xE1c V\xE0ng</color>!\nTh\u1eb1ng c\u1ed1t c\u1ee7a m\xE0y c\u1ea7m ti\u1ec1n hoa h\u1ed3ng b\xE1n \u0111\u1ee9ng m\xE0y r\u1ed3i c\xFAt th\u1eb3ng v\u1ec1 n\u01b0\u1edbc r\u1ed3i. \u0110\u1eebng m\u01a1 t\u1edbi tr\u01b0\u1eddng h\u1ecdc hay ti\u1ec1n vi\u1ec7n ph\xED n\u1eefa \u2014 \u1edf \u0111\xE2y, m\u1ea1ng m\xE0y thu\u1ed9c v\u1ec1 b\u1ecdn tao.\nM\u1ed7i ng\xE0y m\xE0y ph\u1ea3i g\xF5 l\u1eeba \u0111\u1ee7 \xEDt nh\u1ea5t <color=red>2 con m\u1ed3i</color>. \u0110\u1ee7 KPI th\xEC c\xF3 c\u01a1m \u0103n m\xE0 s\u1ed1ng qua <color=red>5 ng\xE0y \u0111\xEAm</color>, c\xF2n l\u01b0\u1eddi bi\u1ebfng ho\u1eb7c t\u1eeb ch\u1ed1i m\u1ee5c ti\xEAu? \u0110\u1eebng tr\xE1ch tao ch\xEDch c\xE2y roi \u0111i\u1ec7n n\xE0y t\u1edbi ch\u1ebft!\nNG\u1ed2I V\xC0O M\xC1Y V\xC0 B\u1eaeT \u0110\u1ea6U L\xC0M VI\u1ec6C!"
 --- !u!4 &612965102
 Transform:
   m_ObjectHideFlags: 0
@@ -19640,12 +19634,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96

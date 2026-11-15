@@ -64,25 +64,25 @@ public class CanteenManager : MonoBehaviour
         switch (day)
         {
             case 1:
-                finalDialogue = "Này ma mới, tao ở cái trại này lâu lắm rồi... chứng kiến nhiều kẻ bỏ mạng lắm. Ráng nhét tí cơm vào bụng đi kẻo gục.\nĐêm mai đợi bảo vệ đi vệ sinh, thử lẻn xuống <color=yellow>Tầng 1</color> xem sao. Tìm cuốn <color=yellow>Sổ tay</color> để ghi chép đường thoát.";
+                finalDialogue = "Này cậu sinh viên năm nhất... mới bị thằng bạn lừa bán lên Tam Giác Vàng đúng không? Tôi thấy nhiều đứa trẻ như cậu gục vì roi điện ở cái xưởng này rồi. Ráng nuốt miếng cơm đi mà còn sức trả tiền viện phí cho mẹ cậu.\nNghe kỹ đây: khu này vận hành theo chu kỳ <color=yellow>5 ngày đêm thanh trừng</color>. Đêm mai đợi cai ngục đổi ca, lẻn xuống <color=yellow>Tầng 1</color> tìm cuốn <color=yellow>Sổ tay</color> vẽ sơ đồ lối thoát!";
                 break;
             case 2:
-                finalDialogue = "Mặt mày xanh xao quá, nhưng vẫn còn sống là tốt rồi.\nĐêm nay mày phải mò lên <color=yellow>Tầng 2</color>. Trên khu nhà kho có <color=yellow>Kềm cắt xích</color> và <color=yellow>Dây thừng</color>, thiếu chúng nó thì không trèo tường được đâu.";
+                finalDialogue = "Mắt cậu thâm quầng hết rồi, nhưng qua được ngày đầu không bị chích chết là còn hy vọng.\nĐêm nay phải mò lên <color=yellow>Tầng 2</color>. Trong kho dụng cụ cũ có <color=yellow>Kềm cắt xích</color> và cuộn <color=yellow>Dây thừng</color>. Cẩn thận ánh đèn pin tuần tra — bị bắt 3 lần trong một đêm là chúng nó lôi ra giật điện tịch thu sạch đấy!";
                 if (GameManager.instance != null) GameManager.instance.hasTalkedToNPC = true;
                 break;
             case 3:
-                finalDialogue = "Gần đây bọn cai ngục đi tuần gắt gao lắm. Mày tìm được đồ nghề chưa?\nNếu có đồ rồi thì phải có <color=yellow>Chìa khóa</color> cổng. Lão quản lý hay vứt nó ở phòng làm việc trên <color=yellow>Tầng 3</color>. Lên đó cẩn thận, tao từng bị tóm ở cầu thang đấy...";
+                finalDialogue = "Nghe tiếng còi ngoài hành lang không? Bọn quản lý đang siết chặt kiểm soát rồi. Cậu gom được Sổ tay, Kềm và Dây thừng chưa?\nMuốn mở được cổng sau để đào tẩu thì bắt buộc phải có <color=yellow>Chìa khóa</color>. Lão quản lý khóa nó trong tủ sắt ở phòng làm việc trên <color=yellow>Tầng 3</color>. Phải dùng Kềm mới phá được tủ!";
                 break;
             case 4:
                 // PLOT TWIST: Lời từ biệt của hồn ma
-                finalDialogue = "Mày gom đủ 4 món chưa? <color=yellow>Sổ, Kềm, Dây, Chìa khóa</color>... Nhớ lấy bài học của tao. Ngày xưa tao cũng tới được cái cổng đó, nhưng... bọn nó chặt đứt dây thừng của tao.\nĐêm nay tao đi trước đây. Đêm mai (Đêm 5) là hạn chót của mày, bọn nó bắt đầu thanh trừng rồi. Tự bảo trọng!";
+                finalDialogue = "Đủ cả 4 món chưa: <color=yellow>Sổ tay, Kềm, Dây thừng, Chìa khóa</color>... Nhìn cậu làm tôi nhớ bản thân mình nhiều năm trước. Tôi cũng từng trèo lên tới đỉnh bức tường rào khu tự trị này, nhưng... bọn lính gác phát hiện rồi chặt đứt dây thừng của tôi.\nĐêm nay tôi đi thật đây. <color=#EF476F>Đêm thứ 5</color> là hạn chót cuối cùng trước khi chúng nó thanh trừng toàn bộ trại. Hãy sống thay phần tôi và về gặp mẹ cậu đi!";
                 break;
             case 5:
                 // NGÀY 5: Không có NPC, chuyển sang độc thoại nội tâm (in nghiêng)
-                finalDialogue = "<i>Chỗ ngồi đối diện trống không... Lão già hay ngồi kể chuyện vượt ngục mấy hôm trước đâu rồi?\nKhông còn thời gian nữa. Tối nay mình PHẢI TRỐN!</i>";
+                finalDialogue = "<i>Ghế đối diện trống trơn... Ông lão hay ngồi kể chuyện vượt ngục suốt bốn ngày qua đã biến mất không một dấu vết.\nNgoài kia, tiếng roi điện nẹt liên hồi báo hiệu đêm thanh trừng sắp ập xuống. Không còn đường lui nữa — Đêm thứ 5 này mình PHẢI ĐÀO THOÁT khỏi Tam Giác Vàng!</i>";
                 break;
             default:
-                finalDialogue = "<i>Chỉ có tiếng nhai cơm lạnh lẽo...</i>";
+                finalDialogue = "<i>Chỉ còn tiếng nhai cơm nguội lạnh lẽo giữa trại giam Tam Giác Vàng...</i>";
                 break;
         }
 
